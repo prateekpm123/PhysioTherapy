@@ -8,6 +8,8 @@ import Modal from "../components/Modal";
 import { PDFPreview } from "../components/PDFPreview";
 import { IoMdAdd } from "react-icons/io";
 import { AddExcercise } from "../components/AddExcercise";
+// import testFirebase from "../databaseConnections/AddingDataToFirebase";
+import DatabaseController from "../databaseConnections/DatabaseController";
 
 export const Home = () => {
   const data2 = data as unknown as iExcerciseData[];
@@ -43,7 +45,13 @@ export const Home = () => {
   };
 
   const onAddExcerciseClick = () => {
-    setIsAddExcerciseModalOpen(true);
+    // temp
+    // testFirebase();
+    const db = new DatabaseController();
+    const data = db.fetchNodeData("exercises");
+    console.log(data);  
+    // temp
+    // setIsAddExcerciseModalOpen(true);
   };
 
   return (
