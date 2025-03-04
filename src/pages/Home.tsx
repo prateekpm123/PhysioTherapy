@@ -1,5 +1,5 @@
-import { Suspense, useState } from "react";
-import data from "../../database/excerciseDatabase.json";
+import { Suspense, useEffect, useState } from "react";
+// import data from "../../database/excerciseDatabase.json";
 import { ExcerciseTile } from "../components/ExcerciseTile";
 import { iExcerciseData } from "../models/ExcerciseInterface";
 import { PlannerList } from "../components/PlannerList";
@@ -12,8 +12,8 @@ import { AddExcercise } from "../components/AddExcercise";
 import DatabaseController from "../databaseConnections/DatabaseController";
 
 export const Home = () => {
-  const data2 = data as unknown as iExcerciseData[];
-  const [excercises, setExcercises] = useState<iExcerciseData[]>(data2);
+  let data2: iExcerciseData[] | null = null;
+  const [excercises, setExcercises] = useState<iExcerciseData[]>();
   const [plannerItems, setPlannerItems] = useState<iExcerciseData[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isPDFPreviewModalOpen, setIsPDFPreviewModalOpen] =
@@ -25,11 +25,11 @@ export const Home = () => {
 
   const search = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value;
-    if (searchValue === "") {
+    if (searchValue === "" && data2) {
       setExcercises(data2);
       return;
     }
-    const filteredExcercises = data2.filter((excercise) => {
+    const filteredExcercises = data2?.filter((excercise) => {
       return excercise.name.toLowerCase().includes(searchValue.toLowerCase());
     });
     setExcercises(filteredExcercises);
@@ -44,15 +44,32 @@ export const Home = () => {
     setIsModalOpen(true);
   };
 
-  const onAddExcerciseClick = () => {
-    // temp
-    // testFirebase();
-    const db = new DatabaseController();
+  const fetchExcerciseData = () => {
+    const db = DatabaseController.getInstance();
     const data = db.fetchNodeData("exercises");
-    console.log(data);  
-    // temp
-    // setIsAddExcerciseModalOpen(true);
+    data
+      .then((data) => {
+        if (data) {
+          data2 = data;
+          setExcercises(data);
+          console.log(data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      })
+      .finally(() => {
+        // console.log("Data fetched successfully");
+      });
   };
+
+  const onAddExcerciseClick = () => {
+    setIsAddExcerciseModalOpen(true);
+  };
+
+  useEffect(() => {
+    fetchExcerciseData();
+  }, [excercises]);
 
   return (
     <div className="grid grid-cols-6">
@@ -66,30 +83,31 @@ export const Home = () => {
         <div className="relative flex grid overflow-y-auto w-full sm:grid-cols-1 sm:gap-4 md:grid-cols-3 md:gap-4 lg:grid-cols-5 justify-items-start">
           <Suspense fallback={<div>Loading...</div>}></Suspense>
           <Suspense>
-            {excercises.map((_, i) => (
-              <ExcerciseTile
-                key={i}
-                excercise={excercises[i]}
-                onAdd={onAdd}
-                onClick={() => onExcerciseTileClick(excercises[i])}
-              />
-            ))}
+            {excercises &&
+              Object.entries(excercises).map(([key, excercise]) => (
+                <ExcerciseTile
+                  key={key} // Use the original key as the key
+                  excercise={excercise}
+                  onAdd={onAdd}
+                  onClick={() => onExcerciseTileClick(excercise)}
+                />
+              ))}
           </Suspense>
         </div>
         <div
-            style={{
-              bottom: "10%",
-              right: "19%",
-              borderRadius: "50%",
-              boxShadow: "1px 2px 44px 5px rgba(0,0,0,0.75)",
-            }}
-            className="absolute flex h-18 w-18 z-20 bg-slate-500 bg-lightblue p-2 rounded shadow-md"
-          >
-            <IoMdAdd
-              className="text-6xl text-slate-700"
-              onClick={onAddExcerciseClick}
-            />
-          </div>
+          style={{
+            bottom: "10%",
+            right: "19%",
+            borderRadius: "50%",
+            boxShadow: "1px 2px 44px 5px rgba(0,0,0,0.75)",
+          }}
+          className="absolute flex h-18 w-18 z-20 bg-slate-500 bg-lightblue p-2 rounded shadow-md"
+        >
+          <IoMdAdd
+            className="text-6xl text-slate-700"
+            onClick={onAddExcerciseClick}
+          />
+        </div>
       </div>
       {/* {plannerItems.length == 0 ? null : <PlannerList plannerItems={plannerItems} setPlannerItems={setPlannerItems}></PlannerList>} */}
       <PlannerList

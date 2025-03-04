@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import { H1, H4, H6, H7 } from "./TextTags";
 import { iExcerciseData } from "../models/ExcerciseInterface";
 import excerciseData from "../../database/excerciseDatabase.json";
+import DatabaseController from "../databaseConnections/DatabaseController";
 
 export const AddExcercise = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -44,6 +45,10 @@ export const AddExcercise = () => {
 
   const handleAddExercise = async (newExcercise: iExcerciseData) => {
     try {
+      const dbController = DatabaseController.getInstance();
+      dbController.addNewExercise(newExcercise);
+      return;
+
       const existingData = excerciseData;
 
       // Add the new exercise (adjust based on your JSON structure)
