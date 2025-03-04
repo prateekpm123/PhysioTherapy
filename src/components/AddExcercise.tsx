@@ -4,6 +4,10 @@ import { H1, H4, H6, H7 } from "./TextTags";
 import { iExcerciseData } from "../models/ExcerciseInterface";
 import excerciseData from "../../database/excerciseDatabase.json";
 import DatabaseController from "../databaseConnections/DatabaseController";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../databaseConnections/FireBaseConnection";
+
+// import { storage } from "../databaseConnections/FireBaseStorageInstance";
 
 export const AddExcercise = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -14,6 +18,7 @@ export const AddExcercise = () => {
   const repetitionDescription = useRef<HTMLTextAreaElement>(null);
   const excerciseDescription = useRef<HTMLTextAreaElement>(null);
   const excerciseName = useRef<HTMLInputElement>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -26,7 +31,7 @@ export const AddExcercise = () => {
   const onAddExcerciseBtnClick = () => {
     const newExcercise: iExcerciseData = {
       name: excerciseName.current?.value.toString() || "",
-      imgSrc: "",
+      imgSrc: imageUrl || "",
       description: {
         sets: Number(setNumber.current?.value) || 0,
         setsDescription: setDescription.current?.value || "",
@@ -55,41 +60,55 @@ export const AddExcercise = () => {
       existingData.push(newExcercise);
 
       const updatedJson = JSON.stringify(existingData, null, 2);
-      
 
       // Create a downloadable JSON file
-      const blob = new Blob([updatedJson], { type: 'application/json' });
+      const blob = new Blob([updatedJson], { type: "application/json" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = 'exercises.json';
+      a.download = "exercises.json";
       a.click();
-
     } catch (error) {
-      console.error('Error adding exercise:', error);
+      console.error("Error adding exercise:", error);
       // Handle the error, e.g., display an error message to the user
     }
-  }
+  };
 
   const handleUpload = () => {
     if (!selectedImage) {
       alert("Please select an image first.");
       return;
     }
+    const storageRef = ref(storage, "images/my-image.jpg"); // Customize the path/filename
+    const uploadTask = uploadBytes(storageRef, selectedImage);
 
-    const reader = new FileReader();
+    uploadTask
+      .then((snapshot) => {
+        console.log("Image uploaded successfully!");
+        // Optionally, get the download URL for the uploaded image
+        getDownloadURL(snapshot.ref).then((downloadURL) => {
+          setImageUrl(downloadURL);
+          console.log("File available at", downloadURL);
+          // Store this download URL in Firestore or Realtime Database if needed
+        });
+      })
+      .catch((error) => {
+        console.error("Error uploading image:", error);
+      });
 
-    reader.onloadend = () => {
-      if (typeof reader.result === "string") {
-        localStorage.setItem("uploadedImage", reader.result);
-        alert("Image stored locally!");
-        // Optionally, reset the image and preview
-        setSelectedImage(null);
-        setPreview(null);
-      }
-    };
+    // const reader = new FileReader();
 
-    reader.readAsDataURL(selectedImage);
+    // reader.onloadend = () => {
+    //   if (typeof reader.result === "string") {
+    //     localStorage.setItem("uploadedImage", reader.result);
+    //     alert("Image stored locally!");
+    //     // Optionally, reset the image and preview
+    //     setSelectedImage(null);
+    //     setPreview(null);
+    //   }
+    // };
+
+    // reader.readAsDataURL(selectedImage);
   };
 
   return (
@@ -128,7 +147,7 @@ export const AddExcercise = () => {
             <H6 className="text-slate-100 mb-4">No of Sets</H6>
             <input
               className="w-full p-2 mb-4 bg-slate-800 text-slate-100"
-              ref={setNumber} 
+              ref={setNumber}
               type="number"
             ></input>
             <H6 className="text-slate-100">Set Description</H6>
