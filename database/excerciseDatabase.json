@@ -1,0 +1,491 @@
+  [
+  {
+    "name": "Squats",
+    "imgSrc": "../src/assets/Excercises/Squats.png",
+    "description": {
+      "sets": "1-3",
+      "setsDescription": "3 sets of 10 reps",
+      "repititions": "15",
+      "repititionsDescription": "depending on progressions 15 repetitions up and down",
+      "Cues": {
+        "Points": [
+          "Easiest to begin with hand support.",
+          "55cm ball or chair for tactile cue for range of motion.",
+          "Start standing up with hand support.",
+          "Feet straight, knees straight.",
+          "Sit down slowly.",
+          "Stand up, slow and strong."
+        ]
+      }
+    },
+    "type": "Fundamental",
+    "tags": ["Legs", "Core"]
+  },
+  {
+    "name": "Push ups",
+    "imgSrc": "../src/assets/Excercises/PushUps.png",
+    "description": {
+      "sets": 1,
+      "setsDescription": "1 set",
+      "repititions": 10,
+      "repititionsDescription": "10 repetitions",
+      "Cues": {
+        "Points": [
+          "Often easiest to start with push-ups on knees.",
+          "Start in prone.",
+          "Hands by chest.",
+          "Knees bent.",
+          "Knees together.",
+          "Push-up - hold 2 seconds (count 1-2).",
+          "Control down."
+        ]
+      }
+    },
+    "type": "Fundamental",
+    "tags": ["Core"]
+  },
+  {
+    "name": "Planks",
+    "imgSrc": "../src/assets/Excercises/Planks.png",
+    "description": {
+      "sets": "2",
+      "setsDescription": "1 set",
+      "repititions": "10",
+      "repititionsDescription": "10 repetitions",
+      "Cues": {
+        "Points": [
+          "Often easiest to start in quadruped, then move to front plank or high plank.",
+          "Demonstrate hand position (front plank or high plank).",
+          "Hands down, knees up.",
+          "Feet together.",
+          "Toes pointing down.",
+          "Eyes up."
+        ]
+      }
+    },
+    "type": "Fundamental",
+    "tags": ["Core"]
+  },
+  {
+    "name": "Bridges",
+    "imgSrc": "../src/assets/Excercises/Bridges.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "10",
+      "repititionsDescription": "10 repetitions",
+      "Cues": {
+        "Points": [
+          "Start laying on your back.",
+          "Hands behind head, knees bent.",
+          "Feet flat on ground, toes forward.",
+          "Bottom up – hold 5 seconds (count aloud).",
+          "Slow and controlled back down."
+        ]
+      }
+    },
+    "type": "Fundamental",
+    "tags": ["Core"]
+  },
+  {
+    "name": "Quadruped - With Reach",
+    "imgSrc": "../src/assets/Excercises/QuadrupedWithReach.png",
+    "description": {
+      "sets": "2",
+      "setsDescription": "1 set",
+      "repititions": "10",
+      "repititionsDescription": "10 repetitions",
+      "Cues": {
+        "Points": [
+          "Start in quadruped.",
+          "Provide visual and tactile cue for abdominal activation to offset lumbar sway.",
+          "Reach to visual target (wall or 55cm fitball).",
+          "Hold 3 seconds (count 3-2-1)."
+        ]
+      }
+    },
+    "type": "Hip Strengthening",
+    "tags": ["Hip"]
+  },
+  {
+    "name": "Seated Marches",
+    "imgSrc": "../src/assets/Excercises/SeatedMarches.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "10",
+      "repititionsDescription": "10 repetitions",
+      "Cues": {
+        "Points": [
+          "Start sitting in a chair with feet flat on the floor.",
+          "Hold ball or target in both hands.",
+          "Ipsilateral – march same side up and down 15 reps in a row. Then the other side.",
+          "Alternating – hold ball or target at midline and march to target with alternating pattern."
+        ]
+      }
+    },
+    "type": "Hip Strengthening",
+    "tags": ["Hip"]
+  },
+  {
+    "name": "Standing Marches",
+    "imgSrc": "../src/assets/Excercises/StandingMarches.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "10",
+      "repititionsDescription": "10 repetitions",
+      "Cues": {
+        "Points": [
+          "With hand support – start with hands on PT’s shoulders, PT holding ball at midline.",
+          "Alternating march to midline.",
+          "Without hand support – start holding ball independently at hip height, march to midline.",
+          "Verbal Cues:",
+          "Bring your knee to the ball."
+        ]
+      }
+    },
+    "type": "Hip Strengthening",
+    "tags": ["Hip"]
+  },
+  {
+    "name": "Tall Kneeling Rainbows",
+    "imgSrc": "../src/assets/Excercises/TallKneelingRainbows.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "10",
+      "repititionsDescription": "10 repetitions",
+      "Cues": {
+        "Points": [
+          "Start in tall kneeling next to wall, holding a small sensory ball.",
+          "Movement pattern: Tap ball to floor (lateral trunk flexion), bring ball and arm close to body (scapular retraction and elbow flexion), turn and reach to target on wall.",
+          "Visual target placed 6 inches above head height.",
+          "Verbal Cues:",
+          "“Tap, bend, reach.”",
+          "Knees together, feet straight, hips strong, abdominals tight."
+        ]
+      }
+    },
+    "type": "Hip Strengthening",
+    "tags": ["Hip"]
+  },
+  {
+    "name": "Half Kneeling",
+    "imgSrc": "../src/assets/Excercises/HalfKneeling.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "10",
+      "repititionsDescription": "10 repetitions",
+      "Cues": {
+        "Points": [
+          "Start in standing, with one hand support.",
+          "Step back with right foot (“step and stop”).",
+          "Right knee bends to floor (“down slowly”).",
+          "Bring standing knee down to tall kneeling (“together”).",
+          "Hold with abdominal activation.",
+          "Bring “right foot up” (right half kneeling).",
+          "“Stand up.”",
+          "5 reps on right, then 5 reps on left."
+        ]
+      }
+    },
+    "type": "Hip Strengthening",
+    "tags": ["Hip"]
+  },
+  {
+    "name": "Lateral Tilts",
+    "imgSrc": "../src/assets/Excercises/LateralTilts.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "10",
+      "repititionsDescription": "10 repetitions each side, alternating weightshift right and left",
+      "Cues": {
+        "Points": [
+          "Stand feet hip width apart.",
+          "Arms out to sides (90 degrees abduction).",
+          "Legs straight.",
+          "Tilt side to side.",
+          "Model the tilt and/or provide hand support to start.",
+          "Shift weight from one foot to the other.",
+          "Goal: Straight legs, dynamic single leg stance, lateral weight shift, alternating right and left."
+        ]
+      }
+    },
+    "type": "Visual Vestibular Coordination Exercises",
+    "tags": ["Coordination"]
+  },
+  {
+    "name": "Anterior Posterior Tilts",
+    "imgSrc": "../src/assets/Excercises/AnteriorPosteriorTilts.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "10",
+      "repititionsDescription": "10 repetitions right lead, 10 repetitions left lead",
+      "Cues": {
+        "Points": [
+          "Stand in modified tandem stance, with one foot slightly forward of the other.",
+          "Shift weight between forward foot and back foot.",
+          "Keep legs straight.",
+          "Gaze forward.",
+          "Provide hand support as needed."
+        ]
+      }
+    },
+    "type": "Visual Vestibular Coordination Exercises",
+    "tags": ["Coordination"]
+  },
+
+  {
+    "name": "Rotational Ball Passes/Taps",
+    "imgSrc": "../src/assets/Excercises/RotationalBallPassesTaps.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "10",
+      "repititionsDescription": "10 cycles, alternating right and left",
+      "Cues": {
+        "Points": [
+          "Sit/stand by the wall.",
+          "Hold ball with both hands OR fold hands together.",
+          "Visual targets at shoulder height.",
+          "Turn and look.",
+          "Tap ball to target on wall.",
+          "Slow and controlled.",
+          "Alternative movement: stand back-to-back with a partner"
+        ]
+      }
+    },
+    "type": "Visual Vestibular Coordination Exercises",
+    "tags": ["Coordination"]
+  },
+  {
+    "name": "Over Under Passes/Taps",
+    "imgSrc": "../src/assets/Excercises/OverUnderPassesTaps.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "10",
+      "repititionsDescription": "5 cycles Under legs + overhead, alternating over and under",
+      "Cues": {
+        "Points": [
+          "Sit/stand by the wall.",
+          "Hold ball with both hands OR fold hands together.",
+          "Visual targets overhead and under legs.",
+          "Look and reach.",
+          "Tap ball to target on wall.",
+          "Start with small movements and work up to larger ones.",
+          "Slow and controlled.",
+          "Alternative movement: stand with back to a partner and pass the ball from overhead to under legs"
+        ]
+      }
+    },
+    "type": "Visual Vestibular Coordination Exercises",
+    "tags": ["Coordination"]
+  },
+  {
+    "name": "Squat And Reach",
+    "imgSrc": "../src/assets/Excercises/SquatAndReach.png",
+    "description": {
+      "sets": "2",
+      "setsDescription": "2 set",
+      "repititions": "15",
+      "repititionsDescription": "15 repetitions",
+      "Cues": {
+        "Points": [
+          "Heart rate >60% of maximal heart rate for at least 20 minutes of the session.",
+          "Dance party or other warm up exercise at the start, then foundational exercises that keep heart rate elevated.",
+          "Most effective series for heart rate:",
+          "Dance warm-up, Squats, Squat Jumps, Progressive Jumps, Standing Marches"
+        ]
+      }
+    },
+    "type": "Cardiovascular Endurance",
+    "tags": ["Cardiovascular", "Endurance"]
+  },
+  {
+    "name": "Squat Jumps",
+    "imgSrc": "../src/assets/Excercises/SquatJumps.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "10",
+      "repititionsDescription": "10 repetitions",
+      "Cues": {
+        "Points": [
+          "Heart rate >60% of maximal heart rate for at least 20 minutes of the session.",
+          "Dance party or other warm up exercise at the start, then foundational exercises that keep heart rate elevated.",
+          "Most effective series for heart rate:",
+          "Dance warm-up, Squats, Squat Jumps, Progressive Jumps, Standing Marches"
+        ]
+      }
+    },
+    "type": "Cardiovascular Endurance",
+    "tags": ["Cardiovascular", "Endurance"]
+  },
+  {
+    "name": "Side To Side Jumps",
+    "imgSrc": "../src/assets/Excercises/SideToSideJumps.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "5",
+      "repititionsDescription": "5 repetitions each side",
+      "Cues": {
+        "Points": [
+          "Heart rate >60% of maximal heart rate for at least 20 minutes of the session.",
+          "Dance party or other warm up exercise at the start, then foundational exercises that keep heart rate elevated.",
+          "Most effective series for heart rate:",
+          "Dance warm-up, Squats, Squat Jumps, Progressive Jumps, Standing Marches"
+        ]
+      }
+    },
+    "type": "Cardiovascular Endurance",
+    "tags": ["Cardiovascular", "Endurance"]
+  },
+  {
+    "name": "Abduction Jumps",
+    "imgSrc": "../src/assets/Excercises/AbductionJumps.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "5",
+      "repititionsDescription": "5 repetitions (forward and back )",
+      "Cues": {
+        "Points": [
+          "Heart rate >60% of maximal heart rate for at least 20 minutes of the session.",
+          "Dance party or other warm up exercise at the start, then foundational exercises that keep heart rate elevated.",
+          "Most effective series for heart rate:",
+          "Dance warm-up, Squats, Squat Jumps, Progressive Jumps, Standing Marches"
+        ]
+      }
+    },
+    "type": "Cardiovascular Endurance",
+    "tags": ["Cardiovascular", "Endurance"]
+  },
+  {
+    "name": "Standing Marches Cardio",
+    "imgSrc": "../src/assets/Excercises/StandingMarchesCardio.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "1-2 minutes",
+      "repititionsDescription": "1-2 minutes",
+      "Cues": {
+        "Points": [
+          "Heart rate >60% of maximal heart rate for at least 20 minutes of the session.",
+          "Dance party or other warm up exercise at the start, then foundational exercises that keep heart rate elevated.",
+          "Most effective series for heart rate:",
+          "Dance warm-up, Squats, Squat Jumps, Progressive Jumps, Standing Marches"
+        ]
+      }
+    },
+    "type": "Cardiovascular Endurance",
+    "tags": ["Cardiovascular", "Endurance"]
+  },
+  {
+    "name": "Chest Openers",
+    "imgSrc": "../src/assets/Excercises/ChestOpeners.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "4 bouts open and close, 2 second hold with open, 2 second hold with close",
+      "repititionsDescription": "1-2 minutes",
+      "Cues": {
+        "Points": [
+          "Standing tall, arms open, chest up.",
+          "2 second hold.",
+          "Lean forward, “hug” to yourself.",
+          "2 second hold."
+        ]
+      }
+    },
+    "type": "Stretches",
+    "tags": ["Stretch"]
+  },
+  {
+    "name": "Overhead Reaches",
+    "imgSrc": "../src/assets/Excercises/OverheadReaches.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "4",
+      "repititionsDescription": "4 bouts reach up and down, 2 second hold with over, 2 second hold with down",
+      "Cues": {
+        "Points": [
+          "Standing tall, arms circle up over head through abduction, 2 second hold.",
+          "Arms down, relax, 2 second hold."
+        ]
+      }
+    },
+    "type": "Stretches",
+    "tags": ["Stretch"]
+  },
+  {
+    "name": "Single Knee To Chest",
+    "imgSrc": "../src/assets/Excercises/SingleKneeToChest.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "20-30 second hold each side",
+      "repititionsDescription": "20-30 second hold each side",
+      "Cues": {
+        "Points": [
+          "Transfer to floor through half kneel.",
+          "Lay down in supine.",
+          "Single knee to chest, hold 20-30 seconds.",
+          "Contralateral leg straight with toe up (not in position of hip external rotation)."
+        ]
+      }
+    },
+    "type": "Stretches",
+    "tags": ["Stretch"]
+  },
+  {
+    "name": "Hurdler Stretch",
+    "imgSrc": "../src/assets/Excercises/HurdlerStretch.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "20-30 second hold each side",
+      "repititionsDescription": "20-30 second hold each side",
+      "Cues": {
+        "Points": [
+          "Seated on the floor with right leg to the side, knee extended, toes up (ankle dorsiflexion).",
+          "Left knee flexed, left foot against right inner thigh.",
+          "Right hand to right toes.",
+          "Left hand on right knee.",
+          "Hold 20-30 seconds.",
+          "Repeat on left side."
+        ]
+      }
+    },
+    "type": "Stretches",
+    "tags": ["Stretch"]
+  },
+  {
+    "name": "Calf Stretch With Strap",
+    "imgSrc": "../src/assets/Excercises/CalfStretchWithStrap.png",
+    "description": {
+      "sets": "1",
+      "setsDescription": "1 set",
+      "repititions": "20-30 second hold each side",
+      "repititionsDescription": "20-30 second hold each side",
+      "Cues": {
+        "Points": [
+          "Supine on the floor.",
+          "Non-elastic strap around ball of right foot, preferably wearing shoes.",
+          "Right hip flexed at 30 -40 degrees, right knee extended, right ankle dorsiflexed with support from strap at toes for dorsiflexion stretch.",
+          "Left hip and knee extended, foot resting on ground.",
+          "Hold 20-30 seconds.",
+          "Repeat on left."
+        ]
+      }
+    },
+    "type": "Stretches",
+    "tags": ["Stretch"]
+  }
+]
