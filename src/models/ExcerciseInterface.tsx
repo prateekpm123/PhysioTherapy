@@ -12,8 +12,10 @@ export interface iExcerciseData {
 
 export interface iExcerciseTile {
     excercise: iExcerciseData;
+    excerciseKey: string;
     onAdd(excercise: iExcerciseData): void;
     onClick?(): void;
+    refreshExcercise: ()=>void;
 }
 
 interface IExcerciseDescrition {

@@ -35,7 +35,7 @@ class DatabaseController {
 
   addNewExercise = async (newExercise: iExcerciseData) => {
     try {
-      const exercisesRef = ref(database, "exercises");
+      const exercisesRef = ref(database, "excercises");
 
       // Fetch existing exercises (if needed)
       const snapshot = await get(exercisesRef);
@@ -44,8 +44,14 @@ class DatabaseController {
         // exercises.push(newExercise); // Append the new exercise
 
         // Update the exercises node with the modified array
-        await push(exercisesRef, newExercise);
-        console.log("New exercise added!");
+        const result = await push(exercisesRef, newExercise);
+        // Check if the operation was successful
+        if (result) {
+          console.log("New exercise added successfully!");
+          return true;
+        } else {
+          return false;
+        }
       } else {
         // If the exercises node doesn't exist, create it with the new exercise
         await push(exercisesRef, [newExercise]); // Create an array with the new exercise

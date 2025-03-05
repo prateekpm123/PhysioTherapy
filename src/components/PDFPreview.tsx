@@ -30,7 +30,7 @@ export const PDFPreview = (plannerList: iPDFPreview) => {
         className="bg-slate-800 p-2 rounded-md w-full m-1 justify-end sticky text-slate-100"
         onClick={onGeneratePDFClick}
       >
-        Preview PDF
+        Generate PDF
       </button>
     </div>
   );

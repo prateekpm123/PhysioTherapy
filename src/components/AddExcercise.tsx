@@ -2,14 +2,16 @@ import React, { useRef, useState } from "react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { H1, H4, H6, H7 } from "./TextTags";
 import { iExcerciseData } from "../models/ExcerciseInterface";
-import excerciseData from "../../database/excerciseDatabase.json";
 import DatabaseController from "../databaseConnections/DatabaseController";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../databaseConnections/FireBaseConnection";
-
 // import { storage } from "../databaseConnections/FireBaseStorageInstance";
 
-export const AddExcercise = () => {
+interface iAddExcercise {
+  refreshExcercise: () => void;
+}
+
+export const AddExcercise = ({refreshExcercise}: iAddExcercise) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const setNumber = useRef<HTMLInputElement>(null);
@@ -19,6 +21,8 @@ export const AddExcercise = () => {
   const excerciseDescription = useRef<HTMLTextAreaElement>(null);
   const excerciseName = useRef<HTMLInputElement>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [uploadBtnText, setUploadBtnText] = useState<string>("Upload");
+  const [uploadBtnColor, setUploadBtnColor] = useState<string>("bg-slate-800");
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -51,23 +55,16 @@ export const AddExcercise = () => {
   const handleAddExercise = async (newExcercise: iExcerciseData) => {
     try {
       const dbController = DatabaseController.getInstance();
-      dbController.addNewExercise(newExcercise);
-      return;
+      const result = dbController.addNewExercise(newExcercise);
+      result.then((result) => {
+        if(result) {
+          console.log("Triggered refresh Successfully")
+          refreshExcercise();
+        }
+      }).catch((error) => {
+        console.error("Error adding exercise:", error);
+      });
 
-      const existingData = excerciseData;
-
-      // Add the new exercise (adjust based on your JSON structure)
-      existingData.push(newExcercise);
-
-      const updatedJson = JSON.stringify(existingData, null, 2);
-
-      // Create a downloadable JSON file
-      const blob = new Blob([updatedJson], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "exercises.json";
-      a.click();
     } catch (error) {
       console.error("Error adding exercise:", error);
       // Handle the error, e.g., display an error message to the user
@@ -79,37 +76,28 @@ export const AddExcercise = () => {
       alert("Please select an image first.");
       return;
     }
-    const storageRef = ref(storage, "images/my-image.jpg"); // Customize the path/filename
+    const storageRef = ref(storage, "images/"+selectedImage.name); // Customize the path/filename
     const uploadTask = uploadBytes(storageRef, selectedImage);
-
+    setUploadBtnText("Uploading...");
+    setUploadBtnColor("bg-slate-800");
     uploadTask
       .then((snapshot) => {
+        setUploadBtnText("Uploaded");
+        setUploadBtnColor("bg-green-800");
         console.log("Image uploaded successfully!");
         // Optionally, get the download URL for the uploaded image
         getDownloadURL(snapshot.ref).then((downloadURL) => {
           setImageUrl(downloadURL);
+          // setUploadBtnText("Upload Success");
           console.log("File available at", downloadURL);
           // Store this download URL in Firestore or Realtime Database if needed
         });
       })
       .catch((error) => {
+        setUploadBtnText("Upload Failed");
         console.error("Error uploading image:", error);
       });
-
-    // const reader = new FileReader();
-
-    // reader.onloadend = () => {
-    //   if (typeof reader.result === "string") {
-    //     localStorage.setItem("uploadedImage", reader.result);
-    //     alert("Image stored locally!");
-    //     // Optionally, reset the image and preview
-    //     setSelectedImage(null);
-    //     setPreview(null);
-    //   }
-    // };
-
-    // reader.readAsDataURL(selectedImage);
-  };
+  };  
 
   return (
     <div className="grid grid-cols-12 gap-8">
@@ -133,11 +121,14 @@ export const AddExcercise = () => {
           </div>
         )}
         <button
-          className="bg-slate-800 p-2 rounded-md w-full m-1 justify-end text-slate-100"
+          className={
+            uploadBtnColor +
+            " p-2 rounded-md w-full m-1 justify-end text-slate-100"
+          }
           onClick={handleUpload}
           disabled={!selectedImage}
         >
-          Upload
+          {uploadBtnText}
         </button>
       </div>
       <div className="col-span-8 h-fit">

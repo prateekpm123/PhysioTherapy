@@ -23,6 +23,7 @@ export const Home = () => {
   const [currentClickedExcerciseTile, setCurrentClickedExcerciseTile] =
     useState<iExcerciseData>();
 
+
   const search = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value;
     if (searchValue === "" && data2) {
@@ -46,7 +47,7 @@ export const Home = () => {
 
   const fetchExcerciseData = () => {
     const db = DatabaseController.getInstance();
-    const data = db.fetchNodeData("exercises");
+    const data = db.fetchNodeData("excercises");
     data
       .then((data) => {
         if (data) {
@@ -69,7 +70,7 @@ export const Home = () => {
 
   useEffect(() => {
     fetchExcerciseData();
-  }, [excercises]);
+  }, []);
 
   return (
     <div className="grid grid-cols-6">
@@ -87,9 +88,11 @@ export const Home = () => {
               Object.entries(excercises).map(([key, excercise]) => (
                 <ExcerciseTile
                   key={key} // Use the original key as the key
+                  excerciseKey={key} // Use the original key as the key
                   excercise={excercise}
                   onAdd={onAdd}
                   onClick={() => onExcerciseTileClick(excercise)}
+                  refreshExcercise={fetchExcerciseData}
                 />
               ))}
           </Suspense>
@@ -145,7 +148,7 @@ export const Home = () => {
           pIsOpen={isAddExcerciseModalOpen}
           setIsModelOpen={setIsAddExcerciseModalOpen}
         >
-          <AddExcercise />
+          <AddExcercise refreshExcercise={fetchExcerciseData}/>
         </Modal>
       )}
     </div>

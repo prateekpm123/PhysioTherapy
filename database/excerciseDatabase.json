@@ -1,4 +1,5 @@
-[
+{
+  "excercises": [
     {
       "name": "Squats",
       "imgSrc": "../src/assets/Excercises/Squats.png",
@@ -489,4 +490,4 @@
       "tags": ["Stretch"]
     }
   ]
-
+}

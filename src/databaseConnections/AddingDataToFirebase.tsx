@@ -16,7 +16,7 @@ import data from "../../database/excerciseDatabase.json";
 import { database } from "./FireBaseConnection"; // Import your Realtime Database instance
 
 const testFirebase = () => {
-  const exercisesRef = ref(database, "exercises");
+  const exercisesRef = ref(database, "excercises");
 
   set(exercisesRef, data)
     .then(() => {
