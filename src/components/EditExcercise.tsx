@@ -19,6 +19,13 @@ export const EditExcercise = (props: iEditExcercise) => {
   const [preview, setPreview] = useState<string | null>(
     props.excercise?.imgSrc || null
   );
+  const [noOfSets, setNoOfSets] = useState<number>(props.excercise?.description.sets || 0);
+  const [setDescriptionState, setSetDescription] = useState<string>(props.excercise?.description.setsDescription || "");
+  const [repetitionNumberState, setRepetitionNumberState] = useState<number>(props.excercise?.description.repititions || 0);
+  const [repetitionDescriptionState, setRepetitionDescriptionState] = useState<string>(props.excercise?.description.repititionsDescription || "");
+  const [excerciseNameState, setExcerciseNameState] = useState<string>(props.excercise?.name || "");
+  const [excerciseDescriptionState, setExcerciseDescriptionState] = useState<string[]>(props.excercise?.description.Cues.Points || []);
+
   const setNumber = useRef<HTMLInputElement>(null);
   const setDescription = useRef<HTMLInputElement>(null);
   const repetitionNumber = useRef<HTMLInputElement>(null);
@@ -40,10 +47,10 @@ export const EditExcercise = (props: iEditExcercise) => {
   };
 
   const onEditExcerciseBtnClick = () => {
-    setEditExcerciseBtnText("Editing...")
+    setEditExcerciseBtnText("Editing...");
     const newExcercise: iExcerciseData = {
       name: excerciseName.current?.value.toString() || "",
-      imgSrc: imageUrl || "",
+      imgSrc: imageUrl || props.excercise?.imgSrc || "",
       description: {
         sets: Number(setNumber.current?.value) || 0,
         setsDescription: setDescription.current?.value || "",
@@ -109,6 +116,20 @@ export const EditExcercise = (props: iEditExcercise) => {
       });
   };
 
+  const handleInputChangeNumber = (
+    e: React.ChangeEvent<HTMLInputElement>, setINputFn: React.Dispatch<React.SetStateAction<number>>
+  ) => {
+    setINputFn(Number(e.target.value));
+  };
+
+  const handleInputChangeString = (e, setInputFn: React.Dispatch<React.SetStateAction<string>>) => {
+    setInputFn(e.target.value);
+  };
+
+  const handleInputChangeArray = (e, setInputFn: React.Dispatch<React.SetStateAction<string[]>>) => {
+    setInputFn(e.target.value.split("\n"));
+  };
+
   return (
     <div className="grid grid-cols-12 gap-8">
       <div className="col-span-4 h-1/2">
@@ -150,42 +171,48 @@ export const EditExcercise = (props: iEditExcercise) => {
               className="w-full p-2 mb-4 bg-slate-800 text-slate-100"
               ref={setNumber}
               type="number"
-              value={props.excercise?.description.sets}
+              value={noOfSets}
+              onChange={(e) => handleInputChangeNumber(e, setNoOfSets)}
             ></input>
             <H6 className="text-slate-100">Set Description</H6>
             <input
               className="w-full p-2 mb-6 bg-slate-800 text-slate-100"
               ref={setDescription}
-              value={props.excercise?.description.setsDescription}
+              value={setDescriptionState}
+              onChange={(e) => handleInputChangeString(e, setSetDescription)}
             ></input>
             <H6 className="text-slate-100">Repetition</H6>
             <input
               className="w-full p-2 mb-6 bg-slate-800 text-slate-100"
               ref={repetitionNumber}
               type="number"
-              value={props.excercise?.description.repititions}
+              value={repetitionNumberState}
+              onChange={(e) => handleInputChangeNumber(e, setRepetitionNumberState)}
             ></input>
             <H6 className="text-slate-100">Description</H6>
             <textarea
               className="w-full p-2 h-32 bg-slate-800 text-slate-100"
               ref={repetitionDescription}
-              value={props.excercise?.description.repititionsDescription}
-            ></textarea>
+              value={repetitionDescriptionState}
+              onChange={(e) => handleInputChangeString(e, setRepetitionDescriptionState)}
+              ></textarea>
           </div>
           <div className="col-span-1 h-fit">
             <H6 className="text-slate-100 mb-4">Excercise Name</H6>
             <input
               className="w-full p-2 mb-4 bg-slate-800 text-slate-100"
               ref={excerciseName}
-              value={props.excercise?.name}
-            ></input>
+              value={excerciseNameState}
+              onChange={(e) => handleInputChangeString(e, setExcerciseNameState)}
+              ></input>
             <H6 className="text-slate-100 mb-4">Description</H6>
             <textarea
               className="w-full p-2 h-96 bg-slate-800 text-slate-100"
               ref={excerciseDescription}
               placeholder={"1. \n2. \n3. \n4."}
-              value={props.excercise?.description.Cues.Points}
-            ></textarea>
+              value={excerciseDescriptionState.join("\n")}
+              onChange={(e) => handleInputChangeArray(e, setExcerciseDescriptionState)}
+              ></textarea>
           </div>
         </div>
       </div>
