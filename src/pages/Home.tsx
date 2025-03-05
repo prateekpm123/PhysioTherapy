@@ -10,19 +10,21 @@ import { IoMdAdd } from "react-icons/io";
 import { AddExcercise } from "../components/AddExcercise";
 // import testFirebase from "../databaseConnections/AddingDataToFirebase";
 import DatabaseController from "../databaseConnections/DatabaseController";
+import { EditExcercise } from "../components/EditExcercise";
 
 export const Home = () => {
   let data2: iExcerciseData[] | null = null;
   const [excercises, setExcercises] = useState<iExcerciseData[]>();
   const [plannerItems, setPlannerItems] = useState<iExcerciseData[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isExcerciseDetailModalOpen, setIsExcerciseDetailModalOpen] = useState<boolean>(false);
   const [isPDFPreviewModalOpen, setIsPDFPreviewModalOpen] =
     useState<boolean>(false);
   const [isAddExcerciseModalOpen, setIsAddExcerciseModalOpen] =
     useState<boolean>(false);
+  const [isEditExcerciseModalOpen, setIsEditExcerciseModalOpen] =
+    useState<boolean>(false);
   const [currentClickedExcerciseTile, setCurrentClickedExcerciseTile] =
     useState<iExcerciseData>();
-
 
   const search = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value;
@@ -40,9 +42,10 @@ export const Home = () => {
     setPlannerItems((plannerItems) => [...plannerItems, clickedExcercise]);
   };
 
-  const onExcerciseTileClick = (excercise: iExcerciseData) => {
+  const onExcerciseTileClick = (excercise: iExcerciseData, excerciseKey:string) => {
+    excercise.excerciseKey = excerciseKey
     setCurrentClickedExcerciseTile(excercise);
-    setIsModalOpen(true);
+    setIsExcerciseDetailModalOpen(true);
   };
 
   const fetchExcerciseData = () => {
@@ -68,6 +71,10 @@ export const Home = () => {
     setIsAddExcerciseModalOpen(true);
   };
 
+  const onEditExcerciseClick = () => {
+    setIsEditExcerciseModalOpen(true);
+  };
+
   useEffect(() => {
     fetchExcerciseData();
   }, []);
@@ -91,7 +98,9 @@ export const Home = () => {
                   excerciseKey={key} // Use the original key as the key
                   excercise={excercise}
                   onAdd={onAdd}
-                  onClick={() => onExcerciseTileClick(excercise)}
+                  onEdit={onEditExcerciseClick}
+                  onExcerciseTileClick={onExcerciseTileClick}
+                  onClick={() => onExcerciseTileClick(excercise, key)}
                   refreshExcercise={fetchExcerciseData}
                 />
               ))}
@@ -120,17 +129,19 @@ export const Home = () => {
         setPlannerItems={setPlannerItems}
       ></PlannerList>
       {/* MODALS FOR THE SCREEN */}
-      {currentClickedExcerciseTile && (
+      {isExcerciseDetailModalOpen && (
         <Modal
           title={"Excercise Detail"}
-          pIsOpen={isModalOpen}
-          setIsModelOpen={setIsModalOpen}
+          pIsOpen={isExcerciseDetailModalOpen}
+          setIsModelOpen={setIsExcerciseDetailModalOpen}
         >
-          <ExcerciseDetail
-            excercise={currentClickedExcerciseTile}
-            isOpen={isModalOpen}
-            setIsModelOpen={setIsModalOpen}
-          />
+          {currentClickedExcerciseTile && (
+            <ExcerciseDetail
+              excercise={currentClickedExcerciseTile}
+              isOpen={isExcerciseDetailModalOpen}
+              setIsModelOpen={setIsExcerciseDetailModalOpen}
+            />
+          )}
         </Modal>
       )}
       {isPDFPreviewModalOpen && (
@@ -148,7 +159,20 @@ export const Home = () => {
           pIsOpen={isAddExcerciseModalOpen}
           setIsModelOpen={setIsAddExcerciseModalOpen}
         >
-          <AddExcercise refreshExcercise={fetchExcerciseData}/>
+          <AddExcercise refreshExcercise={fetchExcerciseData} />
+        </Modal>
+      )}
+      {isEditExcerciseModalOpen && (
+        <Modal
+          title={"Edit Excercise"}
+          pIsOpen={isEditExcerciseModalOpen}
+          setIsModelOpen={setIsEditExcerciseModalOpen}
+        >
+          <EditExcercise
+            refreshExcercise={fetchExcerciseData}
+            excercise={currentClickedExcerciseTile}
+            excerciseKey={currentClickedExcerciseTile?.excerciseKey}
+          />
         </Modal>
       )}
     </div>

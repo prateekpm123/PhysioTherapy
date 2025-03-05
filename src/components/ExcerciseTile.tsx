@@ -10,7 +10,7 @@ export const ExcerciseTile = (data: iExcerciseTile) => {
 
   const deleteExcercise = async (nodePath: string) => {
     try {
-      const nodeRef = ref(database, "excercises/"+nodePath);
+      const nodeRef = ref(database, "excercises/" + nodePath);
       remove(nodeRef)
         .then(() => {
           console.log("Node deleted successfully!");
@@ -75,7 +75,17 @@ export const ExcerciseTile = (data: iExcerciseTile) => {
           >
             Add
           </button>
-          <button className="bg-slate-500 rounded-md p-2 m-2">Edit</button>
+          <button
+            className="bg-slate-500 rounded-md p-2 m-2"
+            onClick={() => {
+              if (data.onExcerciseTileClick) {
+                data.onExcerciseTileClick(data.excercise, data.excerciseKey);
+              }
+                data.onEdit();
+            }}
+          >
+            Edit
+          </button>
           <button
             className="bg-slate-500 rounded-md p-2 m-2"
             onClick={() => deleteExcercise(data.excerciseKey)}

@@ -5,6 +5,7 @@ export interface iExcerciseData {
     description: IExcerciseDescrition;
     type: string;
     tags: string[];
+    excerciseKey?: string;
     // onDelete(): void;
     // onEdit(): void;
     // onProductClick(): void;
@@ -14,7 +15,9 @@ export interface iExcerciseTile {
     excercise: iExcerciseData;
     excerciseKey: string;
     onAdd(excercise: iExcerciseData): void;
+    onEdit(): void;
     onClick?(): void;
+    onExcerciseTileClick?: (excercise: iExcerciseData, excerciseKey: string)=> void;
     refreshExcercise: ()=>void;
 }
 
