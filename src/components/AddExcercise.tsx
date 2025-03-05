@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { H1, H4, H6, H7 } from "./TextTags";
+import {  H4, H6 } from "./TextTags";
 import { iExcerciseData } from "../models/ExcerciseInterface";
 import DatabaseController from "../databaseConnections/DatabaseController";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";

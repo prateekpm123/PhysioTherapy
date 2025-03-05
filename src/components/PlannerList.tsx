@@ -31,7 +31,7 @@ export const PlannerList = (inputs: PlannerListProps) => {
       ref={plannerListRef}
       className="flex flex-col items-center justify-start w-full h-full z-10 bg-slate-600"
     >
-      <h1 className="text-2xl text-slate-100">Plan</h1>
+      <h1 className="text-2xl text-slate-100">Planss</h1>
       <div
         style={{ height: "95%" }}
         className="w-full max-h-dvh overflow-y-scroll"
