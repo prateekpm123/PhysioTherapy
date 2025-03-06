@@ -122,11 +122,11 @@ export const EditExcercise = (props: iEditExcercise) => {
     setINputFn(Number(e.target.value));
   };
 
-  const handleInputChangeString = (e, setInputFn: React.Dispatch<React.SetStateAction<string>>) => {
+  const handleInputChangeString = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, setInputFn: React.Dispatch<React.SetStateAction<string>>) => {
     setInputFn(e.target.value);
   };
 
-  const handleInputChangeArray = (e, setInputFn: React.Dispatch<React.SetStateAction<string[]>>) => {
+  const handleInputChangeArray = (e: React.ChangeEvent<HTMLTextAreaElement>, setInputFn: React.Dispatch<React.SetStateAction<string[]>>) => {
     setInputFn(e.target.value.split("\n"));
   };
 
