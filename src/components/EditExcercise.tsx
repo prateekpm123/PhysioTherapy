@@ -7,6 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { ref as databaseRef, update } from "firebase/database";
 import { storage, database } from "../databaseConnections/FireBaseConnection";
 // import { storage } from "../databaseConnections/FireBaseStorageInstance";
+import { isMobile } from "react-device-detect";
 
 interface iEditExcercise {
   excercise: iExcerciseData | undefined;
@@ -19,12 +20,23 @@ export const EditExcercise = (props: iEditExcercise) => {
   const [preview, setPreview] = useState<string | null>(
     props.excercise?.imgSrc || null
   );
-  const [noOfSets, setNoOfSets] = useState<number>(props.excercise?.description.sets || 0);
-  const [setDescriptionState, setSetDescription] = useState<string>(props.excercise?.description.setsDescription || "");
-  const [repetitionNumberState, setRepetitionNumberState] = useState<number>(props.excercise?.description.repititions || 0);
-  const [repetitionDescriptionState, setRepetitionDescriptionState] = useState<string>(props.excercise?.description.repititionsDescription || "");
-  const [excerciseNameState, setExcerciseNameState] = useState<string>(props.excercise?.name || "");
-  const [excerciseDescriptionState, setExcerciseDescriptionState] = useState<string[]>(props.excercise?.description.Cues.Points || []);
+  const [noOfSets, setNoOfSets] = useState<number>(
+    props.excercise?.description.sets || 0
+  );
+  const [setDescriptionState, setSetDescription] = useState<string>(
+    props.excercise?.description.setsDescription || ""
+  );
+  const [repetitionNumberState, setRepetitionNumberState] = useState<number>(
+    props.excercise?.description.repititions || 0
+  );
+  const [repetitionDescriptionState, setRepetitionDescriptionState] =
+    useState<string>(props.excercise?.description.repititionsDescription || "");
+  const [excerciseNameState, setExcerciseNameState] = useState<string>(
+    props.excercise?.name || ""
+  );
+  const [excerciseDescriptionState, setExcerciseDescriptionState] = useState<
+    string[]
+  >(props.excercise?.description.Cues.Points || []);
 
   const setNumber = useRef<HTMLInputElement>(null);
   const setDescription = useRef<HTMLInputElement>(null);
@@ -117,22 +129,33 @@ export const EditExcercise = (props: iEditExcercise) => {
   };
 
   const handleInputChangeNumber = (
-    e: React.ChangeEvent<HTMLInputElement>, setINputFn: React.Dispatch<React.SetStateAction<number>>
+    e: React.ChangeEvent<HTMLInputElement>,
+    setINputFn: React.Dispatch<React.SetStateAction<number>>
   ) => {
     setINputFn(Number(e.target.value));
   };
 
-  const handleInputChangeString = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, setInputFn: React.Dispatch<React.SetStateAction<string>>) => {
+  const handleInputChangeString = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    setInputFn: React.Dispatch<React.SetStateAction<string>>
+  ) => {
     setInputFn(e.target.value);
   };
 
-  const handleInputChangeArray = (e: React.ChangeEvent<HTMLTextAreaElement>, setInputFn: React.Dispatch<React.SetStateAction<string[]>>) => {
+  const handleInputChangeArray = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+    setInputFn: React.Dispatch<React.SetStateAction<string[]>>
+  ) => {
     setInputFn(e.target.value.split("\n"));
   };
 
   return (
-    <div className="grid grid-cols-12 gap-8">
-      <div className="col-span-4 h-1/2">
+    <div
+      className={
+        isMobile ? "grid grid-cols-1 gap-4 p-4" : "grid grid-cols-12 gap-8"
+      }
+    >
+      <div className={isMobile ? "col-span-1" : "col-span-4 h-1/2"}>
         <h1 className="text-6xl text-slate-100 mb-4">Upload Image</h1>
         <input
           type="file"
@@ -162,9 +185,15 @@ export const EditExcercise = (props: iEditExcercise) => {
           {uploadBtnText}
         </button>
       </div>
-      <div className="col-span-8 h-fit">
+      <div className={isMobile ? "col-span-1" : "col-span-8 h-fit"}>
         <H4 className="text-slate-100">Details</H4>
-        <div className="grid grid-cols-2 gap-8 mt-4">
+        <div
+          className={
+            isMobile
+              ? "grid grid-cols-1 gap-4 mt-2"
+              : "grid grid-cols-2 gap-8 mt-4"
+          }
+        >
           <div className="col-span-1 h-fit">
             <H6 className="text-slate-100 mb-4">No of Sets</H6>
             <input
@@ -187,15 +216,19 @@ export const EditExcercise = (props: iEditExcercise) => {
               ref={repetitionNumber}
               type="number"
               value={repetitionNumberState}
-              onChange={(e) => handleInputChangeNumber(e, setRepetitionNumberState)}
+              onChange={(e) =>
+                handleInputChangeNumber(e, setRepetitionNumberState)
+              }
             ></input>
             <H6 className="text-slate-100">Description</H6>
             <textarea
               className="w-full p-2 h-32 bg-slate-800 text-slate-100"
               ref={repetitionDescription}
               value={repetitionDescriptionState}
-              onChange={(e) => handleInputChangeString(e, setRepetitionDescriptionState)}
-              ></textarea>
+              onChange={(e) =>
+                handleInputChangeString(e, setRepetitionDescriptionState)
+              }
+            ></textarea>
           </div>
           <div className="col-span-1 h-fit">
             <H6 className="text-slate-100 mb-4">Excercise Name</H6>
@@ -203,21 +236,24 @@ export const EditExcercise = (props: iEditExcercise) => {
               className="w-full p-2 mb-4 bg-slate-800 text-slate-100"
               ref={excerciseName}
               value={excerciseNameState}
-              onChange={(e) => handleInputChangeString(e, setExcerciseNameState)}
-              ></input>
+              onChange={(e) =>
+                handleInputChangeString(e, setExcerciseNameState)
+              }
+            ></input>
             <H6 className="text-slate-100 mb-4">Description</H6>
             <textarea
               className="w-full p-2 h-96 bg-slate-800 text-slate-100"
               ref={excerciseDescription}
               placeholder={"1. \n2. \n3. \n4."}
               value={excerciseDescriptionState.join("\n")}
-              onChange={(e) => handleInputChangeArray(e, setExcerciseDescriptionState)}
-              ></textarea>
+              onChange={(e) =>
+                handleInputChangeArray(e, setExcerciseDescriptionState)
+              }
+            ></textarea>
           </div>
         </div>
       </div>
-
-      <div className="col-span-12 ">
+      <div className={isMobile ? "col-span-1" : "col-span-12"}>
         <button
           onClick={onEditExcerciseBtnClick}
           className="bg-slate-800 p-4 text-3xl rounded-md w-full m-1 justify-end text-slate-100"
@@ -227,4 +263,5 @@ export const EditExcercise = (props: iEditExcercise) => {
       </div>
     </div>
   );
+
 };

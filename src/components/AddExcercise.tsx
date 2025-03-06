@@ -1,17 +1,18 @@
 import React, { useRef, useState } from "react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import {  H4, H6 } from "./TextTags";
+import { H4, H6 } from "./TextTags";
 import { iExcerciseData } from "../models/ExcerciseInterface";
 import DatabaseController from "../databaseConnections/DatabaseController";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../databaseConnections/FireBaseConnection";
 // import { storage } from "../databaseConnections/FireBaseStorageInstance";
+import { isMobile } from "react-device-detect";
 
 interface iAddExcercise {
   refreshExcercise: () => void;
 }
 
-export const AddExcercise = ({refreshExcercise}: iAddExcercise) => {
+export const AddExcercise = ({ refreshExcercise }: iAddExcercise) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const setNumber = useRef<HTMLInputElement>(null);
@@ -56,15 +57,16 @@ export const AddExcercise = ({refreshExcercise}: iAddExcercise) => {
     try {
       const dbController = DatabaseController.getInstance();
       const result = dbController.addNewExercise(newExcercise);
-      result.then((result) => {
-        if(result) {
-          console.log("Triggered refresh Successfully")
-          refreshExcercise();
-        }
-      }).catch((error) => {
-        console.error("Error adding exercise:", error);
-      });
-
+      result
+        .then((result) => {
+          if (result) {
+            console.log("Triggered refresh Successfully");
+            refreshExcercise();
+          }
+        })
+        .catch((error) => {
+          console.error("Error adding exercise:", error);
+        });
     } catch (error) {
       console.error("Error adding exercise:", error);
       // Handle the error, e.g., display an error message to the user
@@ -76,7 +78,7 @@ export const AddExcercise = ({refreshExcercise}: iAddExcercise) => {
       alert("Please select an image first.");
       return;
     }
-    const storageRef = ref(storage, "images/"+selectedImage.name); // Customize the path/filename
+    const storageRef = ref(storage, "images/" + selectedImage.name); // Customize the path/filename
     const uploadTask = uploadBytes(storageRef, selectedImage);
     setUploadBtnText("Uploading...");
     setUploadBtnColor("bg-slate-800");
@@ -97,11 +99,15 @@ export const AddExcercise = ({refreshExcercise}: iAddExcercise) => {
         setUploadBtnText("Upload Failed");
         console.error("Error uploading image:", error);
       });
-  };  
+  };
 
   return (
-    <div className="grid grid-cols-12 gap-8">
-      <div className="col-span-4 h-1/2">
+    <div
+      className={
+        isMobile ? "grid grid-cols-1 gap-4" : "grid grid-cols-12 gap-8"
+      }
+    >
+      <div className={isMobile ? "col-span-1 h-1/2" : "col-span-4 h-1/2"}>
         <h1 className="text-6xl text-slate-100 mb-4">Upload Image</h1>
         <input
           type="file"
@@ -131,9 +137,15 @@ export const AddExcercise = ({refreshExcercise}: iAddExcercise) => {
           {uploadBtnText}
         </button>
       </div>
-      <div className="col-span-8 h-fit">
+      <div className={isMobile ? "col-span-1 h-fit" : "col-span-8 h-fit"}>
         <H4 className="text-slate-100">Details</H4>
-        <div className="grid grid-cols-2 gap-8 mt-4">
+        <div
+          className={
+            isMobile
+              ? "grid grid-cols-1 gap-4 mt-3"
+              : "grid grid-cols-2 gap-8 mt-4"
+          }
+        >
           <div className="col-span-1 h-fit">
             <H6 className="text-slate-100 mb-4">No of Sets</H6>
             <input
@@ -174,7 +186,7 @@ export const AddExcercise = ({refreshExcercise}: iAddExcercise) => {
         </div>
       </div>
 
-      <div className="col-span-12 ">
+      <div className={isMobile ? "col-span-1 " : "col-span-12 "}>
         <button
           onClick={onAddExcerciseBtnClick}
           className="bg-slate-800 p-4 text-3xl rounded-md w-full m-1 justify-end text-slate-100"
