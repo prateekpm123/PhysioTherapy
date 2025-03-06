@@ -14,11 +14,16 @@ export interface iExcerciseData {
 export interface iExcerciseTile {
     excercise: iExcerciseData;
     excerciseKey: string;
+    viewType: ExcerciseType;
     onAdd(excercise: iExcerciseData): void;
     onEdit(): void;
     onClick?(): void;
     onExcerciseTileClick?: (excercise: iExcerciseData, excerciseKey: string)=> void;
     refreshExcercise: ()=>void;
+}
+
+export enum ExcerciseType {
+    FULL_VIEW, MOBILE_VIEW
 }
 
 interface IExcerciseDescrition {

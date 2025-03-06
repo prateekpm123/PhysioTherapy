@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useState } from "react";
 // import data from "../../database/excerciseDatabase.json";
 import { ExcerciseTile } from "../components/ExcerciseTile";
-import { iExcerciseData } from "../models/ExcerciseInterface";
+import { ExcerciseType, iExcerciseData } from "../models/ExcerciseInterface";
 import { PlannerList } from "../components/PlannerList";
 import { ExcerciseDetail } from "../components/ExcerciseDetail";
 import Modal from "../components/Modal";
@@ -11,12 +11,14 @@ import { AddExcercise } from "../components/AddExcercise";
 // import testFirebase from "../databaseConnections/AddingDataToFirebase";
 import DatabaseController from "../databaseConnections/DatabaseController";
 import { EditExcercise } from "../components/EditExcercise";
+import { isMobile } from "react-device-detect";
 
 export const Home = () => {
-  let data2: iExcerciseData[] | null = null;
+  const [data2, setData2] = useState<iExcerciseData[]|null>();
   const [excercises, setExcercises] = useState<iExcerciseData[]>();
   const [plannerItems, setPlannerItems] = useState<iExcerciseData[]>([]);
-  const [isExcerciseDetailModalOpen, setIsExcerciseDetailModalOpen] = useState<boolean>(false);
+  const [isExcerciseDetailModalOpen, setIsExcerciseDetailModalOpen] =
+    useState<boolean>(false);
   const [isPDFPreviewModalOpen, setIsPDFPreviewModalOpen] =
     useState<boolean>(false);
   const [isAddExcerciseModalOpen, setIsAddExcerciseModalOpen] =
@@ -25,9 +27,10 @@ export const Home = () => {
     useState<boolean>(false);
   const [currentClickedExcerciseTile, setCurrentClickedExcerciseTile] =
     useState<iExcerciseData>();
-    const [currentExcerciseTileEditClick, setCurrentExcerciseTileEditClick] =
+  const [currentExcerciseTileEditClick, setCurrentExcerciseTileEditClick] =
     useState<iExcerciseData>();
-    // let currentClickedExcerciseTile: iExcerciseData | undefined = undefined;
+
+  // let currentClickedExcerciseTile: iExcerciseData | undefined = undefined;
 
   const search = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value;
@@ -45,8 +48,11 @@ export const Home = () => {
     setPlannerItems((plannerItems) => [...plannerItems, clickedExcercise]);
   };
 
-  const onExcerciseTileForDetailClicked = (excercise: iExcerciseData, excerciseKey:string) => {
-    excercise.excerciseKey = excerciseKey
+  const onExcerciseTileForDetailClicked = (
+    excercise: iExcerciseData,
+    excerciseKey: string
+  ) => {
+    excercise.excerciseKey = excerciseKey;
     setCurrentClickedExcerciseTile(excercise);
     // currentClickedExcerciseTile = excercise;
     setIsExcerciseDetailModalOpen(true);
@@ -58,7 +64,7 @@ export const Home = () => {
     data
       .then((data) => {
         if (data) {
-          data2 = data;
+          setData2(data);
           setExcercises(data);
           console.log(data);
         }
@@ -75,26 +81,41 @@ export const Home = () => {
     setIsAddExcerciseModalOpen(true);
   };
 
-  const onEditExcerciseClick = (excercise: iExcerciseData, excerciseKey: string) => {
-    excercise.excerciseKey = excerciseKey
+  const onEditExcerciseClick = (
+    excercise: iExcerciseData,
+    excerciseKey: string
+  ) => {
+    excercise.excerciseKey = excerciseKey;
     setCurrentExcerciseTileEditClick(excercise);
     setIsEditExcerciseModalOpen(true);
   };
 
   useEffect(() => {
     fetchExcerciseData();
-  }, []);
+  },[]);
 
   return (
     <div className="grid grid-cols-6">
-      <div className="col-span-5 flex flex-col-reverse w-full h-screen bg-slate-900 p-8">
+      <div
+        className={
+          isMobile
+            ? "col-span-6 flex flex-col-reverse w-full h-screen bg-slate-900 p-3"
+            : "col-span-5 flex flex-col-reverse w-full h-screen bg-slate-900 p-8"
+        }
+      >
         <input
           type="text"
           placeholder="Search"
           className="bg-slate-700 w-full p-4 text-slate-200 text-lg rounded-3xl"
           onChange={(e) => search(e)}
         />
-        <div className="relative flex grid overflow-y-auto w-full sm:grid-cols-1 sm:gap-4 md:grid-cols-3 md:gap-4 lg:grid-cols-5 justify-items-start">
+        <div
+          className={
+            isMobile
+              ? "relative grid overflow-y-auto w-full col-span-6 justify-items-start"
+              : "relative grid overflow-y-auto w-full gap-4 sm:grid-cols-1 sm:gap-4 md:grid-cols-3 md:gap-4 lg:grid-cols-5 justify-items-start"
+          }
+        >
           <Suspense fallback={<div>Loading...</div>}></Suspense>
           <Suspense>
             {excercises &&
@@ -106,8 +127,15 @@ export const Home = () => {
                   onAdd={onAdd}
                   onEdit={() => onEditExcerciseClick(excercise, key)}
                   onExcerciseTileClick={onEditExcerciseClick}
-                  onClick={() => onExcerciseTileForDetailClicked(excercise, key)}
+                  onClick={() =>
+                    onExcerciseTileForDetailClicked(excercise, key)
+                  }
                   refreshExcercise={fetchExcerciseData}
+                  viewType={
+                    isMobile
+                      ? ExcerciseType.MOBILE_VIEW
+                      : ExcerciseType.FULL_VIEW
+                  }
                 />
               ))}
           </Suspense>
@@ -128,12 +156,16 @@ export const Home = () => {
         </div>
       </div>
       {/* {plannerItems.length == 0 ? null : <PlannerList plannerItems={plannerItems} setPlannerItems={setPlannerItems}></PlannerList>} */}
-      <PlannerList
-        isPDFPreviewModelRequired={isPDFPreviewModalOpen}
-        setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
-        plannerItems={plannerItems}
-        setPlannerItems={setPlannerItems}
-      ></PlannerList>
+      {isMobile ? (
+        false
+      ) : (
+        <PlannerList
+          isPDFPreviewModelRequired={isPDFPreviewModalOpen}
+          setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
+          plannerItems={plannerItems}
+          setPlannerItems={setPlannerItems}
+        ></PlannerList>
+      )}
       {/* MODALS FOR THE SCREEN */}
       {isExcerciseDetailModalOpen && (
         <Modal
@@ -177,7 +209,11 @@ export const Home = () => {
           <EditExcercise
             refreshExcercise={fetchExcerciseData}
             excercise={currentExcerciseTileEditClick}
-            excerciseKey={currentExcerciseTileEditClick ? currentExcerciseTileEditClick.excerciseKey : ""}
+            excerciseKey={
+              currentExcerciseTileEditClick
+                ? currentExcerciseTileEditClick.excerciseKey
+                : ""
+            }
           />
         </Modal>
       )}

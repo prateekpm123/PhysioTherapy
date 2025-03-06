@@ -8,7 +8,7 @@ interface MyComponentProps {
 
 const P_EmptyCard: React.FC<MyComponentProps> = ({ children, className }) => {
   return (
-    <div className={"m-10 border-x-gray-300 bg-gray-600 h-3/4 p-8" + className}>
+    <div className={"m-10 border-x-gray-300 bg-gray-600 h-3/4 p-8 " + className}>
       <>{children}</>
     </div>
   );
