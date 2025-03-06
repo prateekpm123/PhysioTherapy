@@ -14,9 +14,11 @@ import { EditExcercise } from "../components/EditExcercise";
 import { isMobile } from "react-device-detect";
 
 export const Home = () => {
-  const [data2, setData2] = useState<iExcerciseData[]|null>();
+  const [data2, setData2] = useState<iExcerciseData[] | null>();
   const [excercises, setExcercises] = useState<iExcerciseData[]>();
   const [plannerItems, setPlannerItems] = useState<iExcerciseData[]>([]);
+  const [isPlannerListModalOpen, setIsPlannerListModalOpen] =
+    useState<boolean>(false);
   const [isExcerciseDetailModalOpen, setIsExcerciseDetailModalOpen] =
     useState<boolean>(false);
   const [isPDFPreviewModalOpen, setIsPDFPreviewModalOpen] =
@@ -81,6 +83,10 @@ export const Home = () => {
     setIsAddExcerciseModalOpen(true);
   };
 
+  const onPlannerListCounterBtnClick = () => {
+    setIsPlannerListModalOpen(true);
+  };
+
   const onEditExcerciseClick = (
     excercise: iExcerciseData,
     excerciseKey: string
@@ -92,7 +98,7 @@ export const Home = () => {
 
   useEffect(() => {
     fetchExcerciseData();
-  },[]);
+  }, []);
 
   return (
     <div className="grid grid-cols-6">
@@ -143,7 +149,7 @@ export const Home = () => {
         <div
           style={{
             bottom: "10%",
-            right: "19%",
+            right: isMobile ? "3%" : "19%",
             borderRadius: "50%",
             boxShadow: "1px 2px 44px 5px rgba(0,0,0,0.75)",
           }}
@@ -157,7 +163,18 @@ export const Home = () => {
       </div>
       {/* {plannerItems.length == 0 ? null : <PlannerList plannerItems={plannerItems} setPlannerItems={setPlannerItems}></PlannerList>} */}
       {isMobile ? (
-        false
+        <div
+          style={{
+            bottom: "10%",
+            right: "80%",
+            borderRadius: "50%",
+            boxShadow: "1px 2px 44px 5px rgba(0,0,0,0.75)",
+          }}
+          onClick={onPlannerListCounterBtnClick}
+          className="absolute flex h-18 w-20 z-20 text-slate-700 bg-slate-500 bg-lightblue p-2 pl-5 text-6xl rounded shadow-md"
+        >
+          {plannerItems.length}
+        </div>
       ) : (
         <PlannerList
           isPDFPreviewModelRequired={isPDFPreviewModalOpen}
@@ -215,6 +232,20 @@ export const Home = () => {
                 : ""
             }
           />
+        </Modal>
+      )}
+      {isPlannerListModalOpen && (
+        <Modal
+          title={"Planner list"}
+          pIsOpen={isPlannerListModalOpen}
+          setIsModelOpen={setIsPlannerListModalOpen}
+        >
+          <PlannerList
+            isPDFPreviewModelRequired={isPDFPreviewModalOpen}
+            setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
+            plannerItems={plannerItems}
+            setPlannerItems={setPlannerItems}
+          ></PlannerList>
         </Modal>
       )}
     </div>

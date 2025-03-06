@@ -152,7 +152,7 @@ const ExcerciseTileMobileView = ({
           className="h-full w-full col-span-3"
         ></img>
         <div className="col-span-9">
-          <div className="grid grid-rows-3">
+          <div className="grid grid-rows-2">
             <p
               onClick={data.onClick}
               onMouseEnter={() => {
@@ -162,11 +162,11 @@ const ExcerciseTileMobileView = ({
                 setMouseShape("pointer");
               }}
               style={{ cursor: mouseShape }}
-              className="row-span-1 text-gray-200"
+              className="row-span-1 text-gray-200 p-3"
             >
               {data.excercise.name}
             </p>
-            <p
+            {/* <p
               onClick={data.onClick}
               onMouseEnter={() => {
                 setMouseShape("grab");
@@ -178,7 +178,7 @@ const ExcerciseTileMobileView = ({
               className="row-span-1 text-gray-200"
             >
               {data.excercise.type}
-            </p>
+            </p> */}
             <div className="grid grid-cols-3">
               <button
                 onClick={() => data.onAdd(data.excercise)}
