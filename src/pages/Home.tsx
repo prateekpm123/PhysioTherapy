@@ -25,6 +25,9 @@ export const Home = () => {
     useState<boolean>(false);
   const [currentClickedExcerciseTile, setCurrentClickedExcerciseTile] =
     useState<iExcerciseData>();
+    const [currentExcerciseTileEditClick, setCurrentExcerciseTileEditClick] =
+    useState<iExcerciseData>();
+    // let currentClickedExcerciseTile: iExcerciseData | undefined = undefined;
 
   const search = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value;
@@ -42,9 +45,10 @@ export const Home = () => {
     setPlannerItems((plannerItems) => [...plannerItems, clickedExcercise]);
   };
 
-  const onExcerciseTileClick = (excercise: iExcerciseData, excerciseKey:string) => {
+  const onExcerciseTileForDetailClicked = (excercise: iExcerciseData, excerciseKey:string) => {
     excercise.excerciseKey = excerciseKey
     setCurrentClickedExcerciseTile(excercise);
+    // currentClickedExcerciseTile = excercise;
     setIsExcerciseDetailModalOpen(true);
   };
 
@@ -71,7 +75,9 @@ export const Home = () => {
     setIsAddExcerciseModalOpen(true);
   };
 
-  const onEditExcerciseClick = () => {
+  const onEditExcerciseClick = (excercise: iExcerciseData, excerciseKey: string) => {
+    excercise.excerciseKey = excerciseKey
+    setCurrentExcerciseTileEditClick(excercise);
     setIsEditExcerciseModalOpen(true);
   };
 
@@ -98,9 +104,9 @@ export const Home = () => {
                   excerciseKey={key} // Use the original key as the key
                   excercise={excercise}
                   onAdd={onAdd}
-                  onEdit={onEditExcerciseClick}
-                  onExcerciseTileClick={onExcerciseTileClick}
-                  onClick={() => onExcerciseTileClick(excercise, key)}
+                  onEdit={() => onEditExcerciseClick(excercise, key)}
+                  onExcerciseTileClick={onEditExcerciseClick}
+                  onClick={() => onExcerciseTileForDetailClicked(excercise, key)}
                   refreshExcercise={fetchExcerciseData}
                 />
               ))}
@@ -170,8 +176,8 @@ export const Home = () => {
         >
           <EditExcercise
             refreshExcercise={fetchExcerciseData}
-            excercise={currentClickedExcerciseTile}
-            excerciseKey={currentClickedExcerciseTile?.excerciseKey}
+            excercise={currentExcerciseTileEditClick}
+            excerciseKey={currentExcerciseTileEditClick ? currentExcerciseTileEditClick.excerciseKey : ""}
           />
         </Modal>
       )}
