@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 interface TextTagsProps extends React.HTMLAttributes<HTMLHeadingElement> {
   children: ReactNode;

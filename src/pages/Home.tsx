@@ -12,6 +12,8 @@ import { AddExcercise } from "../components/AddExcercise";
 import DatabaseController from "../databaseConnections/DatabaseController";
 import { EditExcercise } from "../components/EditExcercise";
 import { isMobile } from "react-device-detect";
+import React from "react";
+import { act } from "@testing-library/react";
 
 export const Home = () => {
   const [data2, setData2] = useState<iExcerciseData[] | null>();
@@ -66,9 +68,12 @@ export const Home = () => {
     data
       .then((data) => {
         if (data) {
-          setData2(data);
-          setExcercises(data);
-          console.log(data);
+          act(() => {
+            setData2(data);
+            setExcercises(data);
+          });
+
+          // console.log(data);
         }
       })
       .catch((error) => {
@@ -112,6 +117,7 @@ export const Home = () => {
         <input
           type="text"
           placeholder="Search"
+          name="Search"
           className="bg-slate-700 w-full p-4 text-slate-200 text-lg rounded-3xl"
           onChange={(e) => search(e)}
         />
@@ -158,6 +164,7 @@ export const Home = () => {
           <IoMdAdd
             className="text-6xl text-slate-700"
             onClick={onAddExcerciseClick}
+            data-testid="createExcerciseBtn"
           />
         </div>
       </div>
@@ -177,6 +184,7 @@ export const Home = () => {
         </div>
       ) : (
         <PlannerList
+          testId={"homePlannerList"}
           isPDFPreviewModelRequired={isPDFPreviewModalOpen}
           setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
           plannerItems={plannerItems}
@@ -186,6 +194,7 @@ export const Home = () => {
       {/* MODALS FOR THE SCREEN */}
       {isExcerciseDetailModalOpen && (
         <Modal
+          testId={"ExcerciseDetailModal"}
           title={"Excercise Detail"}
           pIsOpen={isExcerciseDetailModalOpen}
           setIsModelOpen={setIsExcerciseDetailModalOpen}
@@ -201,6 +210,7 @@ export const Home = () => {
       )}
       {isPDFPreviewModalOpen && (
         <Modal
+          testId={"ExcerciseDetailModal"}
           title={"PDF Preview"}
           pIsOpen={isPDFPreviewModalOpen}
           setIsModelOpen={setIsPDFPreviewModalOpen}
@@ -210,6 +220,7 @@ export const Home = () => {
       )}
       {isAddExcerciseModalOpen && (
         <Modal
+          testId={"AddExcerciseModal"}
           title={"Add Excercise"}
           pIsOpen={isAddExcerciseModalOpen}
           setIsModelOpen={setIsAddExcerciseModalOpen}
@@ -219,6 +230,7 @@ export const Home = () => {
       )}
       {isEditExcerciseModalOpen && (
         <Modal
+          testId={"EditExcerciseModal"}
           title={"Edit Excercise"}
           pIsOpen={isEditExcerciseModalOpen}
           setIsModelOpen={setIsEditExcerciseModalOpen}
@@ -236,11 +248,13 @@ export const Home = () => {
       )}
       {isPlannerListModalOpen && (
         <Modal
+          testId={"PlannerListModal"}
           title={"Planner list"}
           pIsOpen={isPlannerListModalOpen}
           setIsModelOpen={setIsPlannerListModalOpen}
         >
           <PlannerList
+            testId={"mobilFullPlannerList"}
             isPDFPreviewModelRequired={isPDFPreviewModalOpen}
             setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
             plannerItems={plannerItems}
@@ -250,4 +264,8 @@ export const Home = () => {
       )}
     </div>
   );
+};
+
+export const Home2 = () => {
+  return <div>testing</div>;
 };

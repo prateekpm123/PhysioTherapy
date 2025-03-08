@@ -3,12 +3,14 @@ import { ExcerciseType, iExcerciseTile } from "../models/ExcerciseInterface";
 // import P_EmptyCard from "./EmptyCard";
 import { database } from "../databaseConnections/FireBaseConnection";
 import { ref, remove } from "firebase/database";
+import React from "react"
 
 export const ExcerciseTile = (data: iExcerciseTile) => {
   const [mouseShape, setMouseShape] = useState("pointer");
 
   const deleteExcercise = async (nodePath: string) => {
     try {
+      console.log("Inside delete function \n Deleting node:", nodePath);
       const nodeRef = ref(database, "excercises/" + nodePath);
       remove(nodeRef)
         .then(() => {
@@ -61,6 +63,7 @@ const ExcerciseTileFullView = ({
       <div className="flex-block items-start justify-center border-2 border-slate-500 rounded-md h-80 w-60 sm:w-200 bg-slate-700 mt-8 cursor-pointer">
         <img
           onClick={data.onClick}
+          data-testid={"excerciseImg"}
           onMouseEnter={() => {
             setMouseShape("grab");
           }}
@@ -72,6 +75,7 @@ const ExcerciseTileFullView = ({
           className="h-48 w-full"
         ></img>
         <p
+          data-testid={"excerciseName"}
           onClick={data.onClick}
           onMouseEnter={() => {
             setMouseShape("grab");
@@ -89,6 +93,7 @@ const ExcerciseTileFullView = ({
         </p> */}
         <p
           onClick={data.onClick}
+          data-testid={"excerciseType"}
           onMouseEnter={() => {
             setMouseShape("grab");
           }}

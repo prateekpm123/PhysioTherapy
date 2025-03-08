@@ -1,4 +1,5 @@
 import { iExcerciseData } from "../models/ExcerciseInterface";
+import React from "react";
 
 export interface iExcerciseDetailProps {
     excercise: iExcerciseData;
@@ -7,7 +8,7 @@ export interface iExcerciseDetailProps {
 }
 
 export const ExcerciseDetail = (excerciseDetailProp: iExcerciseDetailProps) => {
-  console.log(excerciseDetailProp);
+  // console.log(excerciseDetailProp);
 
   return (
       <div className="h-full w-full">

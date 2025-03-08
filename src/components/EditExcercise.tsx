@@ -200,6 +200,7 @@ export const EditExcercise = (props: iEditExcercise) => {
               className="w-full p-2 mb-4 bg-slate-800 text-slate-100"
               ref={setNumber}
               type="number"
+              data-testid="setNumberInput"
               value={noOfSets}
               onChange={(e) => handleInputChangeNumber(e, setNoOfSets)}
             ></input>
@@ -208,6 +209,7 @@ export const EditExcercise = (props: iEditExcercise) => {
               className="w-full p-2 mb-6 bg-slate-800 text-slate-100"
               ref={setDescription}
               value={setDescriptionState}
+              data-testid="setDescriptionInput"
               onChange={(e) => handleInputChangeString(e, setSetDescription)}
             ></input>
             <H6 className="text-slate-100">Repetition</H6>
@@ -216,6 +218,7 @@ export const EditExcercise = (props: iEditExcercise) => {
               ref={repetitionNumber}
               type="number"
               value={repetitionNumberState}
+              data-testid="repititionNumberInput"
               onChange={(e) =>
                 handleInputChangeNumber(e, setRepetitionNumberState)
               }
@@ -225,6 +228,7 @@ export const EditExcercise = (props: iEditExcercise) => {
               className="w-full p-2 h-32 bg-slate-800 text-slate-100"
               ref={repetitionDescription}
               value={repetitionDescriptionState}
+              data-testid="repititionDescriptionInput"
               onChange={(e) =>
                 handleInputChangeString(e, setRepetitionDescriptionState)
               }
@@ -236,6 +240,7 @@ export const EditExcercise = (props: iEditExcercise) => {
               className="w-full p-2 mb-4 bg-slate-800 text-slate-100"
               ref={excerciseName}
               value={excerciseNameState}
+              data-testid="excerciseNameInput"
               onChange={(e) =>
                 handleInputChangeString(e, setExcerciseNameState)
               }
@@ -245,6 +250,7 @@ export const EditExcercise = (props: iEditExcercise) => {
               className="w-full p-2 h-96 bg-slate-800 text-slate-100"
               ref={excerciseDescription}
               placeholder={"1. \n2. \n3. \n4."}
+              data-testid="excerciseDescriptionInput"
               value={excerciseDescriptionState.join("\n")}
               onChange={(e) =>
                 handleInputChangeArray(e, setExcerciseDescriptionState)

@@ -8,6 +8,7 @@ import { storage } from "../databaseConnections/FireBaseConnection";
 // import { storage } from "../databaseConnections/FireBaseStorageInstance";
 import { isMobile } from "react-device-detect";
 
+
 interface iAddExcercise {
   refreshExcercise: () => void;
 }
@@ -152,22 +153,26 @@ export const AddExcercise = ({ refreshExcercise }: iAddExcercise) => {
               className="w-full p-2 mb-4 bg-slate-800 text-slate-100"
               ref={setNumber}
               type="number"
+              data-testid="setNumberInput"
             ></input>
             <H6 className="text-slate-100">Set Description</H6>
             <input
               className="w-full p-2 mb-6 bg-slate-800 text-slate-100"
               ref={setDescription}
+              data-testid="setDescriptionInput"
             ></input>
             <H6 className="text-slate-100">Repetition</H6>
             <input
               className="w-full p-2 mb-6 bg-slate-800 text-slate-100"
               ref={repetitionNumber}
               type="number"
+              data-testid="repititionNumberInput"
             ></input>
             <H6 className="text-slate-100">Description</H6>
             <textarea
               className="w-full p-2 h-32 bg-slate-800 text-slate-100"
               ref={repetitionDescription}
+              data-testid="repititionDescriptionInput"
             ></textarea>
           </div>
           <div className="col-span-1 h-fit">
@@ -175,13 +180,15 @@ export const AddExcercise = ({ refreshExcercise }: iAddExcercise) => {
             <input
               className="w-full p-2 mb-4 bg-slate-800 text-slate-100"
               ref={excerciseName}
-            ></input>
+              data-testid="excerciseNameInput"
+              ></input>
             <H6 className="text-slate-100 mb-4">Description</H6>
             <textarea
               className="w-full p-2 h-96 bg-slate-800 text-slate-100"
               ref={excerciseDescription}
               placeholder={"1. \n2. \n3. \n4."}
-            ></textarea>
+              data-testid="excerciseDescriptionInput"
+              ></textarea>
           </div>
         </div>
       </div>

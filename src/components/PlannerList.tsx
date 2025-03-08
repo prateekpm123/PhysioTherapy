@@ -1,12 +1,14 @@
 import { Suspense, useRef } from "react";
 import { iExcerciseData } from "../models/ExcerciseInterface";
 import { PlannerItem } from "./PlannerItem";
+import React from "react";
 
 export interface PlannerListProps {
   plannerItems: iExcerciseData[];
   setPlannerItems?: React.Dispatch<React.SetStateAction<iExcerciseData[]>>;
   isPDFPreviewModelRequired: boolean;
   setIsPDFPreviewModelRequired: React.Dispatch<React.SetStateAction<boolean>>;
+  testId: string;
 }
 
 export const PlannerList = (inputs: PlannerListProps) => {
@@ -28,6 +30,7 @@ export const PlannerList = (inputs: PlannerListProps) => {
 
   return (
     <div
+      data-testid={inputs.testId}
       ref={plannerListRef}
       className="flex flex-col items-center justify-start w-full h-full z-10 bg-slate-600"
     >
@@ -40,6 +43,7 @@ export const PlannerList = (inputs: PlannerListProps) => {
         <Suspense>
           {inputs.plannerItems.map((_, i) => (
             <PlannerItem
+              key={i}
               excercise={inputs.plannerItems[i]}
               plannerListRef={plannerListRef}
               onDelete={onDelete}

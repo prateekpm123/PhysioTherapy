@@ -1,28 +1,30 @@
 import React, { ReactNode } from "react";
 
 interface ModalProps {
+  testId: string;
   pIsOpen: boolean;
   children: ReactNode;
   title: string,
   setIsModelOpen: React.Dispatch<React.SetStateAction<boolean>>;  
 }
 
-const Modal: React.FC<ModalProps> = ({ title, pIsOpen, setIsModelOpen, children }) => {
+const Modal: React.FC<ModalProps> = ({ title, pIsOpen, setIsModelOpen, children, testId }) => {
   const onClose = () => {
     setIsModelOpen(false);
   };
   if (!pIsOpen) return null;
 
   return (
-    <div className="fixed h-full w-full inset-0 z-50 top-0 right-0 overflow-y-auto bg-slate-600">
+    <div data-testid={testId} role="dialog" className="fixed h-full w-full inset-0 z-50 top-0 right-0 overflow-y-auto bg-slate-600">
       <div
         className="bg-slate-600 rounded-lg p-6 shadow-lg w-full h-full"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-slate-100">{title}</h2>
+          <h2 role="heading" className="text-lg font-semibold text-slate-100">{title}</h2>
           <button
             onClick={onClose}
+            data-testid="modalCloseBtn"
             className="text-gray-500 hover:text-gray-700 focus:outline-none"
           >
             <svg
