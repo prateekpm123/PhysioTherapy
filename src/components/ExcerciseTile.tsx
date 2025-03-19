@@ -218,3 +218,8 @@ const ExcerciseTileMobileView = ({
     // </P_EmptyCard>
   );
 };
+
+
+/**
+ * 
+ */

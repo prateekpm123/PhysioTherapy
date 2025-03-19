@@ -1,8 +1,10 @@
 import { render, screen, fireEvent, act, within } from "@testing-library/react";
+// import { getInstance } from "../databaseConnections/DatabaseController";
 import { Home } from "./Home"; // Replace with your actual path
 import "@testing-library/jest-dom";
 import React from "react";
 import { iExcerciseData } from "../models/ExcerciseInterface";
+import getInstance from "../databaseConnections/DatabaseController";
 // import { letterSpacing } from "html2canvas/dist/types/css/property-descriptors/letter-spacing";
 
 // Mocking this, cuz it was giving an error regarding jspdf which I am using to generate pdf and it's using Canvas which is not supported by jest
@@ -23,52 +25,52 @@ jest.mock("jspdf", () => ({
 //     //   setMockExcercises(mockExcercises);
 //       break;
 //     }
-//   } 
+//   }
 // };
 
 // Mock data for search functionality
 let mockExcercises: iExcerciseData[] = [
-    {
-      name: "Push ups",
-      imgSrc: "../src/assets/Excercises/PushUps.png",
-      description: {
-        sets: 1,
-        setsDescription: "1 set",
-        repititions: 10,
-        repititionsDescription: "10 repetitions",
-        Cues: {
-          Points: [
-            "Often easiest to start with push-ups on knees.",
-            "Start in prone.",
-            "Hands by chest.",
-            "Knees bent.",
-            "Knees together.",
-            "Push-up - hold 2 seconds (count 1-2).",
-            "Control down.",
-          ],
-        },
+  {
+    name: "Push ups",
+    imgSrc: "../src/assets/Excercises/PushUps.png",
+    description: {
+      sets: 1,
+      setsDescription: "1 set",
+      repititions: 10,
+      repititionsDescription: "10 repetitions",
+      Cues: {
+        Points: [
+          "Often easiest to start with push-ups on knees.",
+          "Start in prone.",
+          "Hands by chest.",
+          "Knees bent.",
+          "Knees together.",
+          "Push-up - hold 2 seconds (count 1-2).",
+          "Control down.",
+        ],
       },
-      type: "Fundamental",
-      tags: ["Core"],
     },
-    {
-      name: "Planks",
-      imgSrc: "../src/assets/Excercises/Planks.png",
-      description: {
-        sets: 1,
-        setsDescription: "1 set",
-        repititions: 10,
-        repititionsDescription: "10 repetitions",
-        Cues: {
-          Points: [
-            "Often easiest to start in quadruped, then move to front plank or high plank.",
-          ],
-        },
+    type: "Fundamental",
+    tags: ["Core"],
+  },
+  {
+    name: "Planks",
+    imgSrc: "../src/assets/Excercises/Planks.png",
+    description: {
+      sets: 1,
+      setsDescription: "1 set",
+      repititions: 10,
+      repititionsDescription: "10 repetitions",
+      Cues: {
+        Points: [
+          "Often easiest to start in quadruped, then move to front plank or high plank.",
+        ],
       },
-      type: "Fundamental",
-      tags: ["Core"],
     },
-  ];
+    type: "Fundamental",
+    tags: ["Core"],
+  },
+];
 // const [mockExcercises, setMockExcercises] = useState<iExcerciseData[]>(data);
 
 // Mock data and setup
@@ -345,13 +347,141 @@ describe("Home Component - Modals", () => {
           name: /Delete/i,
         }
       );
+
+      // Mock the fetchNodeData call to return the updated exercises list
+      jest.mock("../databaseConnections/DatabaseController", () => ({
+        getInstance: () => ({
+          fetchNodeData: jest.fn(() =>
+            Promise.resolve([
+              {
+                name: "Push ups",
+                imgSrc: "../src/assets/Excercises/PushUps.png",
+                description: {
+                  sets: 1,
+                  setsDescription: "1 set",
+                  repititions: 10,
+                  repititionsDescription: "10 repetitions",
+                  Cues: {
+                    Points: [
+                      "Often easiest to start with push-ups on knees.",
+                      "Start in prone.",
+                      "Hands by chest.",
+                      "Knees bent.",
+                      "Knees together.",
+                      "Push-up - hold 2 seconds (count 1-2).",
+                      "Control down.",
+                    ],
+                  },
+                },
+                type: "Fundamental",
+                tags: ["Core"],
+              },
+            ])
+          ),
+        }),
+      }));
+
       await act(async () => {
         fireEvent.click(deleteButton);
       });
-    //   deleteExcerciseMock("2");
-      // not able to check the delete functionality unfortunately
-    //   expect(mockExcercises.length).toBe(1);
-      expect(plankCard).not.toBeInTheDocument();
+      render(<Home />);
+
+      const plankText2 = await screen.findByText("Planks"); // Adjust selector if needed
+      expect(plankText2).not.toBeInTheDocument();
     }
   });
+});
+
+// Mock DatabaseController
+jest.mock("../databaseConnections/DatabaseController", () => {
+  const mockDeleteExcercise = jest.fn();
+  const mockFetchNodeData = jest.fn();
+  return {
+    getInstance: jest.fn(() => ({
+      deleteExcercise: mockDeleteExcercise,
+      fetchNodeData: mockFetchNodeData,
+    })),
+  };
+});
+
+describe('Home Component - ExcerciseTile', () => {
+    it('deletes an excercise tile', async () => {
+      // Mock data to simulate initial exercises.
+      const mockExercises: iExcerciseData[] = [
+        {
+          name: "Push ups",
+          imgSrc: "../src/assets/Excercises/PushUps.png",
+          description: {
+            sets: 1,
+            setsDescription: "1 set",
+            repititions: 10,
+            repititionsDescription: "10 repetitions",
+            Cues: {
+              Points: [
+                "Often easiest to start with push-ups on knees.",
+                "Start in prone.",
+                "Hands by chest.",
+                "Knees bent.",
+                "Knees together.",
+                "Push-up - hold 2 seconds (count 1-2).",
+                "Control down.",
+              ],
+            },
+          },
+          type: "Fundamental",
+          tags: ["Core"],
+        },
+        {
+          name: "Planks",
+          imgSrc: "../src/assets/Excercises/Planks.png",
+          description: {
+            sets: 1,
+            setsDescription: "1 set",
+            repititions: 10,
+            repititionsDescription: "10 repetitions",
+            Cues: {
+              Points: [
+                "Often easiest to start in quadruped, then move to front plank or high plank.",
+              ],
+            },
+          },
+          type: "Fundamental",
+          tags: ["Core"],
+        },
+      ];
+  
+      const mockFetchNodeData = new getInstance().fetchNodeData as jest.Mock;
+      mockFetchNodeData.mockResolvedValue(mockExercises);
+  
+      render(<Home />);
+  
+      // Wait for the exercises to render.
+      await screen.findByText('Test Exercise');
+  
+      // Find the delete button for the 'Test Exercise' tile.
+      const deleteButton = screen.getAllByRole('button', { name: /delete/i })[0];
+  
+      // Simulate clicking the delete button.
+      await act(async () => {
+        fireEvent.click(deleteButton);
+      });
+  
+      // Mock the fetchNodeData response after deletion.
+      mockFetchNodeData.mockResolvedValue([mockExercises[1]]); // Only the second exercise remains.
+  
+      // Simulate the refresh call which is done inside of the home component.
+      await act(async () => {
+          await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+  
+      // Verify that the 'Test Exercise' tile is no longer rendered.
+      expect(screen.queryByText('Test Exercise')).toBeNull();
+  
+      // Verify that the 'Another Exercise' tile is still rendered.
+      expect(screen.getByText('Another Exercise')).toBeInTheDocument();
+  
+      const mockDeleteExcercise = new getInstance().deleteExcercise as jest.Mock;
+    //   const mockDeleteExcercise = require('../databaseConnections/DatabaseController').getInstance().deleteExcercise as jest.Mock;
+      expect(mockDeleteExcercise).toHaveBeenCalledWith('123');
+    });
 });
