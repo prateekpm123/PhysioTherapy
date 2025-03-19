@@ -1,5 +1,4 @@
 import { Suspense, useEffect, useState } from "react";
-// import data from "../../database/excerciseDatabase.json";
 import { ExcerciseTile } from "../components/ExcerciseTile";
 import { ExcerciseType, iExcerciseData } from "../models/ExcerciseInterface";
 import { PlannerList } from "../components/PlannerList";
@@ -8,12 +7,12 @@ import Modal from "../components/Modal";
 import { PDFPreview } from "../components/PDFPreview";
 import { IoMdAdd } from "react-icons/io";
 import { AddExcercise } from "../components/AddExcercise";
-// import testFirebase from "../databaseConnections/AddingDataToFirebase";
 import DatabaseController from "../databaseConnections/DatabaseController";
 import { EditExcercise } from "../components/EditExcercise";
 import { isMobile } from "react-device-detect";
 import React from "react";
 import { act } from "@testing-library/react";
+import { Box, Flex, TextField, Button } from "@radix-ui/themes";
 
 export const Home = () => {
   const [data2, setData2] = useState<iExcerciseData[] | null>();
@@ -33,8 +32,6 @@ export const Home = () => {
     useState<iExcerciseData>();
   const [currentExcerciseTileEditClick, setCurrentExcerciseTileEditClick] =
     useState<iExcerciseData>();
-
-  // let currentClickedExcerciseTile: iExcerciseData | undefined = undefined;
 
   const search = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value;
@@ -58,7 +55,6 @@ export const Home = () => {
   ) => {
     excercise.excerciseKey = excerciseKey;
     setCurrentClickedExcerciseTile(excercise);
-    // currentClickedExcerciseTile = excercise;
     setIsExcerciseDetailModalOpen(true);
   };
 
@@ -72,15 +68,10 @@ export const Home = () => {
             setData2(data);
             setExcercises(data);
           });
-
-          // console.log(data);
         }
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-      })
-      .finally(() => {
-        // console.log("Data fetched successfully");
       });
   };
 
@@ -88,9 +79,9 @@ export const Home = () => {
     setIsAddExcerciseModalOpen(true);
   };
 
-  const onPlannerListCounterBtnClick = () => {
-    setIsPlannerListModalOpen(true);
-  };
+  // const onPlannerListCounterBtnClick = () => {
+  //   setIsPlannerListModalOpen(true);
+  // };
 
   const onEditExcerciseClick = (
     excercise: iExcerciseData,
@@ -106,35 +97,31 @@ export const Home = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-6">
-      <div
-        className={
-          isMobile
-            ? "col-span-6 flex flex-col-reverse w-full h-screen bg-slate-900 p-3"
-            : "col-span-5 flex flex-col-reverse w-full h-screen bg-slate-900 p-8"
-        }
+    <Flex direction="row" className="h-screen">
+      <Flex
+        direction="column"
+        className="bg-slate-900"
+        style={{
+          flex: isMobile ? "1 1 100%" : "5 1 0%",
+          padding: isMobile ? "12px" : "32px",
+        }}
       >
-        <input
-          type="text"
-          placeholder="Search"
-          name="Search"
-          className="bg-slate-700 w-full p-4 text-slate-200 text-lg rounded-3xl"
-          onChange={(e) => search(e)}
-        />
-        <div
-          className={
-            isMobile
-              ? "relative grid overflow-y-auto w-full col-span-6 justify-items-start"
-              : "relative grid overflow-y-auto w-full gap-4 sm:grid-cols-1 sm:gap-4 md:grid-cols-3 md:gap-4 lg:grid-cols-5 justify-items-start"
-          }
+        <Box
+          className="overflow-y-auto"
+          style={{
+            display: "grid",
+            gap: "16px",
+            gridTemplateColumns: isMobile
+              ? "1fr"
+              : "repeat(auto-fill, minmax(200px, 1fr))",
+          }}
         >
-          <Suspense fallback={<div>Loading...</div>}></Suspense>
-          <Suspense>
+          <Suspense fallback={<div>Loading...</div>}>
             {excercises &&
               Object.entries(excercises).map(([key, excercise]) => (
                 <ExcerciseTile
-                  key={key} // Use the original key as the key
-                  excerciseKey={key} // Use the original key as the key
+                  key={key}
+                  excerciseKey={key}
                   excercise={excercise}
                   onAdd={onAdd}
                   onEdit={() => onEditExcerciseClick(excercise, key)}
@@ -151,47 +138,51 @@ export const Home = () => {
                 />
               ))}
           </Suspense>
-        </div>
-        <div
+        </Box>
+        <Button
+          variant="soft"
+          size="3"
           style={{
+            position: "absolute",
             bottom: "10%",
             right: isMobile ? "3%" : "19%",
             borderRadius: "50%",
             boxShadow: "1px 2px 44px 5px rgba(0,0,0,0.75)",
           }}
-          className="absolute flex h-18 w-18 z-20 bg-slate-500 bg-lightblue p-2 rounded shadow-md"
+          onClick={onAddExcerciseClick}
         >
-          <IoMdAdd
-            className="text-6xl text-slate-700"
-            onClick={onAddExcerciseClick}
-            data-testid="createExcerciseBtn"
-          />
-        </div>
-      </div>
-      {/* {plannerItems.length == 0 ? null : <PlannerList plannerItems={plannerItems} setPlannerItems={setPlannerItems}></PlannerList>} */}
-      {isMobile ? (
-        <div
+          <IoMdAdd className="text-6xl text-slate-700" />
+        </Button>
+        <TextField.Root
+          placeholder="Search"
+          size="3"
+          radius="full"
           style={{
-            bottom: "10%",
-            right: "80%",
-            borderRadius: "50%",
-            boxShadow: "1px 2px 44px 5px rgba(0,0,0,0.75)",
+            position: "fixed", // Sticks to the bottom
+            bottom: "0", // Aligns to the bottom of the screen
+            left: "0",
+            width: "100%", // Full width
+            height: "60px", // Increased height
+            backgroundColor: "rgba(46, 47, 80, 1)",
+            color: "white",
+            padding: "10px",
+            boxSizing: "border-box",
           }}
-          onClick={onPlannerListCounterBtnClick}
-          className="absolute flex h-18 w-20 z-20 text-slate-700 bg-slate-500 bg-lightblue p-2 pl-5 text-6xl rounded shadow-md"
-        >
-          {plannerItems.length}
-        </div>
-      ) : (
-        <PlannerList
-          testId={"homePlannerList"}
-          isPDFPreviewModelRequired={isPDFPreviewModalOpen}
-          setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
-          plannerItems={plannerItems}
-          setPlannerItems={setPlannerItems}
-        ></PlannerList>
+          onChange={(e) => search(e as React.ChangeEvent<HTMLInputElement>)}
+        />
+      </Flex>
+      {!isMobile && (
+        <Box style={{ flex: "1 1 0%", padding: "16px" }}>
+          <PlannerList
+            testId={"homePlannerList"}
+            isPDFPreviewModelRequired={isPDFPreviewModalOpen}
+            setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
+            plannerItems={plannerItems}
+            setPlannerItems={setPlannerItems}
+          />
+        </Box>
       )}
-      {/* MODALS FOR THE SCREEN */}
+      {/* Modals */}
       {isExcerciseDetailModalOpen && (
         <Modal
           testId={"ExcerciseDetailModal"}
@@ -262,7 +253,7 @@ export const Home = () => {
           ></PlannerList>
         </Modal>
       )}
-    </div>
+    </Flex>
   );
 };
 

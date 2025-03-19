@@ -4,6 +4,13 @@ import { ExcerciseType, iExcerciseTile } from "../models/ExcerciseInterface";
 import { database } from "../databaseConnections/FireBaseConnection";
 import { ref, remove } from "firebase/database";
 import React from "react"
+import {
+  Card,
+  Flex,
+  Text,
+  Button,
+} from "@radix-ui/themes";
+
 
 export const ExcerciseTile = (data: iExcerciseTile) => {
   const [mouseShape, setMouseShape] = useState("pointer");
@@ -52,6 +59,8 @@ interface ExcerciseTileViewProps {
   setMouseShape: (shape: string) => void;
 }
 
+
+
 const ExcerciseTileFullView = ({
   data,
   deleteExcercise,
@@ -59,61 +68,52 @@ const ExcerciseTileFullView = ({
   setMouseShape,
 }: ExcerciseTileViewProps) => {
   return (
-    // <P_EmptyCard className="w-96 p-0 m-0">
-      <div className="flex-block items-start justify-center border-2 border-slate-500 rounded-md h-80 w-60 sm:w-200 bg-slate-700 mt-8 cursor-pointer">
+    <Card size="5" style={{ width: "300px", height:"400px", margin: "10px", padding: "10px" }}>
+      <Flex direction="column" gap="3">
         <img
-          onClick={data.onClick}
-          data-testid={"excerciseImg"}
-          onMouseEnter={() => {
-            setMouseShape("grab");
-          }}
-          onMouseLeave={() => {
-            setMouseShape("pointer");
-          }}
-          style={{ cursor: mouseShape }}
           src={data.excercise.imgSrc}
-          className="h-48 w-full"
-        ></img>
-        <p
-          data-testid={"excerciseName"}
+          alt={data.excercise.name}
+          style={{
+            width: "100%",
+            height: "200px",
+            objectFit: "cover",
+            borderRadius: "10px",
+            cursor: mouseShape,
+          }}
           onClick={data.onClick}
-          onMouseEnter={() => {
-            setMouseShape("grab");
-          }}
-          onMouseLeave={() => {
-            setMouseShape("pointer");
-          }}
-          style={{ cursor: mouseShape }}
-          className="flex justify-center text-gray-200"
+          onMouseEnter={() => setMouseShape("grab")}
+          onMouseLeave={() => setMouseShape("pointer")}
+        />
+        <Text
+          size="6"
+          weight="bold"
+          style={{ cursor: mouseShape, textAlign: "center" }}
+          onClick={data.onClick}
+          onMouseEnter={() => setMouseShape("grab")}
+          onMouseLeave={() => setMouseShape("pointer")}
         >
           {data.excercise.name}
-        </p>
-        {/* <p className="flex justify-start text-gray-200">
-          {data.description.Cues.points[0]}
-        </p> */}
-        <p
-          onClick={data.onClick}
-          data-testid={"excerciseType"}
-          onMouseEnter={() => {
-            setMouseShape("grab");
-          }}
-          onMouseLeave={() => {
-            setMouseShape("pointer");
-          }}
+        </Text>
+        <Text
+          size="4"
           style={{ cursor: mouseShape }}
-          className="flex pl-4 justify-start text-gray-200"
+          onClick={data.onClick}
+          onMouseEnter={() => setMouseShape("grab")}
+          onMouseLeave={() => setMouseShape("pointer")}
         >
           {data.excercise.type}
-        </p>
-        <div className="grid grid-cols-3 justify-center text-gray-200">
-          <button
+        </Text>
+        <Flex gap="2" justify="center">
+          <Button
+            variant="soft"
+            size="3"
             onClick={() => data.onAdd(data.excercise)}
-            className="bg-slate-500 rounded-md p-2 m-2"
           >
             Add
-          </button>
-          <button
-            className="bg-slate-500 rounded-md p-2 m-2"
+          </Button>
+          <Button
+            variant="soft"
+            size="3"
             onClick={() => {
               if (data.onExcerciseTileClick) {
                 data.onExcerciseTileClick(data.excercise, data.excerciseKey);
@@ -122,16 +122,17 @@ const ExcerciseTileFullView = ({
             }}
           >
             Edit
-          </button>
-          <button
-            className="bg-slate-500 rounded-md p-2 m-2"
+          </Button>
+          <Button
+            size="3"
+            variant="soft"
             onClick={() => deleteExcercise(data.excerciseKey)}
           >
             Delete
-          </button>
-        </div>
-      </div>
-    // </P_EmptyCard>
+          </Button>
+        </Flex>
+      </Flex>
+    </Card>
   );
 };
 
@@ -142,84 +143,71 @@ const ExcerciseTileMobileView = ({
   setMouseShape,
 }: ExcerciseTileViewProps) => {
   return (
-    // <P_EmptyCard className="h-12 p-0 w-full">
-      <div className="grid grid-cols-12 cursor-pointer mb-3 bg-slate-700">
+    <Card size="2" style={{ marginBottom: "10px", padding: "10px", width: "100%", height: "100px" }}>
+      <Flex gap="3" align="center">
         <img
-          onClick={data.onClick}
-          onMouseEnter={() => {
-            setMouseShape("grab");
-          }}
-          onMouseLeave={() => {
-            setMouseShape("pointer");
-          }}
-          style={{ cursor: mouseShape }}
           src={data.excercise.imgSrc}
-          className="h-full w-full col-span-3"
-        ></img>
-        <div className="col-span-9">
-          <div className="grid grid-rows-2">
-            <p
-              onClick={data.onClick}
-              onMouseEnter={() => {
-                setMouseShape("grab");
-              }}
-              onMouseLeave={() => {
-                setMouseShape("pointer");
-              }}
-              style={{ cursor: mouseShape }}
-              className="row-span-1 text-gray-200 p-3"
+          alt={data.excercise.name}
+          style={{
+            width: "80px",
+            height: "80px",
+            objectFit: "cover",
+            cursor: mouseShape,
+          }}
+          onClick={data.onClick}
+          onMouseEnter={() => setMouseShape("grab")}
+          onMouseLeave={() => setMouseShape("pointer")}
+        />
+        <Flex direction="column" gap="2" style={{ flex: 1 }}>
+          <Text
+            size="5"
+            weight="bold"
+            style={{ cursor: mouseShape }}
+            onClick={data.onClick}
+            onMouseEnter={() => setMouseShape("grab")}
+            onMouseLeave={() => setMouseShape("pointer")}
+          >
+            {data.excercise.name}
+          </Text>
+          <Text
+            size="4"
+            style={{ cursor: mouseShape }}
+            onClick={data.onClick}
+            onMouseEnter={() => setMouseShape("grab")}
+            onMouseLeave={() => setMouseShape("pointer")}
+          >
+            {data.excercise.type}
+          </Text>
+          <Flex gap="2" justify="start">
+            <Button
+              variant="soft"
+              size="2"
+              onClick={() => data.onAdd(data.excercise)}
             >
-              {data.excercise.name}
-            </p>
-            {/* <p
-              onClick={data.onClick}
-              onMouseEnter={() => {
-                setMouseShape("grab");
+              Add
+            </Button>
+            <Button
+              variant="soft"
+              size="2"
+              onClick={() => {
+                if (data.onExcerciseTileClick) {
+                  data.onExcerciseTileClick(data.excercise, data.excerciseKey);
+                }
+                data.onEdit();
               }}
-              onMouseLeave={() => {
-                setMouseShape("pointer");
-              }}
-              style={{ cursor: mouseShape }}
-              className="row-span-1 text-gray-200"
             >
-              {data.excercise.type}
-            </p> */}
-            <div className="grid grid-cols-3">
-              <button
-                onClick={() => data.onAdd(data.excercise)}
-                className="col-span-1 bg-slate-500 rounded-md p-2 m-2"
-              >
-                Add
-              </button>
-              <button
-                className="col-span-1 bg-slate-500 rounded-md p-2 m-2"
-                onClick={() => {
-                  if (data.onExcerciseTileClick) {
-                    data.onExcerciseTileClick(
-                      data.excercise,
-                      data.excerciseKey
-                    );
-                  }
-                  data.onEdit();
-                }}
-              >
-                Edit
-              </button>
-              <button
-                className="col-span-1 bg-slate-500 rounded-md p-2 m-2"
-                onClick={() => deleteExcercise(data.excerciseKey)}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    // </P_EmptyCard>
+              Edit
+            </Button>
+            <Button
+              variant="soft"
+              size="2"
+              onClick={() => deleteExcercise(data.excerciseKey)}
+            >
+              Delete
+            </Button>
+          </Flex>
+        </Flex>
+      </Flex>
+    </Card>
   );
 };
-
-
-/**
- * 
- */
