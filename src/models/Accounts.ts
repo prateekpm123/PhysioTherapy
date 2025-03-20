@@ -1,3 +1,3 @@
 export enum Accounts {
-    GOOGLE, FACEBOOK, TWITTER, GITHUB
+    GOOGLE, FACEBOOK, TWITTER, GITHUB, EMAIL
 }

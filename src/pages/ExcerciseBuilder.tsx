@@ -14,7 +14,7 @@ import React from "react";
 import { act } from "@testing-library/react";
 import { Box, Flex, TextField, Button } from "@radix-ui/themes";
 
-export const Home = () => {
+export const ExcerciseBuilder = () => {
   const [data2, setData2] = useState<iExcerciseData[] | null>();
   const [excercises, setExcercises] = useState<iExcerciseData[]>();
   const [plannerItems, setPlannerItems] = useState<iExcerciseData[]>([]);
