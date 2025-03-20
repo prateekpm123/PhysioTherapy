@@ -1,4 +1,9 @@
-import { signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithPopup,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { firebaseAuth } from "../../databaseConnections/FireBaseConnection"; // Your firebase.js file
 import { Accounts } from "../../models/Accounts";
 import {
@@ -13,9 +18,19 @@ import {
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { FcGoogle, FcVoicemail } from "react-icons/fc"; // Google icon
 import { FaFacebook } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { SignInDto } from "../../dtos/SignInDto";
+import { useDispatch } from "react-redux";
+import { setIsSignedIn, setUser } from "../../stores/userSessionSlice";
 
 export const SignIn = () => {
   const loading = false;
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+
+
+  // Functions
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
@@ -42,7 +57,11 @@ export const SignIn = () => {
 
   const handleEmailSignIn = async (email: string, password: string) => {
     try {
-      const result = await signInWithEmailAndPassword(firebaseAuth, email, password);
+      const result = await signInWithEmailAndPassword(
+        firebaseAuth,
+        email,
+        password
+      );
       const user = result.user;
       const idToken = await user.getIdToken();
       sendIdTokenToBackend(idToken, Accounts.EMAIL);
@@ -51,7 +70,10 @@ export const SignIn = () => {
     }
   };
 
-  const sendIdTokenToBackend = async (idToken: string, accountType: Accounts) => {
+  const sendIdTokenToBackend = async (
+    idToken: string,
+    accountType: Accounts
+  ) => {
     try {
       let url = "http://localhost:3000/auth";
       if (accountType === Accounts.FACEBOOK) {
@@ -70,14 +92,28 @@ export const SignIn = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
+        const data = (await response.json()) as SignInDto;
+        afterSignInSuccess(data);
         console.log("Backend response:", data);
       } else {
+        afterSignInFail();
         console.error("Backend request failed:", response.statusText);
       }
     } catch (error) {
       console.error("Error sending token to backend:", error);
     }
+  };
+
+  const afterSignInSuccess = (data: SignInDto) => {
+    console.log("Sign-in success:", data);
+    dispatch(setUser(data));
+    dispatch(setIsSignedIn(true));
+    navigate("/doctorhome");
+  };
+
+  const afterSignInFail = () => {
+    console.log("Sign-in Fail:");
+    dispatch(setIsSignedIn(false));
   };
 
   return (
@@ -135,7 +171,9 @@ export const SignIn = () => {
                     variant="solid"
                     size="3"
                     style={{ marginTop: "10px" }}
-                    onClick={() => handleEmailSignIn("test@example.com", "password123")} // Replace with actual input values
+                    onClick={() =>
+                      handleEmailSignIn("test@example.com", "password123")
+                    } // Replace with actual input values
                   >
                     <FcVoicemail size="30" style={{ marginRight: "0px" }} />
                     Sign in with Email
@@ -143,13 +181,32 @@ export const SignIn = () => {
                 </Skeleton>
 
                 {/* Add OR with a line */}
-                  <Flex align="center" style={{ margin: "20px 0", width: "100%" }}>
-                    <Box style={{ flex: 1, height: "1px", backgroundColor: "#c0c0c0" }} />
-                    <Text size="4" weight="bold" style={{ margin: "0 10px", color: "#c0c0c0" }}>
-                      OR
-                    </Text>
-                    <Box style={{ flex: 1, height: "1px", backgroundColor: "#c0c0c0" }} />
-                  </Flex>
+                <Flex
+                  align="center"
+                  style={{ margin: "20px 0", width: "100%" }}
+                >
+                  <Box
+                    style={{
+                      flex: 1,
+                      height: "1px",
+                      backgroundColor: "#c0c0c0",
+                    }}
+                  />
+                  <Text
+                    size="4"
+                    weight="bold"
+                    style={{ margin: "0 10px", color: "#c0c0c0" }}
+                  >
+                    OR
+                  </Text>
+                  <Box
+                    style={{
+                      flex: 1,
+                      height: "1px",
+                      backgroundColor: "#c0c0c0",
+                    }}
+                  />
+                </Flex>
 
                 <Skeleton loading={loading}>
                   <Button
