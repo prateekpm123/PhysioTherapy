@@ -12,7 +12,7 @@ class DatabaseController {
     }
     return DatabaseController.dbController;
   }
-
+  
   fetchNodeData = async (
     nodePath: string
   ): Promise<iExcerciseData[] | null> => {

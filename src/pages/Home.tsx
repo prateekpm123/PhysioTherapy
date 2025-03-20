@@ -100,7 +100,7 @@ export const Home = () => {
     <Flex direction="row" className="h-screen">
       <Flex
         direction="column"
-        className="bg-slate-900"
+        className="bg-slate-800"
         style={{
           flex: isMobile ? "1 1 100%" : "5 1 0%",
           padding: isMobile ? "12px" : "32px",
@@ -113,7 +113,7 @@ export const Home = () => {
             gap: "16px",
             gridTemplateColumns: isMobile
               ? "1fr"
-              : "repeat(auto-fill, minmax(200px, 1fr))",
+              : "repeat(auto-fill, minmax(280px, 1fr))",
           }}
         >
           <Suspense fallback={<div>Loading...</div>}>
