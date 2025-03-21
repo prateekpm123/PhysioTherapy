@@ -4,4 +4,5 @@ export enum StatusAndErrorType {
     Unauthorized = 1003,
     Invalid = 1004,
     Verified = 1005,
+    InternalError = 2001
 }
