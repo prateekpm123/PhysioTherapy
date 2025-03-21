@@ -1,6 +1,7 @@
 // Header.tsx
 import { styled } from '@stitches/react';
 import { Flex, Link, Container, Button } from '@radix-ui/themes';
+import { useNavigate } from 'react-router-dom';
 
 const Nav = styled('nav', {
   padding: '1rem 0',
@@ -22,6 +23,7 @@ const NavLink = styled(Link, {
 });
 
 const NavBar = () => {
+  const navigate = useNavigate();
   return (
     <Nav>
       <Container size="4">
@@ -35,8 +37,8 @@ const NavBar = () => {
             <NavLink href="#">Contact</NavLink>
           </Flex>
           <Flex>
-            <NavLink href="#">Sign Up</NavLink>
-            <NavLink href="#">Log In</NavLink>
+            <NavLink onClick={()=> navigate('/signup')} href="">Sign Up</NavLink>
+            <NavLink onClick={()=> navigate('/login')} href="">Log In</NavLink>
             <Button variant="soft" color="blue">
               Get Started
             </Button>

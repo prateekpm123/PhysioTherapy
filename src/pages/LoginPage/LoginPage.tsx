@@ -27,6 +27,7 @@ import { FailedResponseDto } from "../../dtos/FailedResponseDto";
 import { StatusAndErrorType } from "../../models/StatusAndErrorType.enum";
 import { useToast } from "../../stores/ToastContext";
 import { ToastColors } from "../../components/Toast";
+import { setCookie } from "../../utils/cookies";
 
 export const LoginPage = () => {
   const loading = false;
@@ -41,6 +42,9 @@ export const LoginPage = () => {
       const result = await signInWithPopup(firebaseAuth, provider);
       const user = result.user;
       const idToken = await user.getIdToken();
+      // const saveJWT = await saveJwtToken(idToken);
+      setCookie("JwtToken", idToken, 1);
+      // console.log(saveJWT);
       sendIdTokenToBackendLogin(
         idToken,
         Accounts.GOOGLE,

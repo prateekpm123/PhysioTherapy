@@ -11,6 +11,8 @@ import {
 import { Avatar } from "radix-ui";
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../stores/userSessionStore";
+import { getCookie } from "../../utils/cookies";
+// import { getJwtToken } from "../../controllers/authController";
 
 const Nav = styled("nav", {
   padding: "1rem 0",
@@ -35,10 +37,21 @@ const NavLink = styled(Link, {
 const DoctorNavBar = () => {
   const user = useSelector((state: UserSessionStateType) => state.userSession.user);
 
-
-  const onClickOfSignOut = () => {
-
+  const onProfileClick = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    // I am using this to test a new me API using jwt in the backend and verifying users requests to the backend, and how all of it'll work
+    await fetch("http://localhost:3000/api/me", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        // "Authorization": `Bearer ${localStorage.getItem("jwt")}`
+        "Authorization": user.uid
+    }}).then(response => response.json()).then(data => console.log(data));
   }
+
+  // const onClickOfSignOut = () => {
+
+  // }
 
   return (
     <Nav>
@@ -62,7 +75,7 @@ const DoctorNavBar = () => {
           <Box></Box>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
-              <button>
+              <button onClick={onProfileClick}>
                 <Avatar.Root className="AvatarRoot">
                   <Avatar.Image
                     className="AvatarImage"
@@ -97,9 +110,9 @@ const DoctorNavBar = () => {
 
               <DropdownMenu.Separator />
               <DropdownMenu.Item>Share</DropdownMenu.Item>
-              <DropdownMenu.Item>Add to favorites</DropdownMenu.Item>
+              <DropdownMenu.Item >Add to favorites</DropdownMenu.Item>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item shortcut="⌘ ⌫" color="red" onClick={onClickOfSignOut}>
+              <DropdownMenu.Item shortcut="⌘ ⌫" color="red" onClick={onProfileClick}>
                 Sign Out
               </DropdownMenu.Item>
             </DropdownMenu.Content>
