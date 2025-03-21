@@ -18,6 +18,8 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { setIsSignedIn, setUser } from "../../stores/userSessionSlice";
+import { FailedResponseDto } from "../../dtos/FailedResponseDto";
+import { StatusAndErrorType } from "../../models/SignInStatus.enum";
 
 export const LoginPage = () => {
   const loading = false;
@@ -67,9 +69,16 @@ export const LoginPage = () => {
     navigate("/doctorhome");
   };
 
-  const afterSignInFail = () => {
-    console.log("Sign-in Fail:");
+  const afterSignInFail = (response: FailedResponseDto) => {
+    if(response.status === StatusAndErrorType.UserAlreadyExists) {
+      console.log("User already exists");
+    } else if(response.status === StatusAndErrorType.UserNotCreated) {
+      console.log("User was not created");
+    } else {
+      console.log("Sign-in Fail:");
+    }
     dispatch(setIsSignedIn(false));
+    
   };
   return (
     <>
