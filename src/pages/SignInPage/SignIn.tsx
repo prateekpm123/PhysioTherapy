@@ -22,13 +22,17 @@ import { useNavigate } from "react-router-dom";
 import { SignInDto } from "../../dtos/SignInDto";
 import { useDispatch } from "react-redux";
 import { setIsSignedIn, setUser } from "../../stores/userSessionSlice";
-import { sendIdTokenToBackend } from "../../controllers/authController";
+import { sendIdTokenToBackendSignUp } from "../../controllers/authController";
+import { FailedResponseDto } from "../../dtos/FailedResponseDto";
+import { StatusAndErrorType } from "../../models/SignInStatus.enum";
+import { useToast } from "../../stores/ToastContext";
+// import { ToastColors } from "../../components/Toast";
 
 export const SignIn = () => {
   const loading = false;
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const {showToast} = useToast();
 
   // Functions
   const handleGoogleSignIn = async () => {
@@ -37,7 +41,7 @@ export const SignIn = () => {
       const result = await signInWithPopup(firebaseAuth, provider);
       const user = result.user;
       const idToken = await user.getIdToken();
-      sendIdTokenToBackend(idToken, Accounts.GOOGLE, afterSignInSuccess, afterSignInFail);
+      sendIdTokenToBackendSignUp(idToken, Accounts.GOOGLE, afterSignInSuccess, afterSignInFail);
     } catch (error) {
       console.error("Google sign-in error:", error);
     }
@@ -49,7 +53,7 @@ export const SignIn = () => {
       const result = await signInWithPopup(firebaseAuth, provider);
       const user = result.user;
       const idToken = await user.getIdToken();
-      sendIdTokenToBackend(idToken, Accounts.FACEBOOK, afterSignInSuccess, afterSignInFail);
+      sendIdTokenToBackendSignUp(idToken, Accounts.FACEBOOK, afterSignInSuccess, afterSignInFail);
     } catch (error) {
       console.error("Facebook sign-in error:", error);
     }
@@ -64,7 +68,7 @@ export const SignIn = () => {
       );
       const user = result.user;
       const idToken = await user.getIdToken();
-      sendIdTokenToBackend(idToken, Accounts.EMAIL, afterSignInSuccess, afterSignInFail);
+      sendIdTokenToBackendSignUp(idToken, Accounts.EMAIL, afterSignInSuccess, afterSignInFail);
     } catch (error) {
       console.error("Email sign-in error:", error);
     }
@@ -79,10 +83,21 @@ export const SignIn = () => {
     navigate("/doctorhome");
   };
 
-  const afterSignInFail = () => {
-    console.log("Sign-in Fail:");
+  const afterSignInFail = (response: FailedResponseDto) => {
+    if(response.status === StatusAndErrorType.UserAlreadyExists) {
+      showToast("User already exists testing this and that");
+      // showToast("User already exists", 30000, 'blue');
+      // showToast("User already exists", 30000, 'green');
+      console.log("User already exists");
+    } else if(response.status === StatusAndErrorType.UserNotCreated) {
+      console.log("User was not created");
+    } else {
+      console.log("Sign-in Fail:");
+    }
     dispatch(setIsSignedIn(false));
+    
   };
+
 
   return (
     <>

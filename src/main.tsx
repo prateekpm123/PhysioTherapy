@@ -5,6 +5,7 @@ import App from "./App.tsx";
 import { Theme } from "@radix-ui/themes";
 import { Provider } from "react-redux";
 import userSessionStore from "./stores/userSessionStore.tsx";
+import { ToastProvider } from "./stores/ToastContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -16,7 +17,9 @@ createRoot(document.getElementById("root")!).render(
       grayColor="gray"
     >
       <Provider store={userSessionStore}>
-        <App />
+        <ToastProvider>
+          <App />
+        </ToastProvider>
       </Provider>
     </Theme>
   </StrictMode>

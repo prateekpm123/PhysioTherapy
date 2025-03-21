@@ -1,4 +1,5 @@
 export interface SignInDto {
+  ok: boolean
   message: string;
   userGoogleAuthData: GoogleUserDataDto;
   status: number;

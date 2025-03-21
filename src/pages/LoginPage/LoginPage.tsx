@@ -10,7 +10,7 @@ import {
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { FacebookAuthProvider, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { firebaseAuth } from "../../databaseConnections/FireBaseConnection";
-import { sendIdTokenToBackend } from "../../controllers/authController";
+import { sendIdTokenToBackendLogin } from "../../controllers/authController";
 import { Accounts } from "../../models/Accounts";
 import { useNavigate } from "react-router-dom";
 import { SignInDto } from "../../dtos/SignInDto";
@@ -33,7 +33,7 @@ export const LoginPage = () => {
       const result = await signInWithPopup(firebaseAuth, provider);
       const user = result.user;
       const idToken = await user.getIdToken();
-      sendIdTokenToBackend(
+      sendIdTokenToBackendLogin(
         idToken,
         Accounts.GOOGLE,
         afterSignInSuccess,
@@ -50,7 +50,7 @@ export const LoginPage = () => {
       const result = await signInWithPopup(firebaseAuth, provider);
       const user = result.user;
       const idToken = await user.getIdToken();
-      sendIdTokenToBackend(
+      sendIdTokenToBackendLogin(
         idToken,
         Accounts.FACEBOOK,
         afterSignInSuccess,
