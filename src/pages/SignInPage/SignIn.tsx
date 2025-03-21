@@ -14,6 +14,7 @@ import {
   Button,
   Skeleton,
   TextField,
+  Link,
 } from "@radix-ui/themes";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { FcGoogle, FcVoicemail } from "react-icons/fc"; // Google icon
@@ -24,7 +25,7 @@ import { useDispatch } from "react-redux";
 import { setIsSignedIn, setUser } from "../../stores/userSessionSlice";
 import { sendIdTokenToBackendSignUp } from "../../controllers/authController";
 import { FailedResponseDto } from "../../dtos/FailedResponseDto";
-import { StatusAndErrorType } from "../../models/SignInStatus.enum";
+import { StatusAndErrorType } from "../../models/StatusAndErrorType.enum";
 import { useToast } from "../../stores/ToastContext";
 // import { ToastColors } from "../../components/Toast";
 
@@ -32,7 +33,7 @@ export const SignIn = () => {
   const loading = false;
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {showToast} = useToast();
+  const { showToast } = useToast();
 
   // Functions
   const handleGoogleSignIn = async () => {
@@ -41,7 +42,12 @@ export const SignIn = () => {
       const result = await signInWithPopup(firebaseAuth, provider);
       const user = result.user;
       const idToken = await user.getIdToken();
-      sendIdTokenToBackendSignUp(idToken, Accounts.GOOGLE, afterSignInSuccess, afterSignInFail);
+      sendIdTokenToBackendSignUp(
+        idToken,
+        Accounts.GOOGLE,
+        afterSignInSuccess,
+        afterSignInFail
+      );
     } catch (error) {
       console.error("Google sign-in error:", error);
     }
@@ -53,7 +59,12 @@ export const SignIn = () => {
       const result = await signInWithPopup(firebaseAuth, provider);
       const user = result.user;
       const idToken = await user.getIdToken();
-      sendIdTokenToBackendSignUp(idToken, Accounts.FACEBOOK, afterSignInSuccess, afterSignInFail);
+      sendIdTokenToBackendSignUp(
+        idToken,
+        Accounts.FACEBOOK,
+        afterSignInSuccess,
+        afterSignInFail
+      );
     } catch (error) {
       console.error("Facebook sign-in error:", error);
     }
@@ -68,13 +79,16 @@ export const SignIn = () => {
       );
       const user = result.user;
       const idToken = await user.getIdToken();
-      sendIdTokenToBackendSignUp(idToken, Accounts.EMAIL, afterSignInSuccess, afterSignInFail);
+      sendIdTokenToBackendSignUp(
+        idToken,
+        Accounts.EMAIL,
+        afterSignInSuccess,
+        afterSignInFail
+      );
     } catch (error) {
       console.error("Email sign-in error:", error);
     }
   };
-
-
 
   const afterSignInSuccess = (data: SignInDto) => {
     console.log("Sign-in success:", data);
@@ -84,20 +98,18 @@ export const SignIn = () => {
   };
 
   const afterSignInFail = (response: FailedResponseDto) => {
-    if(response.status === StatusAndErrorType.UserAlreadyExists) {
-      showToast("User already exists testing this and that");
+    if (response.errorCode === StatusAndErrorType.UserAlreadyExists) {
+      showToast("User already exists, try logging In");
       // showToast("User already exists", 30000, 'blue');
       // showToast("User already exists", 30000, 'green');
       console.log("User already exists");
-    } else if(response.status === StatusAndErrorType.UserNotCreated) {
+    } else if (response.errorCode === StatusAndErrorType.UserNotCreated) {
       console.log("User was not created");
     } else {
       console.log("Sign-in Fail:");
     }
     dispatch(setIsSignedIn(false));
-    
   };
-
 
   return (
     <>
@@ -162,7 +174,16 @@ export const SignIn = () => {
                     Sign in with Email
                   </Button>
                 </Skeleton>
-
+                <Text>
+                  Already Signed up ? Login <Link
+                    onClick={() => navigate("/login")}
+                    href=""
+                    highContrast
+                    style={{ color: "#5392cd" }}
+                  >
+                    { "Here"}
+                  </Link>
+                </Text>
                 {/* Add OR with a line */}
                 <Flex
                   align="center"

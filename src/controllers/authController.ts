@@ -26,7 +26,7 @@ export const sendIdTokenToBackendSignUp = async (
     });
     const responseJson = await response.json();
     if (responseJson.ok) {
-      const data = (await response.json()) as SignInDto;
+      const data = responseJson as SignInDto;
       afterSignInSuccess(data);
       console.log("Backend response:", data);
     } else {

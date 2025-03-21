@@ -1,6 +1,8 @@
-import { StatusAndErrorType } from "../models/SignInStatus.enum";
+import { StatusAndErrorType } from "../models/StatusAndErrorType.enum";
 
 export interface FailedResponseDto {
-    ok: boolean;
-    status: StatusAndErrorType
+  message: string
+  statusCode: number;
+  errorCode: StatusAndErrorType;
+  errors: unknown;
 }

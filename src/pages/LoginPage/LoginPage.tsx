@@ -6,9 +6,14 @@ import {
   TextField,
   Button,
   Skeleton,
+  Link,
 } from "@radix-ui/themes";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { FacebookAuthProvider, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  FacebookAuthProvider,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import { firebaseAuth } from "../../databaseConnections/FireBaseConnection";
 import { sendIdTokenToBackendLogin } from "../../controllers/authController";
 import { Accounts } from "../../models/Accounts";
@@ -19,15 +24,18 @@ import { FaFacebook } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { setIsSignedIn, setUser } from "../../stores/userSessionSlice";
 import { FailedResponseDto } from "../../dtos/FailedResponseDto";
-import { StatusAndErrorType } from "../../models/SignInStatus.enum";
+import { StatusAndErrorType } from "../../models/StatusAndErrorType.enum";
+import { useToast } from "../../stores/ToastContext";
+import { ToastColors } from "../../components/Toast";
 
 export const LoginPage = () => {
   const loading = false;
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { showToast } = useToast();
 
   // Functions
-  const handleGoogleSignIn = async () => {
+  const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(firebaseAuth, provider);
@@ -36,15 +44,15 @@ export const LoginPage = () => {
       sendIdTokenToBackendLogin(
         idToken,
         Accounts.GOOGLE,
-        afterSignInSuccess,
-        afterSignInFail
+        afterLoginSuccess,
+        afterLoginFail
       );
     } catch (error) {
       console.error("Google sign-in error:", error);
     }
   };
 
-  const handleFacebookSignIn = async () => {
+  const handleFacebookLogin = async () => {
     const provider = new FacebookAuthProvider();
     try {
       const result = await signInWithPopup(firebaseAuth, provider);
@@ -53,32 +61,29 @@ export const LoginPage = () => {
       sendIdTokenToBackendLogin(
         idToken,
         Accounts.FACEBOOK,
-        afterSignInSuccess,
-        afterSignInFail
+        afterLoginSuccess,
+        afterLoginFail
       );
     } catch (error) {
       console.error("Facebook sign-in error:", error);
     }
   };
 
-
-  const afterSignInSuccess = (data: SignInDto) => {
+  const afterLoginSuccess = (data: SignInDto) => {
     console.log("Sign-in success:", data);
     dispatch(setUser(data));
     dispatch(setIsSignedIn(true));
     navigate("/doctorhome");
   };
 
-  const afterSignInFail = (response: FailedResponseDto) => {
-    if(response.status === StatusAndErrorType.UserAlreadyExists) {
-      console.log("User already exists");
-    } else if(response.status === StatusAndErrorType.UserNotCreated) {
+  const afterLoginFail = (response: FailedResponseDto) => {
+    if (response.errorCode === StatusAndErrorType.UserNotCreated) {
+      showToast("User was not created", undefined, ToastColors.RED);
       console.log("User was not created");
     } else {
       console.log("Sign-in Fail:");
     }
     dispatch(setIsSignedIn(false));
-    
   };
   return (
     <>
@@ -132,12 +137,13 @@ export const LoginPage = () => {
                 </Skeleton>
                 <Skeleton loading={loading}>
                   <Button
-                    variant="outline"
+                    variant="solid"
                     size="3"
                     style={{ marginTop: "10px" }}
                   >
                     Login
                   </Button>
+                  <Text>Not Signed up ? Sign in <Link href="" highContrast onClick={()=> navigate('/signup')} style={{color: '#5392cd'}}>Here</Link></Text>
                 </Skeleton>
                 {/* Add OR with a line */}
                 <Flex
@@ -172,7 +178,7 @@ export const LoginPage = () => {
                     variant="solid"
                     size="3"
                     style={{ marginTop: "10px" }}
-                    onClick={handleGoogleSignIn}
+                    onClick={handleGoogleLogin}
                   >
                     <FcGoogle size="30" style={{ marginRight: "0px" }} />
                     Sign in with Google
@@ -184,7 +190,7 @@ export const LoginPage = () => {
                     size="3"
                     disabled={true}
                     style={{ marginTop: "10px" }}
-                    onClick={handleFacebookSignIn}
+                    onClick={handleFacebookLogin}
                   >
                     <FaFacebook size="30" style={{ marginRight: "0px" }} />
                     Sign in with Facebook
