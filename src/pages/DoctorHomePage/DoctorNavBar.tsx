@@ -11,7 +11,7 @@ import {
 import { Avatar } from "radix-ui";
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../stores/userSessionStore";
-import { getCookie } from "../../utils/cookies";
+// import { getCookie } from "../../utils/cookies";
 // import { getJwtToken } from "../../controllers/authController";
 
 const Nav = styled("nav", {
