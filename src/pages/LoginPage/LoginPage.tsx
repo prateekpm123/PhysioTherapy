@@ -8,9 +8,69 @@ import {
   Skeleton,
 } from "@radix-ui/themes";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { FacebookAuthProvider, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { firebaseAuth } from "../../databaseConnections/FireBaseConnection";
+import { sendIdTokenToBackend } from "../../controllers/authController";
+import { Accounts } from "../../models/Accounts";
+import { useNavigate } from "react-router-dom";
+import { SignInDto } from "../../dtos/SignInDto";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { setIsSignedIn, setUser } from "../../stores/userSessionSlice";
 
 export const LoginPage = () => {
   const loading = false;
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Functions
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(firebaseAuth, provider);
+      const user = result.user;
+      const idToken = await user.getIdToken();
+      sendIdTokenToBackend(
+        idToken,
+        Accounts.GOOGLE,
+        afterSignInSuccess,
+        afterSignInFail
+      );
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+    }
+  };
+
+  const handleFacebookSignIn = async () => {
+    const provider = new FacebookAuthProvider();
+    try {
+      const result = await signInWithPopup(firebaseAuth, provider);
+      const user = result.user;
+      const idToken = await user.getIdToken();
+      sendIdTokenToBackend(
+        idToken,
+        Accounts.FACEBOOK,
+        afterSignInSuccess,
+        afterSignInFail
+      );
+    } catch (error) {
+      console.error("Facebook sign-in error:", error);
+    }
+  };
+
+
+  const afterSignInSuccess = (data: SignInDto) => {
+    console.log("Sign-in success:", data);
+    dispatch(setUser(data));
+    dispatch(setIsSignedIn(true));
+    navigate("/doctorhome");
+  };
+
+  const afterSignInFail = () => {
+    console.log("Sign-in Fail:");
+    dispatch(setIsSignedIn(false));
+  };
   return (
     <>
       <Flex
@@ -67,7 +127,58 @@ export const LoginPage = () => {
                     size="3"
                     style={{ marginTop: "10px" }}
                   >
-                    Edit profile
+                    Login
+                  </Button>
+                </Skeleton>
+                {/* Add OR with a line */}
+                <Flex
+                  align="center"
+                  style={{ margin: "20px 0", width: "100%" }}
+                >
+                  <Box
+                    style={{
+                      flex: 1,
+                      height: "1px",
+                      backgroundColor: "#c0c0c0",
+                    }}
+                  />
+                  <Text
+                    size="4"
+                    weight="bold"
+                    style={{ margin: "0 10px", color: "#c0c0c0" }}
+                  >
+                    OR
+                  </Text>
+                  <Box
+                    style={{
+                      flex: 1,
+                      height: "1px",
+                      backgroundColor: "#c0c0c0",
+                    }}
+                  />
+                </Flex>
+
+                <Skeleton loading={loading}>
+                  <Button
+                    variant="solid"
+                    size="3"
+                    style={{ marginTop: "10px" }}
+                    onClick={handleGoogleSignIn}
+                  >
+                    <FcGoogle size="30" style={{ marginRight: "0px" }} />
+                    Sign in with Google
+                  </Button>
+                </Skeleton>
+                <Skeleton loading={loading}>
+                  <Button
+                    variant="solid"
+                    size="3"
+                    disabled={true}
+                    style={{ marginTop: "10px" }}
+                    onClick={handleFacebookSignIn}
+                  >
+                    <FaFacebook size="30" style={{ marginRight: "0px" }} />
+                    Sign in with Facebook
                   </Button>
                 </Skeleton>
               </Flex>

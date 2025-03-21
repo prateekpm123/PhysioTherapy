@@ -22,12 +22,12 @@ import { useNavigate } from "react-router-dom";
 import { SignInDto } from "../../dtos/SignInDto";
 import { useDispatch } from "react-redux";
 import { setIsSignedIn, setUser } from "../../stores/userSessionSlice";
+import { sendIdTokenToBackend } from "../../controllers/authController";
 
 export const SignIn = () => {
   const loading = false;
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
 
 
   // Functions
@@ -37,7 +37,7 @@ export const SignIn = () => {
       const result = await signInWithPopup(firebaseAuth, provider);
       const user = result.user;
       const idToken = await user.getIdToken();
-      sendIdTokenToBackend(idToken, Accounts.GOOGLE);
+      sendIdTokenToBackend(idToken, Accounts.GOOGLE, afterSignInSuccess, afterSignInFail);
     } catch (error) {
       console.error("Google sign-in error:", error);
     }
@@ -49,7 +49,7 @@ export const SignIn = () => {
       const result = await signInWithPopup(firebaseAuth, provider);
       const user = result.user;
       const idToken = await user.getIdToken();
-      sendIdTokenToBackend(idToken, Accounts.FACEBOOK);
+      sendIdTokenToBackend(idToken, Accounts.FACEBOOK, afterSignInSuccess, afterSignInFail);
     } catch (error) {
       console.error("Facebook sign-in error:", error);
     }
@@ -64,45 +64,13 @@ export const SignIn = () => {
       );
       const user = result.user;
       const idToken = await user.getIdToken();
-      sendIdTokenToBackend(idToken, Accounts.EMAIL);
+      sendIdTokenToBackend(idToken, Accounts.EMAIL, afterSignInSuccess, afterSignInFail);
     } catch (error) {
       console.error("Email sign-in error:", error);
     }
   };
 
-  const sendIdTokenToBackend = async (
-    idToken: string,
-    accountType: Accounts
-  ) => {
-    try {
-      let url = "http://localhost:3000/auth";
-      if (accountType === Accounts.FACEBOOK) {
-        url = url + "/facebook";
-      } else if (accountType === Accounts.GOOGLE) {
-        url = url + "/google";
-      } else if (accountType === Accounts.EMAIL) {
-        url = url + "/email";
-      }
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${idToken}`,
-        },
-      });
 
-      if (response.ok) {
-        const data = (await response.json()) as SignInDto;
-        afterSignInSuccess(data);
-        console.log("Backend response:", data);
-      } else {
-        afterSignInFail();
-        console.error("Backend request failed:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error sending token to backend:", error);
-    }
-  };
 
   const afterSignInSuccess = (data: SignInDto) => {
     console.log("Sign-in success:", data);
