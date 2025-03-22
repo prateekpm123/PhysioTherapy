@@ -11,6 +11,7 @@ export const DoctorHomePage = () => {
   const isSignedIn = useSelector(
     (state: UserSessionStateType) => state.userSession.isSignedIn
   );
+  
   // const user: User = useSelector(
   // (state: UserSessionStateType) => state.userSession.user
   // );
@@ -23,7 +24,7 @@ export const DoctorHomePage = () => {
     <>
       <div style={{ backgroundColor: ThemeColorPallate.background }}>
         <DoctorNavBar />
-        <Outlet /> {/* Render nested routes here */}
+        <Outlet/> {/* Render nested routes here */}
         {/* <Flex direction="column" justify="center" align="center">
         <Text size="9"> Welcome {user.name}!</Text>
         <img src={user.pictureUrl} height={200} width={200}></img>

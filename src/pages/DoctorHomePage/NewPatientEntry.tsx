@@ -10,8 +10,13 @@ import iPatients from "../../models/iPatients";
 import { createPatient } from "../../controllers/PatientsController";
 import { FailedResponseDto } from "../../dtos/FailedResponseDto";
 import { StatusAndErrorType } from "../../models/StatusAndErrorType.enum";
+// import { PatientListProps } from "./PatientLIst";
 
-const NewPatientEntry = () => {
+interface iNewPatientEntry {
+  onSave: () => void;
+}
+
+const NewPatientEntry: React.FC<iNewPatientEntry> = ( {onSave} )  => {
   const [formData, setFormData] = useState<iPatients>({
     patientName: "",
     patientAge: 0,
@@ -52,6 +57,7 @@ const NewPatientEntry = () => {
 
   const onCreateSuccess = () => {
     showToast("Form submitted successfully", DefaultToastTiming, ToastColors.GREEN);
+    onSave();
     console.log("Patient was created succesfully");
   };
   const onCreateFail = (response: FailedResponseDto) => {
@@ -67,7 +73,7 @@ const NewPatientEntry = () => {
   };
 
   return (
-    <div className="p-6 max-w-lg mx-auto">
+    <div className="p-6 mx-auto" style={{width: "80%"}}>
       <h1 className="text-2xl font-bold mb-4">New Patient Entry</h1>
       <Form.Root className="space-y-4" onSubmit={handleSubmit}>
         {/* Patient Name */}
