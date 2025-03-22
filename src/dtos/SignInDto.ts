@@ -1,8 +1,7 @@
-export interface SignInDto {
-  ok: boolean
-  message: string;
+import { BaseAPIDto } from "./BaseAPIDto";
+
+export interface SignInDto extends BaseAPIDto {
   userGoogleAuthData: GoogleUserDataDto;
-  status: number;
 }
 
 export interface GoogleUserDataDto {

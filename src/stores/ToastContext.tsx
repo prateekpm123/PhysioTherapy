@@ -33,6 +33,8 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   );
 };
 
+export const DefaultToastTiming = 4000;
+
 export const useToast = () => {
   const context = useContext(ToastContext);
   if (!context) {

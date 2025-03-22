@@ -13,7 +13,7 @@ createRoot(document.getElementById("root")!).render(
       accentColor="blue"
       appearance="dark"
       radius="medium"
-      panelBackground="translucent"
+      panelBackground="solid"
       grayColor="gray"
     >
       <Provider store={userSessionStore}>
