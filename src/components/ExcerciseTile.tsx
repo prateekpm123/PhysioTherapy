@@ -3,7 +3,6 @@ import { ExcerciseType, iExcerciseTile } from "../models/ExcerciseInterface";
 // import P_EmptyCard from "./EmptyCard";
 import { database } from "../databaseConnections/FireBaseConnection";
 import { ref, remove } from "firebase/database";
-import React from "react";
 import { Card, Flex, Text, Button, Skeleton } from "@radix-ui/themes";
 
 export const ExcerciseTile = (data: iExcerciseTile) => {

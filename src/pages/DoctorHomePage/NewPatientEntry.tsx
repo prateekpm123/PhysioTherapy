@@ -10,6 +10,8 @@ import iPatients from "../../models/iPatients";
 import { createPatient } from "../../controllers/PatientsController";
 import { FailedResponseDto } from "../../dtos/FailedResponseDto";
 import { StatusAndErrorType } from "../../models/StatusAndErrorType.enum";
+import { useSelector } from "react-redux";
+import { UserSessionStateType } from "../../stores/userSessionStore";
 // import { PatientListProps } from "./PatientLIst";
 
 interface iNewPatientEntry {
@@ -17,6 +19,9 @@ interface iNewPatientEntry {
 }
 
 const NewPatientEntry: React.FC<iNewPatientEntry> = ( {onSave} )  => {
+  const doctorData = useSelector(
+      (state: UserSessionStateType) => state.userSession.user
+    );
   const [formData, setFormData] = useState<iPatients>({
     patientName: "",
     patientAge: 0,
@@ -26,6 +31,7 @@ const NewPatientEntry: React.FC<iNewPatientEntry> = ( {onSave} )  => {
     email: "",
     address: "",
     fileUpload: [],
+    doctorId: ""
   });
   const { showToast } = useToast();
 
@@ -46,7 +52,7 @@ const NewPatientEntry: React.FC<iNewPatientEntry> = ( {onSave} )  => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
+    formData.doctorId = doctorData.uid;
     createPatient({
       data: formData,
       afterAPISuccess: onCreateSuccess,

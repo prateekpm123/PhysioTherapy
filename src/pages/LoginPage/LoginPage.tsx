@@ -41,7 +41,7 @@ export const LoginPage = () => {
     try {
       const result = await signInWithPopup(firebaseAuth, provider);
       const user = result.user;
-      const idToken = await user.getIdToken();
+      const idToken = await user.getIdToken(true);
       // const saveJWT = await saveJwtToken(idToken);
       setCookie("JwtToken", idToken, 1);
       // console.log(saveJWT);

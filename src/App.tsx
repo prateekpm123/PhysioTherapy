@@ -10,7 +10,7 @@ import DoctorHomePageRoutes from './pages/DoctorHomePage/DoctorHomePageRoutes';
 
 const App: React.FC = () => {
   return (
-    <Router>
+    <Router basename='/PhysioTherapy'>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />

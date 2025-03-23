@@ -2,7 +2,6 @@ import { render, screen, fireEvent, act, within } from "@testing-library/react";
 // import { getInstance } from "../databaseConnections/DatabaseController";
 import { ExcerciseBuilder } from "./ExcerciseBuilder"; // Replace with your actual path
 import "@testing-library/jest-dom";
-import React from "react";
 import { iExcerciseData } from "../models/ExcerciseInterface";
 import getInstance from "../databaseConnections/DatabaseController";
 // import { letterSpacing } from "html2canvas/dist/types/css/property-descriptors/letter-spacing";

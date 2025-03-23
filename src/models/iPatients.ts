@@ -6,7 +6,8 @@ interface iPatients {
     phoneNumber: string
     email: string
     address: string
-    fileUpload: File[]
+    fileUpload: File[],
+    doctorId: string
 }
 
 // interface iPhoneNumber {

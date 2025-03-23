@@ -1,7 +1,6 @@
 import { RiDeleteBinLine } from "react-icons/ri";
 import { IPlannerItem } from "../models/IPlannerItems";
 import { useState } from "react";
-import React from "react";
 
 // import DraggableDiv from "./DraggableDiv";
 
