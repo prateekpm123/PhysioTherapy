@@ -22,7 +22,7 @@ import { SignInDto } from "../../dtos/SignInDto";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { setIsSignedIn, setUser } from "../../stores/userSessionSlice";
+import { setDoctorDetails, setIsSignedIn, setUser } from "../../stores/userSessionSlice";
 import { FailedResponseDto } from "../../dtos/FailedResponseDto";
 import { StatusAndErrorType } from "../../models/StatusAndErrorType.enum";
 import { useToast } from "../../stores/ToastContext";
@@ -76,6 +76,7 @@ export const LoginPage = () => {
   const afterLoginSuccess = (data: SignInDto) => {
     console.log("Sign-in success:", data);
     dispatch(setUser(data));
+    dispatch(setDoctorDetails(data.userGoogleAuthData.doctorDetails));
     dispatch(setIsSignedIn(true));
     navigate("/doctorhome");
   };

@@ -13,7 +13,9 @@ import { useToast, DefaultToastTiming } from "../stores/ToastContext";
 import { createDoctor } from "../controllers/DoctorController";
 import { Flex } from "@radix-ui/themes";
 import { UserSessionStateType } from "../stores/userSessionStore";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setDoctorDetails } from "../stores/userSessionSlice";
+import { DoctorDetails as iDoctorDetails } from "../models/iDoctorDetails";
 
 interface DoctorDetailsProps {
   onSave?: () => void;
@@ -40,6 +42,7 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
     doctor_certification: "",
     user_id:""
   });
+  const dispatch = useDispatch();
   const { showToast } = useToast();
   const doctorData = useSelector(
     (state: UserSessionStateType) => state.userSession.user
@@ -65,13 +68,15 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
     console.log("Collected Form Data:", formData);
   };
 
-  const onCreateSuccess = () => {
+  const onCreateSuccess = (data: iDoctorDetails) => {
     showToast(
       "Doctor details submitted successfully",
       DefaultToastTiming,
       ToastColors.GREEN
     );
+    dispatch(setDoctorDetails(data));
     if (onSave) {
+    
       onSave();
     } else {
       navigate("/doctorhome");

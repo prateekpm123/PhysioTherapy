@@ -1,5 +1,5 @@
 import { FailedResponseDto } from "../dtos/FailedResponseDto";
-import { SignInDto } from "../dtos/SignInDto";
+import { LoginDto, SignInDto } from "../dtos/SignInDto";
 import { Accounts } from "../models/Accounts";
 // import { getCookie } from "../utils/cookies";
 
@@ -42,7 +42,7 @@ export const sendIdTokenToBackendSignUp = async (
 export const sendIdTokenToBackendLogin = async (
   idToken: string,
   accountType: Accounts,
-  afterSignInSuccess: (data: SignInDto) => void,
+  afterSignInSuccess: (data: LoginDto) => void,
   afterSignInFail: (response: FailedResponseDto) => void
 ) => {
   try {
@@ -63,7 +63,7 @@ export const sendIdTokenToBackendLogin = async (
     });
     const responseJson = await response.json();
     if (responseJson.ok) {
-      const data = responseJson as SignInDto;
+      const data = responseJson as LoginDto;
       afterSignInSuccess(data);
       console.log("Backend response:", data);
     } else {

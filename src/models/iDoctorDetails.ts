@@ -10,13 +10,14 @@ export interface DoctorDetails {
   country: string;
   city: string;
   state: string;
-  
+
   role: string;
   user_id: string;
-  doctor_history: object;
+  doctor_history: string;
   doctor_specialization: string;
   doctor_qualification: string;
   doctor_experience: string;
   doctor_awards: string;
   doctor_certification: string;
+  d_id?: string;
 }

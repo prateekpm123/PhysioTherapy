@@ -1,7 +1,14 @@
+import { DoctorDetails } from "../models/iDoctorDetails";
+// import DoctorDetails from "../pages/DoctorDetails";
 import { BaseAPIDto } from "./BaseAPIDto";
 
 export interface SignInDto extends BaseAPIDto {
   userGoogleAuthData: GoogleUserDataDto;
+}
+
+export interface LoginDto extends BaseAPIDto {
+  userGoogleAuthData: GoogleUserDataDto;
+  doctorDetails: DoctorDetails;
 }
 
 export interface GoogleUserDataDto {
@@ -10,6 +17,7 @@ export interface GoogleUserDataDto {
   iss: string;
   aud: string;
   auth_time: number;
+  doctorDetails?: DoctorDetails;
   user_id: string;
   sub: string;
   iat: number;

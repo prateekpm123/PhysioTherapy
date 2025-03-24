@@ -33,11 +33,12 @@ export const createPatient = async (inputs: iApiCallInterface) => {
 export const getAllPatients = async (inputs: iApiCallInterface) => {
     try {
       const response = await fetch(baseURL + "/getall", {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `${idToken}`,
         },
+        body: JSON.stringify(inputs.data as iPatients)
       });
       const responseJson = await response.json();
       if (responseJson.ok) {

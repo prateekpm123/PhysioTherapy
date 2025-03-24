@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit/react";
 import { UserSession } from "../models/IUserSession";
 import { UserType } from "../models/UserType";
-import { SignInDto } from "../dtos/SignInDto";
+import { LoginDto } from "../dtos/SignInDto";
+import { DoctorDetails } from "../models/iDoctorDetails";
 
 const initialState: UserSession = {
   user: {
@@ -22,6 +23,27 @@ const initialState: UserSession = {
     googleIdentitiesEmail: [],
     googleSignInProvider: "",
   },
+  doctorDetails: {
+    name: "",
+    age: 0,
+    country_code: "",
+    phone_number: 0n,
+    email: "",
+    address: "",
+    pincode: 0,
+    country: "",
+    city: "",
+    state: "",
+    role: "",
+    user_id: "",
+    doctor_history: "",
+    doctor_specialization: "",
+    doctor_qualification: "",
+    doctor_experience: "",
+    doctor_awards: "",
+    doctor_certification: "",
+    d_id: "",
+  },
   token: "",
   isSignedIn: false,
 };
@@ -31,7 +53,7 @@ const userSessionSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      const userData = action.payload as SignInDto;
+      const userData = action.payload as LoginDto;
       state.user = {
         uid: userData.userGoogleAuthData.uid, // Preserve `uid` if needed
         type: UserType.DOCTOR, // Preserve `type` if needed
@@ -54,11 +76,36 @@ const userSessionSlice = createSlice({
           userData.userGoogleAuthData.firebase.sign_in_provider,
       };
     },
+    setDoctorDetails: (state, action) => {
+      const doctorData = action.payload as DoctorDetails;
+      state.doctorDetails = {
+        name: doctorData.name,
+        age: doctorData.age,
+        country_code: doctorData.country_code,
+        phone_number: doctorData.phone_number,
+        email: doctorData.email,
+        address: doctorData.address,
+        pincode: doctorData.pincode,
+        country: doctorData.country,
+        city: doctorData.city,
+        state: doctorData.state,
+        role: doctorData.role,
+        user_id: doctorData.user_id,
+        doctor_history: doctorData.doctor_history,
+        doctor_specialization: doctorData.doctor_specialization,
+        doctor_qualification: doctorData.doctor_qualification,
+        doctor_experience: doctorData.doctor_experience,
+        doctor_awards: doctorData.doctor_awards,
+        doctor_certification: doctorData.doctor_certification,
+        d_id: doctorData.d_id
+      };
+    },
     setIsSignedIn: (state, action) => {
       state.isSignedIn = action.payload;
     },
   },
 });
 
-export const { setUser, setIsSignedIn } = userSessionSlice.actions;
+export const { setUser, setIsSignedIn, setDoctorDetails } =
+  userSessionSlice.actions;
 export default userSessionSlice.reducer;

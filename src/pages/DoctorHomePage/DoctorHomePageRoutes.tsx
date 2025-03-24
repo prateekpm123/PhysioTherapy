@@ -22,11 +22,11 @@ const DoctorHomePageRoutes = () => {
     <Routes>
       <Route path="/" element={<DoctorHomePage />}>
         {/* <Route index element={<DoctorHomePageCentre />} /> */}
-        <Route index element={<DoctorHomeLandingPage onSave={onNewPatientCreation} refreshTrigger={patientListRefresh}/>} />
+        <Route index element={<DoctorHomeLandingPage onSave={onNewPatientCreation} refreshTrigger={patientListRefresh} setPatientListRefresh={setPatientListRefresh}/>} />
         
         {/* ... other nested routes ... */}
         <Route path="newPatient" element={<NewPatientEntry onSave={onNewPatientCreation}/>} />
-        <Route path="patientList" element={<PatientList refreshTrigger={patientListRefresh}/>} />
+        <Route path="patientList" element={<PatientList refreshTrigger={patientListRefresh} setPatientListRefresh={setPatientListRefresh}/>} />
         <Route path="patientDetails" element={<PatientDetails />} />
         <Route path="patientTreatmentHistory" element={<PatientTreatmentHistory />} />
         <Route path="patientTreatmentBuilder" element={<PatientTreatmentBuilder />} />

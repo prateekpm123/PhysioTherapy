@@ -8,7 +8,7 @@ import { DefaultToastTiming, useToast } from "../../stores/ToastContext";
 import { ToastColors } from "../../components/Toast";
 import iPatients from "../../models/iPatients";
 import { createPatient } from "../../controllers/PatientsController";
-import { FailedResponseDto } from "../../dtos/FailedResponseDto"; 
+import { FailedResponseDto } from "../../dtos/FailedResponseDto";
 import { StatusAndErrorType } from "../../models/StatusAndErrorType.enum";
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../stores/userSessionStore";
@@ -18,10 +18,15 @@ interface iNewPatientEntry {
   onSave: () => void;
 }
 
-const NewPatientEntry: React.FC<iNewPatientEntry> = ( {onSave} )  => {
+const NewPatientEntry: React.FC<iNewPatientEntry> = ({ onSave }) => {
+  // const userData = useSelector(
+  //   (state: UserSessionStateType) => state.userSession.user
+  // );
   const doctorData = useSelector(
-      (state: UserSessionStateType) => state.userSession.user
-    );
+    (state: UserSessionStateType) => state.userSession.doctorDetails
+  );
+
+  console.log("Doctor settings ", doctorData);
   const [formData, setFormData] = useState<iPatients>({
     patientName: "",
     patientAge: 0,
@@ -31,7 +36,7 @@ const NewPatientEntry: React.FC<iNewPatientEntry> = ( {onSave} )  => {
     email: "",
     address: "",
     fileUpload: [],
-    doctorId: ""
+    doctorId: "",
   });
   const { showToast } = useToast();
 
@@ -52,7 +57,7 @@ const NewPatientEntry: React.FC<iNewPatientEntry> = ( {onSave} )  => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    formData.doctorId = doctorData.uid;
+    formData.doctorId = doctorData.d_id || "";
     createPatient({
       data: formData,
       afterAPISuccess: onCreateSuccess,
@@ -62,16 +67,28 @@ const NewPatientEntry: React.FC<iNewPatientEntry> = ( {onSave} )  => {
   };
 
   const onCreateSuccess = () => {
-    showToast("Form submitted successfully", DefaultToastTiming, ToastColors.GREEN);
+    showToast(
+      "Form submitted successfully",
+      DefaultToastTiming,
+      ToastColors.GREEN
+    );
     onSave();
     console.log("Patient was created succesfully");
   };
   const onCreateFail = (response: FailedResponseDto) => {
     if (response.errorCode === StatusAndErrorType.PatientNotCreated) {
-      showToast("Patient data was not saved", DefaultToastTiming, ToastColors.RED);
+      showToast(
+        "Patient data was not saved",
+        DefaultToastTiming,
+        ToastColors.RED
+      );
       console.log("Patient was not created");
-    } else if(response.errorCode === StatusAndErrorType.Unauthorized) {
-        showToast("Your session has expired, log in again", 10000, ToastColors.RED)
+    } else if (response.errorCode === StatusAndErrorType.Unauthorized) {
+      showToast(
+        "Your session has expired, log in again",
+        10000,
+        ToastColors.RED
+      );
     } else {
       showToast("Patient data was not saved");
       console.log("Some error occured");
@@ -79,7 +96,7 @@ const NewPatientEntry: React.FC<iNewPatientEntry> = ( {onSave} )  => {
   };
 
   return (
-    <div className="p-6 mx-auto" style={{width: "80%"}}>
+    <div className="p-6 mx-auto" style={{ width: "80%" }}>
       <h1 className="text-2xl font-bold mb-4">New Patient Entry</h1>
       <Form.Root className="space-y-4" onSubmit={handleSubmit}>
         {/* Patient Name */}

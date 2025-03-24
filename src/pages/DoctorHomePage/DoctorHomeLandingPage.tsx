@@ -11,9 +11,10 @@ interface iDoctorHomeLandingPage {
   // patients: iPatientDto[];
   // setPatients: React.Dispatch<React.SetStateAction<iPatientDto[]>>;
   refreshTrigger: boolean;
+  setPatientListRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DoctorHomeLandingPage: React.FC<iDoctorHomeLandingPage> = ( {onSave, refreshTrigger} ) => {
+const DoctorHomeLandingPage: React.FC<iDoctorHomeLandingPage> = ( {onSave, refreshTrigger, setPatientListRefresh} ) => {
   return (
     <>
       <div>
@@ -24,7 +25,7 @@ const DoctorHomeLandingPage: React.FC<iDoctorHomeLandingPage> = ( {onSave, refre
           style={{ display: "flex" }}
         >
           <Flex style={{ flex: 2, boxShadow:"9px 0px 18px 4px rgba(0,0,0,0.75)", backgroundColor: ThemeColorPallate.foreground }}>
-            <PatientList refreshTrigger={refreshTrigger}></PatientList>
+            <PatientList refreshTrigger={refreshTrigger} setPatientListRefresh={setPatientListRefresh}></PatientList>
           </Flex>
           <Flex style={{ flex: 5 }}>
             <NewPatientEntry onSave={onSave}></NewPatientEntry>
