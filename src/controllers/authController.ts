@@ -1,6 +1,9 @@
 import { FailedResponseDto } from "../dtos/FailedResponseDto";
 import { SignInDto } from "../dtos/SignInDto";
 import { Accounts } from "../models/Accounts";
+// import { getCookie } from "../utils/cookies";
+
+
 
 export const sendIdTokenToBackendSignUp = async (
   idToken: string,

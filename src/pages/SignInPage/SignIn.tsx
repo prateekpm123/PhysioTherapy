@@ -94,7 +94,8 @@ export const SignIn = () => {
     console.log("Sign-in success:", data);
     dispatch(setUser(data));
     dispatch(setIsSignedIn(true));
-    navigate("/doctorhome");
+    navigate("/doctor/details")
+    // navigate("/doctorhome");
   };
 
   const afterSignInFail = (response: FailedResponseDto) => {

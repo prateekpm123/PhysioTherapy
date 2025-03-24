@@ -8,7 +8,7 @@ import { DefaultToastTiming, useToast } from "../../stores/ToastContext";
 import { ToastColors } from "../../components/Toast";
 import iPatients from "../../models/iPatients";
 import { createPatient } from "../../controllers/PatientsController";
-import { FailedResponseDto } from "../../dtos/FailedResponseDto";
+import { FailedResponseDto } from "../../dtos/FailedResponseDto"; 
 import { StatusAndErrorType } from "../../models/StatusAndErrorType.enum";
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../stores/userSessionStore";

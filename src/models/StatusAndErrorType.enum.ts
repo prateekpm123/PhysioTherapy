@@ -11,5 +11,11 @@ export enum StatusAndErrorType {
     PatientNotUpdated = 4003,
     PatientNotDeleted = 4004,
     PatientAlreadyExists = 4005,
-    PatientNotVerified = 4006
+    PatientNotVerified = 4006,
+    DoctorNotCreated = 5001,
+    DoctorNotFound = 5002,
+    DoctorNotUpdated = 5003,
+    DoctorNotDeleted = 5004,
+    DoctorAlreadyExists = 5005,
+    DoctorNotVerified = 5006,
 }
