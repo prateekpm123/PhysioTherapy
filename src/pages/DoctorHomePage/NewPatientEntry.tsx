@@ -9,9 +9,9 @@ import { ToastColors } from "../../components/Toast";
 import iPatients from "../../models/iPatients";
 import { createPatient } from "../../controllers/PatientsController";
 import { FailedResponseDto } from "../../dtos/FailedResponseDto";
-import { StatusAndErrorType } from "../../models/StatusAndErrorType.enum";
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../stores/userSessionStore";
+import ErrorHandler from "../../errorHandlers/ErrorHandler";
 // import { PatientListProps } from "./PatientLIst";
 
 interface iNewPatientEntry {
@@ -76,23 +76,7 @@ const NewPatientEntry: React.FC<iNewPatientEntry> = ({ onSave }) => {
     console.log("Patient was created succesfully");
   };
   const onCreateFail = (response: FailedResponseDto) => {
-    if (response.errorCode === StatusAndErrorType.PatientNotCreated) {
-      showToast(
-        "Patient data was not saved",
-        DefaultToastTiming,
-        ToastColors.RED
-      );
-      console.log("Patient was not created");
-    } else if (response.errorCode === StatusAndErrorType.Unauthorized) {
-      showToast(
-        "Your session has expired, log in again",
-        10000,
-        ToastColors.RED
-      );
-    } else {
-      showToast("Patient data was not saved");
-      console.log("Some error occured");
-    }
+    ErrorHandler(response);
   };
 
   return (

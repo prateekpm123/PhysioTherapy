@@ -1,7 +1,7 @@
 import { BaseAPIDto } from "./BaseAPIDto";
 
 export interface iPatientDto {
-    p_id: string;
+    d_id?: string;
     name: string;
     age: number;
     country_code: string;

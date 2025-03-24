@@ -14,6 +14,8 @@ import { iGetAllPatientDto, iPatientDto } from "../../dtos/PatientDto";
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../stores/userSessionStore";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import ErrorHandler from "../../errorHandlers/ErrorHandler";
+import { DoctorHomeMainScreen, useCurrentMainScreenContext } from "./DoctorHomePage";
 
 export interface PatientListProps {
   // patients: iPatientDto[];
@@ -22,10 +24,14 @@ export interface PatientListProps {
   refreshTrigger: boolean;
 }
 
-const PatientList: React.FC<PatientListProps> = ({ refreshTrigger, setPatientListRefresh }) => {
+const PatientList: React.FC<PatientListProps> = ({
+  refreshTrigger,
+  setPatientListRefresh,
+}) => {
   const [patients, setPatients] = useState([] as iPatientDto[]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const { setCurrentMainScreen, setCurrentPatientId } = useCurrentMainScreenContext();
   const filteredData: iPatientDto[] = patients.filter((item: iPatientDto) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -36,7 +42,14 @@ const PatientList: React.FC<PatientListProps> = ({ refreshTrigger, setPatientLis
   const onPatientLisRefresh = () => {
     setPatientListRefresh(!refreshTrigger);
     setIsLoading(true);
-  }
+  };
+
+  const onPatientCardClick = (patientData: iPatientDto) => {
+    setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS)
+    if (setCurrentPatientId) {
+      setCurrentPatientId(patientData);
+    }
+  };
 
   // Fetch data from API
   useEffect(() => {
@@ -48,6 +61,8 @@ const PatientList: React.FC<PatientListProps> = ({ refreshTrigger, setPatientLis
         console.log(response);
       },
       afterAPIFail: (response) => {
+        ErrorHandler(response);
+        setIsLoading(false);
         console.log(response);
       },
     });
@@ -77,15 +92,20 @@ const PatientList: React.FC<PatientListProps> = ({ refreshTrigger, setPatientLis
       <Flex direction="column" gap="3" height="78vh" overflow="auto">
         {filteredData.map((item: iPatientDto) => (
           <Skeleton loading={isLoading}>
-          <Card key={item.p_id} size="3" style={{minHeight: "120px"}}>
-            <Flex direction="column" gap="1">
-              <Text size="3" weight="medium">
-                {item.name}
-              </Text>
-              <Text size="2">Age: {item.age}</Text>
-              <Text size="2">Condition: {item.chiefComplaint}</Text>
-            </Flex>
-          </Card>
+            <Card
+              onClick={()=>onPatientCardClick(item)}
+              key={item.d_id}
+              size="3"
+              style={{ minHeight: "120px" }}
+            >
+              <Flex direction="column" gap="1">
+                <Text size="3" weight="medium">
+                  {item.name}
+                </Text>
+                <Text size="2">Age: {item.age}</Text>
+                <Text size="2">Condition: {item.chiefComplaint}</Text>
+              </Flex>
+            </Card>
           </Skeleton>
         ))}
       </Flex>
