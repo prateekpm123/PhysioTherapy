@@ -1,4 +1,5 @@
 import { FailedResponseDto } from "../dtos/FailedResponseDto";
+import { iPatientDto } from "../dtos/PatientDto";
 import { iApiCallInterface } from "../models/iApiCallInterface";
 import iPatients from "../models/iPatients";
 import { getCookie } from "../utils/cookies";
@@ -39,6 +40,29 @@ export const getAllPatients = async (inputs: iApiCallInterface) => {
           Authorization: `${idToken}`,
         },
         body: JSON.stringify(inputs.data as iPatients)
+      });
+      const responseJson = await response.json();
+      if (responseJson.ok) {
+        const data = responseJson as unknown;
+        inputs.afterAPISuccess(data);
+        console.log("Backend response:", data);
+      } else {
+        inputs.afterAPIFail(responseJson as FailedResponseDto);
+      }
+    } catch (error) {
+      console.error("Error creating patient:", error);
+    }
+  };
+
+  export const findPatient = async (inputs: iApiCallInterface) => {
+    try {
+      const response = await fetch(baseURL + "/find", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${idToken}`,
+        },
+        body: JSON.stringify(inputs.data as iPatientDto)
       });
       const responseJson = await response.json();
       if (responseJson.ok) {

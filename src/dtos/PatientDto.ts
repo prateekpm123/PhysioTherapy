@@ -7,7 +7,7 @@ export interface iPatientDto {
     country_code: string;
     phone_number: number;
     email: string;
-    address_id: string| null;
+    address: string| null;
     chiefComplaint: string;
     description: string;
     patient_history: [];

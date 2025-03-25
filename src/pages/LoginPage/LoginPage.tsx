@@ -61,7 +61,7 @@ export const LoginPage = () => {
     try {
       const result = await signInWithPopup(firebaseAuth, provider);
       const user = result.user;
-      const idToken = await user.getIdToken();
+      const idToken = await user.getIdToken(true);
       sendIdTokenToBackendLogin(
         idToken,
         Accounts.FACEBOOK,

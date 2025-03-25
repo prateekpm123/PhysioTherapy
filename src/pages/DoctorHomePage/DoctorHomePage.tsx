@@ -15,19 +15,19 @@ export enum DoctorHomeMainScreen {
   PATIENT_DETAILS = 2,
 }
 
-export interface DoctorContext {
+interface DoctorContext {
   currentMainScreen: DoctorHomeMainScreen;
   setCurrentMainScreen: React.Dispatch<
     React.SetStateAction<DoctorHomeMainScreen>
   >;
   currentPatientDetails?: iPatientDto;
-  setCurrentPatientId?: React.Dispatch<React.SetStateAction<iPatientDto>>;
+  setCurrentPatientDetails?: React.Dispatch<React.SetStateAction<iPatientDto>>;
+  isPatientDetailsScreenRefresh: boolean;
+  setIsPatientDetailScreenRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Create a context for the state variable
-const CurrentMainScreenContext = createContext<DoctorContext | undefined>(
-  undefined
-);
+const CurrentMainScreenContext = createContext<DoctorContext | undefined>(undefined);
 
 export const useCurrentMainScreenContext = () => {
   const context = useContext(CurrentMainScreenContext);
@@ -46,9 +46,11 @@ export const DoctorHomePage = () => {
     DoctorHomeMainScreen.NEW_PATIENT_ENTRY
   );
 
-  const [currentPatientDetails, setCurrentPatientId] = useState(
+  const [currentPatientDetails, setCurrentPatientDetails] = useState(
     {} as iPatientDto
   );
+
+  const [isPatientDetailsScreenRefresh, setIsPatientDetailScreenRefresh] = useState(false);
 
   // const user: User = useSelector(
   // (state: UserSessionStateType) => state.userSession.user
@@ -65,7 +67,9 @@ export const DoctorHomePage = () => {
           currentMainScreen,
           setCurrentMainScreen,
           currentPatientDetails,
-          setCurrentPatientId,
+          setCurrentPatientDetails,
+          isPatientDetailsScreenRefresh, 
+          setIsPatientDetailScreenRefresh
         }}
       >
         <div style={{ backgroundColor: ThemeColorPallate.background }}>

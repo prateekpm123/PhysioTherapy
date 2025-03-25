@@ -30,6 +30,8 @@ const DoctorHomeLandingPage: React.FC<iDoctorHomeLandingPage> = ( {onSave, refre
     }
   };
 
+  
+
   const component = renderComponent();
   
   return (

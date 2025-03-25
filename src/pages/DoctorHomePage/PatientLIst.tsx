@@ -15,7 +15,10 @@ import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../stores/userSessionStore";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import ErrorHandler from "../../errorHandlers/ErrorHandler";
-import { DoctorHomeMainScreen, useCurrentMainScreenContext } from "./DoctorHomePage";
+import {
+  DoctorHomeMainScreen,
+  useCurrentMainScreenContext,
+} from "./DoctorHomePage";
 
 export interface PatientListProps {
   // patients: iPatientDto[];
@@ -31,7 +34,8 @@ const PatientList: React.FC<PatientListProps> = ({
   const [patients, setPatients] = useState([] as iPatientDto[]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const { setCurrentMainScreen, setCurrentPatientId } = useCurrentMainScreenContext();
+  const { setCurrentMainScreen, setCurrentPatientDetails } =
+    useCurrentMainScreenContext();
   const filteredData: iPatientDto[] = patients.filter((item: iPatientDto) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -45,9 +49,9 @@ const PatientList: React.FC<PatientListProps> = ({
   };
 
   const onPatientCardClick = (patientData: iPatientDto) => {
-    setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS)
-    if (setCurrentPatientId) {
-      setCurrentPatientId(patientData);
+    setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
+    if (setCurrentPatientDetails) {
+      setCurrentPatientDetails(patientData);
     }
   };
 
@@ -75,9 +79,13 @@ const PatientList: React.FC<PatientListProps> = ({
       p="4"
       style={{ height: "100%", width: "100%" }}
     >
-      <Flex direction="row" gap="4" p="4" align="stretch" justify="start">
+      <Flex direction="row" gap="4" p="4" align="center" justify="between">
         <Heading size="6">Patient List</Heading>
-        <ReloadIcon onClick={onPatientLisRefresh} />
+        <ReloadIcon
+          onClick={onPatientLisRefresh}
+          width="28" // Adjust size as needed
+          height="28" // Adjust size as needed
+        />
       </Flex>
 
       <TextField.Root
@@ -93,7 +101,7 @@ const PatientList: React.FC<PatientListProps> = ({
         {filteredData.map((item: iPatientDto) => (
           <Skeleton loading={isLoading}>
             <Card
-              onClick={()=>onPatientCardClick(item)}
+              onClick={() => onPatientCardClick(item)}
               key={item.d_id}
               size="3"
               style={{ minHeight: "120px" }}

@@ -1,11 +1,12 @@
 // Header.tsx
 import { styled } from "@stitches/react";
-import { Flex, Link, Text,Avatar, DropdownMenu, Box } from "@radix-ui/themes";
+import { Flex, Link, Text,Avatar, DropdownMenu, Box, Button } from "@radix-ui/themes";
 import { Avatar as Avatar2}  from "radix-ui";
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../stores/userSessionStore";
 import { useNavigate } from "react-router-dom";
 import ThemeColorPallate from "../../assets/ThemeColorPallate";
+import { DoctorHomeMainScreen, useCurrentMainScreenContext } from "./DoctorHomePage";
 
 const Nav = styled("nav", {
   width: "100vw",
@@ -29,6 +30,7 @@ const DoctorNavBar = () => {
   const user = useSelector(
     (state: UserSessionStateType) => state.userSession.user
   );
+  const { setCurrentMainScreen } = useCurrentMainScreenContext();
 
   const navigate = useNavigate();
 
@@ -45,11 +47,15 @@ const DoctorNavBar = () => {
       .then((data) => console.log(data));
   };
 
+  const onClickNewPatient = ()=>{
+    setCurrentMainScreen(DoctorHomeMainScreen.NEW_PATIENT_ENTRY);
+  }
+
   return (
     <Nav style={{ backgroundColor: ThemeColorPallate.foreground,  }}>
       <div style={{ width: "100%", padding: "0 1rem" }}>
         {/* Use a div with padding */}
-        <Flex justify="between" align="center" style={{ width: "100%" }}>
+        <Flex justify="between" align="center" style={{ width: "100%" }} gap="4">
           <Logo href="#">PhysioCare</Logo>
           <Flex style={{ flexGrow: 1, justifyContent: "center" }}>
             <Link onClick={()=> navigate('/doctorhome')} href="#" style={{color: "white"}} >Home Center</Link>
@@ -61,6 +67,7 @@ const DoctorNavBar = () => {
           <Flex
             style={{ justifyContent: "flex-end", marginRight: "1rem" }}
           ></Flex>
+          <Button onClick={onClickNewPatient} variant="soft">Create New Patient</Button>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
               <button onClick={onProfileClick}>
