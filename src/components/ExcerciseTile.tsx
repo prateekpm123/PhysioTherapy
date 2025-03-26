@@ -7,6 +7,8 @@ import { Card, Flex, Text, Button, Skeleton } from "@radix-ui/themes";
 import { EditExcercise } from "./EditExcercise";
 import { ExcerciseDetail } from "./ExcerciseDetail";
 import { useCurrentMainScreenContext } from "../pages/DoctorHomePage/DoctorHomePage";
+// import { IoMdAdd } from "react-icons/io";
+
 
 export const ExcerciseTile = (data: iExcerciseTile) => {
   const [mouseShape, setMouseShape] = useState("pointer");
@@ -64,14 +66,17 @@ const ExcerciseTileFullView = ({
   const [isLoading, setIsLoading] = useState(true);
   const handleImageLoad = () => {
     setIsLoading(false); // Update loading state
-    console.log("Image loaded successfully:", data.excercise.excercise_image_url);
+    console.log(
+      "Image loaded successfully:",
+      data.excercise.excercise_image_url
+    );
   };
 
   const { isExcerciseBuilderLoading } = useCurrentMainScreenContext();
 
   const handleImageError = () => {
     setIsLoading(false); // Update loading state
-    console.error("Failed to load image:", data.excercise.excercise_image_url);
+    // console.error("Failed to load image:", data.excercise.excercise_image_url);
   };
 
   return (
@@ -85,6 +90,37 @@ const ExcerciseTileFullView = ({
       }}
     >
       <Flex direction="column" gap="3">
+        {/* <Button
+          variant="solid"
+          size="4"
+          style={{
+            position: "absolute",
+            bottom: "85%",
+            right: "10%",
+            zIndex: 2,
+            borderRadius: "50%",
+            width: "2.5rem",
+            height: "2.5rem",
+            boxShadow: "1px 2px 44px 5px rgba(0,0,0, 0.75)",
+          }}
+        > */}
+          {/* <BiExpand
+            className="text-1xl text-slate-700"
+            style={{
+              position: "absolute",
+              bottom: "85%",
+              backdropFilter: "blur(10px)",
+              right: "10%",
+              zIndex: 2,
+              borderRadius: "50%",
+              padding: "0.5rem",
+              width: "2.5rem",
+              height: "2.5rem",
+              boxShadow: "1px 2px 44px 5px rgba(0,0,0, 0.75)",
+              color: ThemeColorPallate.cardFontColorBlack
+            }}
+          /> */}
+        {/* </Button> */}
         <Skeleton loading={isLoading || isExcerciseBuilderLoading}>
           <div style={{ width: "100%", height: "200px", position: "relative" }}>
             <img
@@ -99,9 +135,9 @@ const ExcerciseTileFullView = ({
               }}
               onLoad={handleImageLoad}
               onError={handleImageError}
-              onClick={data.onClick}
-              onMouseEnter={() => setMouseShape("grab")}
-              onMouseLeave={() => setMouseShape("pointer")}
+              // onClick={data.onClick}
+              // onMouseEnter={() => setMouseShape("grab")}
+              // onMouseLeave={() => setMouseShape("pointer")}
             />
           </div>
         </Skeleton>
@@ -132,8 +168,11 @@ const ExcerciseTileFullView = ({
           >
             Add
           </Button>
-          <EditExcercise  excercise={data.excercise} e_id={data.excercise.e_id}></EditExcercise>
-          <ExcerciseDetail excercise={data.excercise} ></ExcerciseDetail>
+          <EditExcercise
+            excercise={data.excercise}
+            e_id={data.excercise.e_id}
+          ></EditExcercise>
+          <ExcerciseDetail excercise={data.excercise}></ExcerciseDetail>
           {/* <Button
             variant="soft"
             size="3"
@@ -165,13 +204,15 @@ const ExcerciseTileMobileView = ({
   mouseShape,
   setMouseShape,
 }: ExcerciseTileViewProps) => {
-
   const { isExcerciseBuilderLoading } = useCurrentMainScreenContext();
 
   const [isLoading, setIsLoading] = useState(true);
   const handleImageLoad = () => {
     setIsLoading(false); // Update loading state
-    console.log("Image loaded successfully:", data.excercise.excercise_image_url);
+    console.log(
+      "Image loaded successfully:",
+      data.excercise.excercise_image_url
+    );
   };
 
   const handleImageError = () => {
@@ -190,7 +231,7 @@ const ExcerciseTileMobileView = ({
       }}
     >
       <Flex gap="3" align="center">
-        <Skeleton loading={isLoading ||isExcerciseBuilderLoading}>
+        <Skeleton loading={isLoading || isExcerciseBuilderLoading}>
           <div style={{ width: "80px", height: "80px", position: "relative" }}>
             <img
               src={data.excercise.excercise_image_url}

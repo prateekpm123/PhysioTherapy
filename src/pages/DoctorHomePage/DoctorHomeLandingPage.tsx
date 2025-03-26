@@ -24,7 +24,7 @@ const Nav = styled("nav", {
 });
 
 const DoctorHomeLandingPage = () => {
-  const { currentMainScreen, isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh, setIsPatientDetailScreenRefresh, isPatientDetailsScreenRefresh, setPatientDetailsLoading } = useCurrentMainScreenContext();
+  const { currentMainScreen, isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh, setIsPatientDetailScreenRefresh, isPatientDetailsScreenRefresh } = useCurrentMainScreenContext();
   const renderComponent = () => {
     if (currentMainScreen === DoctorHomeMainScreen.NEW_PATIENT_ENTRY) {
       return <NewPatientEntry />;
@@ -41,7 +41,7 @@ const DoctorHomeLandingPage = () => {
 
   const onMiniNavBarReloadClick = () =>{
     if(currentMainScreen === DoctorHomeMainScreen.PATIENT_DETAILS){
-      setPatientDetailsLoading(true);
+      // setPatientDetailsLoading(true);
       setIsPatientDetailScreenRefresh(!isPatientDetailsScreenRefresh);
     } else if(currentMainScreen === DoctorHomeMainScreen.EXCERCISE_BUILDER){
       setIsExcerciseBuilderRefresh(!isExcerciseBuilderRefresh);

@@ -21,10 +21,10 @@ export const PlannerItem = (plannerData: IPlannerItem) => {
   return (
       <Flex
         direction="row"
-        justify="center"
-        align="start"
+        justify="start"
+        align="stretch"
         width="100%"
-        height="48px" // h-12
+        // height="48px" // h-12
         style={{
           margin: "8px 0px", // m-2
           backgroundColor: ThemeColorPallate.cardBackGroundColorBlack,
@@ -38,12 +38,12 @@ export const PlannerItem = (plannerData: IPlannerItem) => {
         <Text color="gray" style={{ color: ThemeColorPallate.cardFontColorBlack }}>
           {plannerData.excercise.excercise_name}
         </Text>
-        <Flex justify="center" align="center">
+        <Flex justify="end" align="center">
           <Flex
-            justify="center"
-            align="center"
-            width="28px" // w-7
-            height="28px" // h-7
+            justify="end"
+            align="start"
+            // width="28px" // w-7
+            // height="28px" // h-7
             style={{ backgroundColor: deleteBtnBgColor }}
           >
             <RiDeleteBinLine

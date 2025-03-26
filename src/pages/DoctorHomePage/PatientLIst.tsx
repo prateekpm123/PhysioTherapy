@@ -31,7 +31,7 @@ const PatientList= () => {
   const [patients, setPatients] = useState([] as iPatientDto[]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const { setCurrentMainScreen, setCurrentPatientDetails, isPatientListScreenRefresh, setIsPatientListScreenRefresh } =
+  const { setCurrentMainScreen, setCurrentPatientDetails, isPatientListScreenRefresh, setIsPatientListScreenRefresh, isPatientDetailsScreenRefresh, setIsPatientDetailScreenRefresh} =
     useCurrentMainScreenContext();
   const filteredData: iPatientDto[] = patients.filter((item: iPatientDto) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -47,6 +47,7 @@ const PatientList= () => {
 
   const onPatientCardClick = (patientData: iPatientDto) => {
     setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
+    setIsPatientDetailScreenRefresh(!isPatientDetailsScreenRefresh);
     if (setCurrentPatientDetails) {
       setCurrentPatientDetails(patientData);
     }

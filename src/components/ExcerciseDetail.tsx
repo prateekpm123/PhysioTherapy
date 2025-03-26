@@ -7,7 +7,8 @@ import {
   Text,
 } from "@radix-ui/themes";
 import { iExcerciseData } from "../models/ExcerciseInterface";
-import React from "react";
+import ThemeColorPallate from "../assets/ThemeColorPallate";
+import { BiExpand } from "react-icons/bi";
 
 export interface iExcerciseDetailProps {
   excercise: iExcerciseData;
@@ -17,11 +18,24 @@ export const ExcerciseDetail = (excerciseDetailProp: iExcerciseDetailProps) => {
   return (
     <Dialog.Root>
       <Dialog.Trigger>
-        <Button variant="soft" size="3">
-          Details
-        </Button>
+        <BiExpand
+          className="text-1xl text-slate-700"
+          style={{
+            position: "absolute",
+            bottom: "85%",
+            backdropFilter: "blur(10px)",
+            right: "10%",
+            zIndex: 2,
+            borderRadius: "50%",
+            padding: "0.5rem",
+            width: "2.5rem",
+            height: "2.5rem",
+            boxShadow: "1px 2px 44px 5px rgba(0,0,0, 0.75)",
+            color: ThemeColorPallate.cardFontColorBlack,
+          }}
+        />
       </Dialog.Trigger>
-
+          
       <Dialog.Content minHeight="20rem" minWidth="80rem" width="100%">
         <Dialog.Title>
           {excerciseDetailProp.excercise?.excercise_name}
@@ -39,7 +53,7 @@ export const ExcerciseDetail = (excerciseDetailProp: iExcerciseDetailProps) => {
             <img
               src={excerciseDetailProp.excercise.excercise_image_url}
               alt={excerciseDetailProp.excercise.excercise_name}
-              style={{ height: "50%", width: "50%", maxWidth: "25rem" }}
+              style={{ width: "50%", maxWidth: "25rem" }}
             />
             {/* </Flex> */}
 

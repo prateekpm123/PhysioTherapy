@@ -151,20 +151,6 @@ export const ExcerciseBuilder = () => {
               ))}
           </Suspense>
         </Box>
-        {/* <Button
-          variant="soft"
-          size="3"
-          style={{
-            position: "absolute",
-            bottom: "10%",
-            right: isMobile ? "3%" : "19%",
-            borderRadius: "50%",
-            boxShadow: "1px 2px 44px 5px rgba(0,0,0,0.75)",
-          }}
-          onClick={onAddExcerciseClick}
-        >
-          <IoMdAdd className="text-6xl text-slate-700" />
-        </Button> */}
         <AddExcercise/>
         <TextField.Root
           placeholder="Search"
@@ -185,7 +171,7 @@ export const ExcerciseBuilder = () => {
         />
       </Flex>
       {!isMobile && (
-        <Box style={{ flex: "1 1 35%", padding: "16px", minWidth:"20rem" }}>
+        <Box style={{ flex: "1 1 35%", marginLeft: "12px", boxShadow: "-9px 0px 15px 0px rgba(0,0,0,0.75)", minWidth:"20rem" }}>
           <PlannerList
             testId={"homePlannerList"}
             isPDFPreviewModelRequired={isPDFPreviewModalOpen}
