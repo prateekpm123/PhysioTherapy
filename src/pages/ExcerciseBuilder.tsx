@@ -5,12 +5,12 @@ import { PlannerList } from "../components/PlannerList";
 import { ExcerciseDetail } from "../components/ExcerciseDetail";
 import Modal from "../components/Modal";
 import { PDFPreview } from "../components/PDFPreview";
-import { IoMdAdd } from "react-icons/io";
+// import { IoMdAdd } from "react-icons/io";
 import { AddExcercise } from "../components/AddExcercise";
 import { EditExcercise } from "../components/EditExcercise";
 import { isMobile } from "react-device-detect";
 import React from "react";
-import { Box, Flex, TextField, Button } from "@radix-ui/themes";
+import { Box, Flex, TextField } from "@radix-ui/themes";
 import { getAllExcercises } from "../controllers/ExcerciseController";
 import ThemeColorPallate from "../assets/ThemeColorPallate";
 import { useCurrentMainScreenContext } from "./DoctorHomePage/DoctorHomePage";
@@ -83,9 +83,9 @@ export const ExcerciseBuilder = () => {
     });   
   };
 
-  const onAddExcerciseClick = () => {
-    setIsAddExcerciseModalOpen(true);
-  };
+  // const onAddExcerciseClick = () => {
+  //   setIsAddExcerciseModalOpen(true);
+  // };
 
   // const onPlannerListCounterBtnClick = () => {
   //   setIsPlannerListModalOpen(true);
@@ -151,7 +151,7 @@ export const ExcerciseBuilder = () => {
               ))}
           </Suspense>
         </Box>
-        <Button
+        {/* <Button
           variant="soft"
           size="3"
           style={{
@@ -164,7 +164,8 @@ export const ExcerciseBuilder = () => {
           onClick={onAddExcerciseClick}
         >
           <IoMdAdd className="text-6xl text-slate-700" />
-        </Button>
+        </Button> */}
+        <AddExcercise/>
         <TextField.Root
           placeholder="Search"
           size="3"
@@ -224,7 +225,7 @@ export const ExcerciseBuilder = () => {
           pIsOpen={isAddExcerciseModalOpen}
           setIsModelOpen={setIsAddExcerciseModalOpen}
         >
-          <AddExcercise refreshExcercise={fetchExcerciseData} />
+          <AddExcercise />
         </Modal>
       )}
       {isEditExcerciseModalOpen && (
