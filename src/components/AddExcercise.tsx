@@ -127,7 +127,7 @@ export const AddExcercise = () => {
           style={{
             position: "absolute",
             bottom: "10%",
-            right: isMobile ? "3%" : "19%",
+            right: isMobile ? "3%" : "20%",
             borderRadius: "50%",
             width: "64px",
             height: "64px",

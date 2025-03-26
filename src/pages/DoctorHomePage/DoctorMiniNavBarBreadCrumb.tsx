@@ -28,6 +28,7 @@ const CustomBreadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
                       cursor: "pointer",
                       padding: "4px 8px",
                       borderRadius: "4px",
+                      fontWeight: "bold",
                       backgroundColor: hoveredIndex === index ? "rgba(255, 255, 255, 0.1)" : "transparent",
                       backdropFilter: "blur(15px)",
                       transition: "background-color 0.2s ease",
@@ -49,7 +50,7 @@ const CustomBreadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
           ) : (
             <Text style={{ padding: "4px 8px" }}>{item.label}</Text>
           )}
-          {index < items.length - 1 && <Text className="text-xl" style={{ padding: "0px 4px" }}>{ " / " }</Text>}
+          {index < items.length - 1 && <Text className="text-sm" style={{ padding: "0px 4px" }}>{ " / " }</Text>}
         </React.Fragment>
       ))}
     </Flex>
