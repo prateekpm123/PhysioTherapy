@@ -1,3 +1,4 @@
+import { iExcercisePlanDto } from "../models/ExcerciseInterface";
 import { BaseAPIDto } from "./BaseAPIDto";
 
 export interface iPatientDto {
@@ -11,6 +12,10 @@ export interface iPatientDto {
     chiefComplaint: string;
     description: string;
     patient_history: [];
+}
+
+export interface iPatientFullData extends iPatientDto{
+    excercisePlans?: iExcercisePlanDto[]
 }
 
 export interface iGetAllPatientDto extends BaseAPIDto{

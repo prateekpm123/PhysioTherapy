@@ -22,7 +22,11 @@ import { SignInDto } from "../../dtos/SignInDto";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { setDoctorDetails, setIsSignedIn, setUser } from "../../stores/userSessionSlice";
+import {
+  setDoctorDetails,
+  setIsSignedIn,
+  setUser,
+} from "../../stores/userSessionSlice";
 import { FailedResponseDto } from "../../dtos/FailedResponseDto";
 import { StatusAndErrorType } from "../../models/StatusAndErrorType.enum";
 import { useToast } from "../../stores/ToastContext";
@@ -39,18 +43,20 @@ export const LoginPage = () => {
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(firebaseAuth, provider);
-      const user = result.user;
-      const idToken = await user.getIdToken(true);
-      // const saveJWT = await saveJwtToken(idToken);
-      setCookie("JwtToken", idToken, 1);
-      // console.log(saveJWT);
-      sendIdTokenToBackendLogin(
-        idToken,
-        Accounts.GOOGLE,
-        afterLoginSuccess,
-        afterLoginFail
-      );
+      signInWithPopup(firebaseAuth, provider).then((result) => {
+        const user = result.user;
+        user.getIdToken(true).then((idToken) => {
+          // const saveJWT = await saveJwtToken(idToken);
+          setCookie("JwtToken", idToken, 1);
+          // console.log(saveJWT);
+          sendIdTokenToBackendLogin(
+            idToken,
+            Accounts.GOOGLE,
+            afterLoginSuccess,
+            afterLoginFail
+          );
+        });
+      });
     } catch (error) {
       console.error("Google sign-in error:", error);
     }
@@ -82,11 +88,13 @@ export const LoginPage = () => {
   };
 
   const afterLoginFail = (response: FailedResponseDto) => {
+    // @todo if user tries to directly login without signing up then show : Please sign up first
     if (response.errorCode === StatusAndErrorType.UserNotCreated) {
-      showToast("User was not created", undefined, ToastColors.RED);
+      showToast("User doesn't exists, try signing in", undefined, ToastColors.RED);
       console.log("User was not created");
     } else {
-      console.log("Sign-in Fail:");
+      showToast("Failed to login", undefined, ToastColors.RED);
+      console.log("Log-in Fail:");
     }
     dispatch(setIsSignedIn(false));
   };
@@ -148,7 +156,17 @@ export const LoginPage = () => {
                   >
                     Login
                   </Button>
-                  <Text>Not Signed up ? Sign in <Link href="" highContrast onClick={()=> navigate('/signup')} style={{color: '#5392cd'}}>Here</Link></Text>
+                  <Text>
+                    Not Signed up ? Sign in{" "}
+                    <Link
+                      href=""
+                      highContrast
+                      onClick={() => navigate("/signup")}
+                      style={{ color: "#5392cd" }}
+                    >
+                      Here
+                    </Link>
+                  </Text>
                 </Skeleton>
                 {/* Add OR with a line */}
                 <Flex

@@ -1,41 +1,73 @@
+import { Button, Dialog, Flex, Heading, Text } from "@radix-ui/themes";
 import { iExcerciseData } from "../models/ExcerciseInterface";
 import React from "react";
 
 export interface iExcerciseDetailProps {
-    excercise: iExcerciseData;
-    isOpen: boolean;
-    setIsModelOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  excercise: iExcerciseData;
 }
 
 export const ExcerciseDetail = (excerciseDetailProp: iExcerciseDetailProps) => {
-  // console.log(excerciseDetailProp);
-
   return (
-      <div className="h-full w-full">
-        <div className="excercise-detail__header">
-          <div className="excercise-detail__header__left">
-            <img src={excerciseDetailProp.excercise.imgSrc} alt={excerciseDetailProp.excercise.name} className="h-1/2 w-1/2"/>
-            <h3 className="text-3xl text-slate-100">{excerciseDetailProp.excercise.name}</h3>
-          </div>
-        </div>
-        <div className="excercise-detail__description">
-          <h4 className="text-2xl text-slate-100">Description</h4>
-          <p className="text-slate-100 text-xl font-bold">Set and Repetition</p>
-          <p className="text-slate-100 text-lg">
-            {excerciseDetailProp.excercise.description.sets} {" - "} {excerciseDetailProp.excercise.description.setsDescription}
-          </p>
-          <p className="text-slate-100 text-lg">
-            {excerciseDetailProp.excercise.description.repititions} {" - "}
-            {excerciseDetailProp.excercise.description.repititionsDescription}
-          </p>
-          <ul className="list-disc list-inside">
-            {excerciseDetailProp.excercise.description.Cues.Points.map(
-              (point: string, index: number) => (
-                <li className="text-slate-100" key={index}>{point}</li>
-              )
-            )}
-          </ul>
-        </div>
-      </div>
+    <Dialog.Root>
+      <Dialog.Trigger>
+        <Button variant="soft" size="3">
+          Details
+        </Button>
+      </Dialog.Trigger>
+
+      <Dialog.Content minHeight="20rem" minWidth="80rem" width="100%">
+        <Dialog.Title>
+          {excerciseDetailProp.excercise?.excercise_name}
+        </Dialog.Title>
+        <Flex direction="row" height="100%" width="100%" gap="6" align="baseline" justify="start">
+          <Flex direction="row" justify="between" minWidth="300px">
+            <img
+              src={excerciseDetailProp.excercise.excercise_image_url}
+              alt={excerciseDetailProp.excercise.excercise_name}
+              style={{ height: "50%", width: "50%" }}
+            />
+          </Flex>
+          <Flex direction="column" gap="4">
+            <Heading size="4" >
+              Description
+            </Heading>
+            {/* <Heading size="5">
+              {excerciseDetailProp.excercise.excercise_description}
+            </Heading> */}
+
+            <ul style={{ listStyleType: "disc", marginLeft: "20px" }}>
+              {excerciseDetailProp.excercise.excercise_description
+                .split("\n")
+                .map((point: string, index: number) => (
+                  <li key={index}>{point}</li>
+                ))}
+            </ul>
+          </Flex>
+          <Flex direction="column">
+            <Text weight="bold">
+              Set and Repetition
+            </Text>
+            <Text color="gray">
+              {excerciseDetailProp.excercise.excercise_sets} {" - "}
+              {excerciseDetailProp.excercise.excercise_sets_description}
+            </Text>
+            <Text color="gray">
+              {excerciseDetailProp.excercise.excercise_reps} {" - "}
+              {excerciseDetailProp.excercise.excercise_reps_description}
+            </Text>
+          </Flex>
+        </Flex>
+        <Flex gap="3" mt="4" justify="end" style={{position: "absolute", bottom: "1rem", right: "1rem"}}>
+          <Dialog.Close>
+            <Button variant="soft" color="gray">
+              Cancel
+            </Button>
+          </Dialog.Close>
+          <Dialog.Close>
+            <Button>Edit Excercise</Button>
+          </Dialog.Close>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 };

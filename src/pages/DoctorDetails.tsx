@@ -23,12 +23,15 @@ interface DoctorDetailsProps {
 
 const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: "",
+  const doctorData = useSelector(
+    (state: UserSessionStateType) => state.userSession.user
+  );
+  const [formData, setFormData] = useState({  // @todo since I have some data already from email account, I should prefill that.
+    name: doctorData.name,
     age: 0,
     country_code: "+91",
     phone_number: "",
-    email: "",
+    email: doctorData.email,
     address: "",
     city: "",
     pincode: "",
@@ -40,13 +43,12 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
     doctor_experience: "",
     doctor_awards: "",
     doctor_certification: "",
-    user_id:""
+    user_id: doctorData.uid
   });
+  // const [formData, setFormData] = useState({} as DoctorDetailsProps);
   const dispatch = useDispatch();
   const { showToast } = useToast();
-  const doctorData = useSelector(
-    (state: UserSessionStateType) => state.userSession.user
-  );
+  
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -68,13 +70,14 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
     console.log("Collected Form Data:", formData);
   };
 
-  const onCreateSuccess = (data: iDoctorDetails) => {
+  const onCreateSuccess = (data: { Doctor: iDoctorDetails; }) => {
+    // @todo when first time logging in, the screens are not loading properly.
     showToast(
       "Doctor details submitted successfully",
       DefaultToastTiming,
       ToastColors.GREEN
     );
-    dispatch(setDoctorDetails(data));
+    dispatch(setDoctorDetails(data.Doctor));
     if (onSave) {
     
       onSave();

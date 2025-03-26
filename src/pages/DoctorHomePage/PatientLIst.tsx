@@ -27,14 +27,11 @@ export interface PatientListProps {
   refreshTrigger: boolean;
 }
 
-const PatientList: React.FC<PatientListProps> = ({
-  refreshTrigger,
-  setPatientListRefresh,
-}) => {
+const PatientList= () => {
   const [patients, setPatients] = useState([] as iPatientDto[]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const { setCurrentMainScreen, setCurrentPatientDetails } =
+  const { setCurrentMainScreen, setCurrentPatientDetails, isPatientListScreenRefresh, setIsPatientListScreenRefresh } =
     useCurrentMainScreenContext();
   const filteredData: iPatientDto[] = patients.filter((item: iPatientDto) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -44,7 +41,7 @@ const PatientList: React.FC<PatientListProps> = ({
   );
 
   const onPatientLisRefresh = () => {
-    setPatientListRefresh(!refreshTrigger);
+    setIsPatientListScreenRefresh(!isPatientListScreenRefresh);
     setIsLoading(true);
   };
 
@@ -70,7 +67,7 @@ const PatientList: React.FC<PatientListProps> = ({
         console.log(response);
       },
     });
-  }, [refreshTrigger]);
+  }, [isPatientListScreenRefresh]);
 
   return (
     <Flex
@@ -97,7 +94,7 @@ const PatientList: React.FC<PatientListProps> = ({
       ></TextField.Root>
 
       {/* <ScrollView style={{ maxHeight: '400px' }}> */}
-      <Flex direction="column" gap="3" height="78vh" overflow="auto">
+      <Flex direction="column" gap="3" height="78dvh" overflow="auto">
         {filteredData.map((item: iPatientDto) => (
           <Skeleton loading={isLoading}>
             <Card

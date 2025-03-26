@@ -7,12 +7,15 @@ import DoctorNavBar from "./DoctorNavBar";
 import { Outlet } from "react-router-dom";
 import ThemeColorPallate from "../../assets/ThemeColorPallate";
 import { createContext, useContext, useState } from "react";
-import { iPatientDto } from "../../dtos/PatientDto";
+import { iPatientDto, iPatientFullData } from "../../dtos/PatientDto";
+import { iExcerciseDataDto } from "../../models/ExcerciseInterface";
 // import { iPatientDto } from "../../dtos/PatientDto";
 
 export enum DoctorHomeMainScreen {
   NEW_PATIENT_ENTRY = 1,
   PATIENT_DETAILS = 2,
+  EXCERCISE_BUILDER = 3,
+  CREATE_EXCERCISE_PLAN = 4
 }
 
 interface DoctorContext {
@@ -20,10 +23,21 @@ interface DoctorContext {
   setCurrentMainScreen: React.Dispatch<
     React.SetStateAction<DoctorHomeMainScreen>
   >;
-  currentPatientDetails?: iPatientDto;
-  setCurrentPatientDetails?: React.Dispatch<React.SetStateAction<iPatientDto>>;
+  currentPatientDetails?: iPatientFullData;
+  setCurrentPatientDetails?: React.Dispatch<React.SetStateAction<iPatientFullData>>;
   isPatientDetailsScreenRefresh: boolean;
   setIsPatientDetailScreenRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  isPatientListScreenRefresh: boolean;
+  setIsPatientListScreenRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  patientDetailsLoading: boolean;
+  setPatientDetailsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+
+  isExcerciseBuilderLoading:boolean;
+  setIsExcerciseBuilderLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  isExcerciseBuilderRefresh: boolean;
+  setIsExcerciseBuilderRefresh:React.Dispatch<React.SetStateAction<boolean>>;
+  excerciseBuilderPlannerList: iExcerciseDataDto[]
+  setExcerciseBuilderPlannerList:React.Dispatch<React.SetStateAction<iExcerciseDataDto[]>>;
 }
 
 // Create a context for the state variable
@@ -46,11 +60,18 @@ export const DoctorHomePage = () => {
     DoctorHomeMainScreen.NEW_PATIENT_ENTRY
   );
 
+  const [patientDetailsLoading, setPatientDetailsLoading] = useState(false);
+  const [isExcerciseBuilderLoading, setIsExcerciseBuilderLoading] = useState(false);
+
+
   const [currentPatientDetails, setCurrentPatientDetails] = useState(
     {} as iPatientDto
   );
 
   const [isPatientDetailsScreenRefresh, setIsPatientDetailScreenRefresh] = useState(false);
+  const [isPatientListScreenRefresh, setIsPatientListScreenRefresh] = useState(false);
+  const [isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh] = useState(false);
+  const [excerciseBuilderPlannerList, setExcerciseBuilderPlannerList] = useState([] as iExcerciseDataDto[]);
 
   // const user: User = useSelector(
   // (state: UserSessionStateType) => state.userSession.user
@@ -69,7 +90,17 @@ export const DoctorHomePage = () => {
           currentPatientDetails,
           setCurrentPatientDetails,
           isPatientDetailsScreenRefresh, 
-          setIsPatientDetailScreenRefresh
+          setIsPatientDetailScreenRefresh,
+          isPatientListScreenRefresh,
+          setIsPatientListScreenRefresh,
+          patientDetailsLoading,
+          setPatientDetailsLoading,
+          isExcerciseBuilderRefresh,
+          setIsExcerciseBuilderRefresh,
+          isExcerciseBuilderLoading,
+          setIsExcerciseBuilderLoading,
+          excerciseBuilderPlannerList,
+          setExcerciseBuilderPlannerList
         }}
       >
         <div style={{ backgroundColor: ThemeColorPallate.background }}>

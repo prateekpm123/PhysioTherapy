@@ -8,26 +8,27 @@ import PatientDetails from "./PatientDetails";
 import PatientTreatmentHistory from "./PatientTreatmentHistory";
 import PatientTreatmentBuilder from "./PatientTreatmentBuilder";
 import DoctorHomeLandingPage from "./DoctorHomeLandingPage";
-import { useState } from "react";
+import CreateExcercisePlanPage from "../CreateExcercisePlanPage";
+// import { iExcerciseDataDto } from "../../models/ExcerciseInterface";
+// import CreateExcercisePlanPage from "../CreateExcercisePlanPage";
+// import { useState } from "react";
 // import { iPatientDto } from "../../dtos/PatientDto";
 
 const DoctorHomePageRoutes = () => {
-  // const [patients, setPatients] = useState([] as iPatientDto[]);
-  const [patientListRefresh, setPatientListRefresh] = useState(false);
-  const onNewPatientCreation = () =>{
-    setPatientListRefresh(!patientListRefresh);
-  }
 
   return (
     <Routes>
       <Route path="/" element={<DoctorHomePage />}>
         {/* <Route index element={<DoctorHomePageCentre />} /> */}
-        <Route index element={<DoctorHomeLandingPage onSave={onNewPatientCreation} refreshTrigger={patientListRefresh} setPatientListRefresh={setPatientListRefresh}/>} />
+        <Route index element={<DoctorHomeLandingPage />} />
+        {/* <Route index element={<DoctorHomeLandingPage onSave={onNewPatientCreation} refreshTrigger={patientListRefresh} setPatientListRefresh={setPatientListRefresh}/>} /> */}
         
         {/* ... other nested routes ... */}
-        <Route path="newPatient" element={<NewPatientEntry onSave={onNewPatientCreation}/>} />
-        <Route path="patientList" element={<PatientList refreshTrigger={patientListRefresh} setPatientListRefresh={setPatientListRefresh}/>} />
+        <Route path="newPatient" element={<NewPatientEntry />}/>
+        {/* <Route path="newPatient" element={<NewPatientEntry onSave={onNewPatientCreation}/>} /> */}
+        <Route path="patientList" element={<PatientList />} />
         <Route path="patientDetails" element={<PatientDetails />} />
+        <Route path="createPlan" element={<CreateExcercisePlanPage />} />
         <Route path="patientTreatmentHistory" element={<PatientTreatmentHistory />} />
         <Route path="patientTreatmentBuilder" element={<PatientTreatmentBuilder />} />
       </Route>

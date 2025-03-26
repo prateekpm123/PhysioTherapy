@@ -4,6 +4,9 @@ import { ExcerciseType, iExcerciseTile } from "../models/ExcerciseInterface";
 import { database } from "../databaseConnections/FireBaseConnection";
 import { ref, remove } from "firebase/database";
 import { Card, Flex, Text, Button, Skeleton } from "@radix-ui/themes";
+import { EditExcercise } from "./EditExcercise";
+import { ExcerciseDetail } from "./ExcerciseDetail";
+import { useCurrentMainScreenContext } from "../pages/DoctorHomePage/DoctorHomePage";
 
 export const ExcerciseTile = (data: iExcerciseTile) => {
   const [mouseShape, setMouseShape] = useState("pointer");
@@ -61,12 +64,14 @@ const ExcerciseTileFullView = ({
   const [isLoading, setIsLoading] = useState(true);
   const handleImageLoad = () => {
     setIsLoading(false); // Update loading state
-    console.log("Image loaded successfully:", data.excercise.imgSrc);
+    console.log("Image loaded successfully:", data.excercise.excercise_image_url);
   };
+
+  const { isExcerciseBuilderLoading } = useCurrentMainScreenContext();
 
   const handleImageError = () => {
     setIsLoading(false); // Update loading state
-    console.error("Failed to load image:", data.excercise.imgSrc);
+    console.error("Failed to load image:", data.excercise.excercise_image_url);
   };
 
   return (
@@ -80,11 +85,11 @@ const ExcerciseTileFullView = ({
       }}
     >
       <Flex direction="column" gap="3">
-        <Skeleton loading={isLoading}>
+        <Skeleton loading={isLoading || isExcerciseBuilderLoading}>
           <div style={{ width: "100%", height: "200px", position: "relative" }}>
             <img
-              src={data.excercise.imgSrc}
-              alt={data.excercise.name}
+              src={data.excercise.excercise_image_url}
+              alt={data.excercise.excercise_name}
               style={{
                 width: "100%",
                 height: "100%",
@@ -108,7 +113,7 @@ const ExcerciseTileFullView = ({
           onMouseEnter={() => setMouseShape("grab")}
           onMouseLeave={() => setMouseShape("pointer")}
         >
-          {data.excercise.name}
+          {data.excercise.excercise_name}
         </Text>
         <Text
           size="4"
@@ -117,7 +122,7 @@ const ExcerciseTileFullView = ({
           onMouseEnter={() => setMouseShape("grab")}
           onMouseLeave={() => setMouseShape("pointer")}
         >
-          {data.excercise.type}
+          {data.excercise.excercise_type}
         </Text>
         <Flex gap="2" justify="center">
           <Button
@@ -127,7 +132,9 @@ const ExcerciseTileFullView = ({
           >
             Add
           </Button>
-          <Button
+          <EditExcercise  excercise={data.excercise} e_id={data.excercise.e_id}></EditExcercise>
+          <ExcerciseDetail excercise={data.excercise} ></ExcerciseDetail>
+          {/* <Button
             variant="soft"
             size="3"
             onClick={() => {
@@ -138,7 +145,7 @@ const ExcerciseTileFullView = ({
             }}
           >
             Edit
-          </Button>
+          </Button> */}
           <Button
             size="3"
             variant="soft"
@@ -158,15 +165,18 @@ const ExcerciseTileMobileView = ({
   mouseShape,
   setMouseShape,
 }: ExcerciseTileViewProps) => {
+
+  const { isExcerciseBuilderLoading } = useCurrentMainScreenContext();
+
   const [isLoading, setIsLoading] = useState(true);
   const handleImageLoad = () => {
     setIsLoading(false); // Update loading state
-    console.log("Image loaded successfully:", data.excercise.imgSrc);
+    console.log("Image loaded successfully:", data.excercise.excercise_image_url);
   };
 
   const handleImageError = () => {
     setIsLoading(false); // Update loading state
-    console.error("Failed to load image:", data.excercise.imgSrc);
+    console.error("Failed to load image:", data.excercise.excercise_image_url);
   };
 
   return (
@@ -180,11 +190,11 @@ const ExcerciseTileMobileView = ({
       }}
     >
       <Flex gap="3" align="center">
-        <Skeleton loading={isLoading}>
+        <Skeleton loading={isLoading ||isExcerciseBuilderLoading}>
           <div style={{ width: "80px", height: "80px", position: "relative" }}>
             <img
-              src={data.excercise.imgSrc}
-              alt={data.excercise.name}
+              src={data.excercise.excercise_image_url}
+              alt={data.excercise.excercise_name}
               style={{
                 width: "100%",
                 height: "100%",
@@ -208,7 +218,7 @@ const ExcerciseTileMobileView = ({
             onMouseEnter={() => setMouseShape("grab")}
             onMouseLeave={() => setMouseShape("pointer")}
           >
-            {data.excercise.name}
+            {data.excercise.excercise_name}
           </Text>
           <Text
             size="4"
@@ -217,7 +227,7 @@ const ExcerciseTileMobileView = ({
             onMouseEnter={() => setMouseShape("grab")}
             onMouseLeave={() => setMouseShape("pointer")}
           >
-            {data.excercise.type}
+            {data.excercise.excercise_type}
           </Text>
           <Flex gap="2" justify="start">
             <Button

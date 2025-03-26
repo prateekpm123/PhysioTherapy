@@ -1,23 +1,25 @@
 import { Suspense, useEffect, useState } from "react";
 import { ExcerciseTile } from "../components/ExcerciseTile";
-import { ExcerciseType, iExcerciseData } from "../models/ExcerciseInterface";
+import { ExcerciseType, iExcerciseDataDto } from "../models/ExcerciseInterface";
 import { PlannerList } from "../components/PlannerList";
 import { ExcerciseDetail } from "../components/ExcerciseDetail";
 import Modal from "../components/Modal";
 import { PDFPreview } from "../components/PDFPreview";
 import { IoMdAdd } from "react-icons/io";
 import { AddExcercise } from "../components/AddExcercise";
-import DatabaseController from "../databaseConnections/DatabaseController";
 import { EditExcercise } from "../components/EditExcercise";
 import { isMobile } from "react-device-detect";
 import React from "react";
-import { act } from "@testing-library/react";
 import { Box, Flex, TextField, Button } from "@radix-ui/themes";
+import { getAllExcercises } from "../controllers/ExcerciseController";
+import ThemeColorPallate from "../assets/ThemeColorPallate";
+import { useCurrentMainScreenContext } from "./DoctorHomePage/DoctorHomePage";
 
 export const ExcerciseBuilder = () => {
-  const [data2, setData2] = useState<iExcerciseData[] | null>();
-  const [excercises, setExcercises] = useState<iExcerciseData[]>();
-  const [plannerItems, setPlannerItems] = useState<iExcerciseData[]>([]);
+  const [data2, setData2] = useState<iExcerciseDataDto[] | null>();
+  const [excercises, setExcercises] = useState<iExcerciseDataDto[]>();
+  // const [plannerItems, setPlannerItems] = useState<iExcerciseDataDto[]>([]);
+  const {isExcerciseBuilderRefresh, setIsExcerciseBuilderLoading, excerciseBuilderPlannerList, setExcerciseBuilderPlannerList} = useCurrentMainScreenContext();
   const [isPlannerListModalOpen, setIsPlannerListModalOpen] =
     useState<boolean>(false);
   const [isExcerciseDetailModalOpen, setIsExcerciseDetailModalOpen] =
@@ -29,9 +31,9 @@ export const ExcerciseBuilder = () => {
   const [isEditExcerciseModalOpen, setIsEditExcerciseModalOpen] =
     useState<boolean>(false);
   const [currentClickedExcerciseTile, setCurrentClickedExcerciseTile] =
-    useState<iExcerciseData>();
+    useState<iExcerciseDataDto>();
   const [currentExcerciseTileEditClick, setCurrentExcerciseTileEditClick] =
-    useState<iExcerciseData>();
+    useState<iExcerciseDataDto>();
 
   const search = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value;
@@ -40,39 +42,45 @@ export const ExcerciseBuilder = () => {
       return;
     }
     const filteredExcercises = data2?.filter((excercise) => {
-      return excercise.name.toLowerCase().includes(searchValue.toLowerCase());
+      return excercise.excercise_name
+        .toLowerCase()
+        .includes(searchValue.toLowerCase());
     });
     setExcercises(filteredExcercises);
   };
 
-  const onAdd = (clickedExcercise: iExcerciseData) => {
-    setPlannerItems((plannerItems) => [...plannerItems, clickedExcercise]);
+  const onAdd = (clickedExcercise: iExcerciseDataDto) => {
+    setExcerciseBuilderPlannerList((excerciseBuilderPlannerList) => [...excerciseBuilderPlannerList, clickedExcercise]);
   };
 
   const onExcerciseTileForDetailClicked = (
-    excercise: iExcerciseData,
+    excercise: iExcerciseDataDto,
     excerciseKey: string
   ) => {
-    excercise.excerciseKey = excerciseKey;
+    excercise.e_id = excerciseKey;
     setCurrentClickedExcerciseTile(excercise);
     setIsExcerciseDetailModalOpen(true);
   };
 
   const fetchExcerciseData = () => {
-    const db = DatabaseController.getInstance();
-    const data = db.fetchNodeData("excercises");
-    data
-      .then((data) => {
-        if (data) {
-          act(() => {
-            setData2(data);
-            setExcercises(data);
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+    setIsExcerciseBuilderLoading(true);
+    getAllExcercises({
+      data: {},
+      afterAPISuccess: (response) => {
+        setData2(response.excercises);
+        setExcercises(response.excercises);
+        setIsExcerciseBuilderLoading(false);
+        // setPatients(response.patients);
+        // setIsLoading(false);
+        console.log(response);
+      },
+      afterAPIFail: (response) => {
+        // ErrorHandler(response);
+        // setIsLoading(false);
+        console.log(response);
+        setIsExcerciseBuilderLoading(false);
+      },
+    });   
   };
 
   const onAddExcerciseClick = () => {
@@ -84,33 +92,37 @@ export const ExcerciseBuilder = () => {
   // };
 
   const onEditExcerciseClick = (
-    excercise: iExcerciseData,
+    excercise: iExcerciseDataDto,
     excerciseKey: string
   ) => {
-    excercise.excerciseKey = excerciseKey;
+    excercise.e_id = excerciseKey;
     setCurrentExcerciseTileEditClick(excercise);
     setIsEditExcerciseModalOpen(true);
   };
 
   useEffect(() => {
     fetchExcerciseData();
-  }, []);
+  }, [isExcerciseBuilderRefresh]);
 
   return (
-    <Flex direction="row" className="h-screen">
+    <Flex direction="row" className="h-screen" width="100%"  height="100%">
       <Flex
         direction="column"
-        className="bg-slate-800"
-        style={{
-          flex: isMobile ? "1 1 100%" : "5 1 0%",
-          padding: isMobile ? "12px" : "32px",
-        }}
+        width="100%"  height="100%"
+        // className="bg-slate-800"
+        // style={{
+        //   flex: isMobile ? "1 1 100%" : "5 1 100%",
+        //   padding: isMobile ? "12px" : "32px",
+        // }}
       >
         <Box
-          className="overflow-y-auto"
           style={{
             display: "grid",
             gap: "16px",
+            width:"100%",
+            height: "100%",
+            maxHeight:"80vh",
+            overflow: "auto",
             gridTemplateColumns: isMobile
               ? "1fr"
               : "repeat(auto-fill, minmax(280px, 1fr))",
@@ -158,12 +170,12 @@ export const ExcerciseBuilder = () => {
           size="3"
           radius="full"
           style={{
-            position: "fixed", // Sticks to the bottom
+            position: "relative", // Sticks to the bottom
             bottom: "0", // Aligns to the bottom of the screen
             left: "0",
             width: "100%", // Full width
             height: "60px", // Increased height
-            backgroundColor: "rgba(46, 47, 80, 1)",
+            backgroundColor: ThemeColorPallate.background,
             color: "white",
             padding: "10px",
             boxSizing: "border-box",
@@ -172,13 +184,11 @@ export const ExcerciseBuilder = () => {
         />
       </Flex>
       {!isMobile && (
-        <Box style={{ flex: "1 1 0%", padding: "16px" }}>
+        <Box style={{ flex: "1 1 35%", padding: "16px", minWidth:"20rem" }}>
           <PlannerList
             testId={"homePlannerList"}
             isPDFPreviewModelRequired={isPDFPreviewModalOpen}
             setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
-            plannerItems={plannerItems}
-            setPlannerItems={setPlannerItems}
           />
         </Box>
       )}
@@ -193,8 +203,6 @@ export const ExcerciseBuilder = () => {
           {currentClickedExcerciseTile && (
             <ExcerciseDetail
               excercise={currentClickedExcerciseTile}
-              isOpen={isExcerciseDetailModalOpen}
-              setIsModelOpen={setIsExcerciseDetailModalOpen}
             />
           )}
         </Modal>
@@ -206,7 +214,7 @@ export const ExcerciseBuilder = () => {
           pIsOpen={isPDFPreviewModalOpen}
           setIsModelOpen={setIsPDFPreviewModalOpen}
         >
-          <PDFPreview plannerList={plannerItems} />
+          <PDFPreview plannerList={excerciseBuilderPlannerList} />
         </Modal>
       )}
       {isAddExcerciseModalOpen && (
@@ -227,11 +235,10 @@ export const ExcerciseBuilder = () => {
           setIsModelOpen={setIsEditExcerciseModalOpen}
         >
           <EditExcercise
-            refreshExcercise={fetchExcerciseData}
             excercise={currentExcerciseTileEditClick}
-            excerciseKey={
+            e_id={
               currentExcerciseTileEditClick
-                ? currentExcerciseTileEditClick.excerciseKey
+                ? currentExcerciseTileEditClick.e_id
                 : ""
             }
           />
@@ -248,8 +255,6 @@ export const ExcerciseBuilder = () => {
             testId={"mobilFullPlannerList"}
             isPDFPreviewModelRequired={isPDFPreviewModalOpen}
             setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
-            plannerItems={plannerItems}
-            setPlannerItems={setPlannerItems}
           ></PlannerList>
         </Modal>
       )}

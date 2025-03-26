@@ -52,7 +52,7 @@ const DoctorNavBar = () => {
   }
 
   return (
-    <Nav style={{ backgroundColor: ThemeColorPallate.foreground,  }}>
+    <Nav style={{ backgroundColor: ThemeColorPallate.foreground, zIndex:10 }}>
       <div style={{ width: "100%", padding: "0 1rem" }}>
         {/* Use a div with padding */}
         <Flex justify="between" align="center" style={{ width: "100%" }} gap="4">

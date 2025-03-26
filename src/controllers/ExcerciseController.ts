@@ -1,46 +1,20 @@
 import { FailedResponseDto } from "../dtos/FailedResponseDto";
-import { iPatientDto } from "../dtos/PatientDto";
 import { iApiCallInterface } from "../models/iApiCallInterface";
-import iPatients from "../models/iPatients";
 import { getCookie } from "../utils/cookies";
 
-const baseURL = "http://localhost:3000/api/patient";
 
-export const createPatient = async (inputs: iApiCallInterface) => {
+const baseURL = "http://localhost:3000/api/excercise";
+
+export const getAllExcercises = async (inputs: iApiCallInterface) => {
   try {
     const idToken = getCookie("JwtToken");
     console.log("Inputs:", idToken);
-    const response = await fetch(baseURL + "/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${idToken}`,
-      },
-      body: JSON.stringify(inputs.data as iPatients),
-    });
-    const responseJson = await response.json();
-    if (responseJson.ok) {
-      const data = responseJson as unknown;
-      inputs.afterAPISuccess(data);
-      console.log("Backend response:", data);
-    } else {
-      inputs.afterAPIFail(responseJson as FailedResponseDto);
-    }
-  } catch (error) {
-    console.error("Error creating patient:", error);
-  }
-};
-
-export const getAllPatients = async (inputs: iApiCallInterface) => {
-  try {
-    const idToken = getCookie("JwtToken");
     const response = await fetch(baseURL + "/getall", {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `${idToken}`,
       },
-      body: JSON.stringify(inputs.data as iPatients),
     });
     const responseJson = await response.json();
     if (responseJson.ok) {
@@ -55,16 +29,18 @@ export const getAllPatients = async (inputs: iApiCallInterface) => {
   }
 };
 
-export const findPatient = async (inputs: iApiCallInterface) => {
+
+export const updateExcercise = async (inputs: iApiCallInterface) => {
   try {
     const idToken = getCookie("JwtToken");
-    const response = await fetch(baseURL + "/find", {
+    console.log("Inputs:", idToken);
+    const response = await fetch(baseURL + "/update", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `${idToken}`,
       },
-      body: JSON.stringify(inputs.data as iPatientDto),
+      body: JSON.stringify(inputs.data)
     });
     const responseJson = await response.json();
     if (responseJson.ok) {
@@ -80,3 +56,51 @@ export const findPatient = async (inputs: iApiCallInterface) => {
 };
 
 
+export const saveExcercisePlan = async (inputs: iApiCallInterface) => {
+  try {
+    const idToken = getCookie("JwtToken");
+    console.log("Inputs:", idToken);
+    const response = await fetch(baseURL + "/saveexcerciseplan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${idToken}`,
+      },
+      body: JSON.stringify(inputs.data)
+    });
+    const responseJson = await response.json();
+    if (responseJson.ok) {
+      const data = responseJson as unknown;
+      inputs.afterAPISuccess(data);
+      console.log("Backend response:", data);
+    } else {
+      inputs.afterAPIFail(responseJson as FailedResponseDto);
+    }
+  } catch (error) {
+    console.error("Error creating patient:", error);
+  }
+};
+
+export const getExcercisePlans = async (inputs: iApiCallInterface) => {
+  try {
+    const idToken = getCookie("JwtToken");
+    const response = await fetch(baseURL + "/getallexcerciseplans", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${idToken}`,
+      },
+      body: JSON.stringify(inputs.data),
+    });
+    const responseJson = await response.json();
+    if (responseJson.ok) {
+      const data = responseJson as unknown;
+      inputs.afterAPISuccess(data);
+      console.log("Backend response:", data);
+    } else {
+      inputs.afterAPIFail(responseJson as FailedResponseDto);
+    }
+  } catch (error) {
+    console.error("Error creating patient:", error);
+  }
+};

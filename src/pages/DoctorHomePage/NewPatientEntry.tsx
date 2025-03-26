@@ -12,19 +12,22 @@ import { FailedResponseDto } from "../../dtos/FailedResponseDto";
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../stores/userSessionStore";
 import ErrorHandler from "../../errorHandlers/ErrorHandler";
+import { useCurrentMainScreenContext } from "./DoctorHomePage";
 // import { PatientListProps } from "./PatientLIst";
 
-interface iNewPatientEntry {
-  onSave: () => void;
-}
+// interface iNewPatientEntry {
+//   onSave: () => void;
+// }
 
-const NewPatientEntry: React.FC<iNewPatientEntry> = ({ onSave }) => {
+const NewPatientEntry= () => {
   // const userData = useSelector(
   //   (state: UserSessionStateType) => state.userSession.user
   // );
   const doctorData = useSelector(
     (state: UserSessionStateType) => state.userSession.doctorDetails
   );
+
+  const { setIsPatientListScreenRefresh, isPatientListScreenRefresh }  = useCurrentMainScreenContext();
 
   console.log("Doctor settings ", doctorData);
   const [formData, setFormData] = useState<iPatients>({
@@ -72,7 +75,7 @@ const NewPatientEntry: React.FC<iNewPatientEntry> = ({ onSave }) => {
       DefaultToastTiming,
       ToastColors.GREEN
     );
-    onSave();
+    setIsPatientListScreenRefresh(!isPatientListScreenRefresh);
     console.log("Patient was created succesfully");
   };
   const onCreateFail = (response: FailedResponseDto) => {
@@ -80,7 +83,7 @@ const NewPatientEntry: React.FC<iNewPatientEntry> = ({ onSave }) => {
   };
 
   return (
-    <div className="p-6 mx-auto" style={{ width: "80%" }}>
+    <div className="pl-40 pr-40 pt-6 mx-auto" style={{ width: "100%", overflow: "auto", maxHeight: "85dvh" }}>
       <h1 className="text-2xl font-bold mb-4">New Patient Entry</h1>
       <Form.Root className="space-y-4" onSubmit={handleSubmit}>
         {/* Patient Name */}

@@ -4,7 +4,6 @@ import { DoctorDetails } from "../models/iDoctorDetails";
 import { getCookie } from "../utils/cookies";
 
 const baseURL = "http://localhost:3000/api/doctor";
-const idToken = getCookie("JwtToken");
 
 export const createDoctor = async ({
   data,
@@ -12,6 +11,7 @@ export const createDoctor = async ({
   afterAPIFail,
 }: iApiCallInterface) => {
   try {
+    const idToken = getCookie("JwtToken");
     console.log("Inputs:", data);
     const response = await fetch(baseURL + "/create", {
       method: "POST",

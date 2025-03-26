@@ -1,6 +1,8 @@
 import { RiDeleteBinLine } from "react-icons/ri";
 import { IPlannerItem } from "../models/IPlannerItems";
 import { useState } from "react";
+import { Flex, Text } from "@radix-ui/themes";
+import ThemeColorPallate from "../assets/ThemeColorPallate";
 
 // import DraggableDiv from "./DraggableDiv";
 
@@ -13,29 +15,46 @@ export const PlannerItem = (plannerData: IPlannerItem) => {
   const onPointerEnterInDelete = () => {
     setDeleteBtnBgColor(deleteBtnDivCSSFixedPart + "bg-slate-950");
   };
-
   const onPointerLeaveInDelete = () => {
     setDeleteBtnBgColor(deleteBtnDivCSSFixedPart + "bg-slate-800");
   };
   return (
-    <div className="grid grid-cols-5 w-full h-12 bg-slate-800 p-3 rounded-md justify-center items-start border-2 border-slate-700">
-      {/* <DraggableDiv parentRef={plannerData.plannerListRef}> */}
-        <p className="col-span-4 text-slate-100">
-          {plannerData.excercise.name}
-        </p>
-        <div className="col-span-1">
-          <div className={deleteBtnBgColor}>
+      <Flex
+        direction="row"
+        justify="center"
+        align="start"
+        width="100%"
+        height="48px" // h-12
+        style={{
+          margin: "8px 0px", // m-2
+          backgroundColor: ThemeColorPallate.cardBackGroundColorBlack,
+          padding: "12px", // p-3
+          borderRadius: "6px", // rounded-md
+          border: "2px solid rgb(51, 65, 85)", // border-2 border-slate-700
+          display: "grid",
+          gridTemplateColumns: "4fr 1fr",
+        }}
+      >
+        <Text color="gray" style={{ color: ThemeColorPallate.cardFontColorBlack }}>
+          {plannerData.excercise.excercise_name}
+        </Text>
+        <Flex justify="center" align="center">
+          <Flex
+            justify="center"
+            align="center"
+            width="28px" // w-7
+            height="28px" // h-7
+            style={{ backgroundColor: deleteBtnBgColor }}
+          >
             <RiDeleteBinLine
-              className=""
-              color="white" 
+              color={ThemeColorPallate.cardFontColorBlack}
               size={20}
               onPointerEnter={onPointerEnterInDelete}
               onPointerLeave={onPointerLeaveInDelete}
               onClick={() => plannerData.onDelete(plannerData.excercise)}
             />
-          </div>
-        </div>
-      {/* </DraggableDiv> */}
-    </div>
+          </Flex>
+        </Flex>
+      </Flex>
   );
 };
