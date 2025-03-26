@@ -46,7 +46,7 @@ export const PlannerList = (inputs: PlannerListProps) => {
           onClick: () => {
             setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
             breadCrumbItems.pop();
-            breadCrumbItems.pop();
+            // breadCrumbItems.pop();
             setBreadCrumbItems(breadCrumbItems);
           },
         },
