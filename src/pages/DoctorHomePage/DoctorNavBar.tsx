@@ -30,7 +30,7 @@ const DoctorNavBar = () => {
   const user = useSelector(
     (state: UserSessionStateType) => state.userSession.user
   );
-  const { setCurrentMainScreen } = useCurrentMainScreenContext();
+  const { setCurrentMainScreen, setBreadCrumbItems } = useCurrentMainScreenContext();
 
   const navigate = useNavigate();
 
@@ -48,6 +48,12 @@ const DoctorNavBar = () => {
   };
 
   const onClickNewPatient = ()=>{
+    setBreadCrumbItems([
+      {
+        label: "",
+        onClick: () => {}
+      }
+    ])
     setCurrentMainScreen(DoctorHomeMainScreen.NEW_PATIENT_ENTRY);
   }
 
