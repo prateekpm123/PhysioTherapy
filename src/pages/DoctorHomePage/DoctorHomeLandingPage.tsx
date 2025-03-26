@@ -24,7 +24,7 @@ const Nav = styled("nav", {
 });
 
 const DoctorHomeLandingPage = () => {
-  const { currentMainScreen, isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh, setIsPatientDetailScreenRefresh, isPatientDetailsScreenRefresh } = useCurrentMainScreenContext();
+  const { breadCrumbItems, currentMainScreen, isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh, setIsPatientDetailScreenRefresh, isPatientDetailsScreenRefresh } = useCurrentMainScreenContext();
   const renderComponent = () => {
     if (currentMainScreen === DoctorHomeMainScreen.NEW_PATIENT_ENTRY) {
       return <NewPatientEntry />;
@@ -50,20 +50,20 @@ const DoctorHomeLandingPage = () => {
 
   const component = renderComponent();
 
-  const items = [
-    {
-      label: "Doctor Details",
-      onClick: ()=> {
-        console.log("Doctor Details");
-      }
-    },
-    {
-      label: "Excercise Planner",
-      onClick: ()=> {
-        console.log("planner");
-      }
-    }
-  ]
+  // const items = [
+  //   {
+  //     label: "Doctor Details",
+  //     onClick: ()=> {
+  //       console.log("Doctor Details");
+  //     }
+  //   },
+  //   {
+  //     label: "Excercise Planner",
+  //     onClick: ()=> {
+  //       console.log("planner");
+  //     }
+  //   }
+  // ]
 
   return (
     <>
@@ -95,7 +95,7 @@ const DoctorHomeLandingPage = () => {
                     gap="4"
                   >
                     <Flex style={{ justifyContent: "start" }}>
-                      <CustomBreadcrumb items={items} />
+                      <CustomBreadcrumb items={breadCrumbItems} />
                     </Flex>
                     <Flex
                       style={{

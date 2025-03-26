@@ -28,6 +28,7 @@ const PatientDetails = () => {
   const {
     currentPatientDetails,
     setCurrentPatientDetails,
+    setBreadCrumbItems,
     isPatientDetailsScreenRefresh,
     setCurrentMainScreen,
     setPatientDetailsLoading,
@@ -36,6 +37,28 @@ const PatientDetails = () => {
   //   const navigate = useNavigate();
 
   const onCreateNewPlan = () => {
+    setBreadCrumbItems([
+      {
+        label: "Patient Details",
+        onClick: () => {
+          setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
+          setBreadCrumbItems([  // setting the breadcrumb again here, so that Excercise Builder gets removed
+            {
+              label: "Patient Details",
+              onClick: () => {
+                setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
+              },
+            }
+          ])
+        },
+      },
+      {
+        label: "Exercise Builder",
+        onClick: () => {
+          setCurrentMainScreen(DoctorHomeMainScreen.EXCERCISE_BUILDER);
+        },
+      },
+    ]);
     setCurrentMainScreen(DoctorHomeMainScreen.EXCERCISE_BUILDER);
   };
 

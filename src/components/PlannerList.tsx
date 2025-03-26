@@ -18,7 +18,7 @@ export interface PlannerListProps {
 }
 
 export const PlannerList = (inputs: PlannerListProps) => {
-  const {excerciseBuilderPlannerList, setExcerciseBuilderPlannerList, setCurrentMainScreen} = useCurrentMainScreenContext();
+  const {breadCrumbItems, setBreadCrumbItems, excerciseBuilderPlannerList, setExcerciseBuilderPlannerList, setCurrentMainScreen} = useCurrentMainScreenContext();
   const plannerListRef = useRef<HTMLDivElement>(null);
   // const navigate = useNavigate();
   const onDelete = (excercise: iExcerciseDataDto) => {
@@ -36,6 +36,39 @@ export const PlannerList = (inputs: PlannerListProps) => {
     inputs.setIsPDFPreviewModelRequired(true);
   };
 
+
+  const handleCreateExcercisePlan = () =>{
+    setCurrentMainScreen(DoctorHomeMainScreen.CREATE_EXCERCISE_PLAN);
+    setBreadCrumbItems(
+      [
+        {
+          label: "Patient Details",
+          onClick: () => {
+            setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
+            breadCrumbItems.pop();
+            breadCrumbItems.pop();
+            setBreadCrumbItems(breadCrumbItems);
+          },
+        },
+        {
+          label: "Exercise Builder",
+          onClick: () => {
+            setCurrentMainScreen(DoctorHomeMainScreen.EXCERCISE_BUILDER);
+            // breadCrumbItems.pop();
+            setBreadCrumbItems(breadCrumbItems);
+            // const 
+            // setBreadCrumbItems()
+          },
+        },
+        {
+          label: "Create Excercise Plan",
+          onClick: () => {
+            setCurrentMainScreen(DoctorHomeMainScreen.CREATE_EXCERCISE_PLAN);
+          },
+        }
+      ]
+    )
+  }
   
 
   return (
@@ -72,7 +105,7 @@ export const PlannerList = (inputs: PlannerListProps) => {
         variant="surface"
         size="3"
         style={{ width: "100%" }}
-        onClick={() => setCurrentMainScreen(DoctorHomeMainScreen.CREATE_EXCERCISE_PLAN)}
+        onClick={handleCreateExcercisePlan}
       >
         Create Plan
       </Button>

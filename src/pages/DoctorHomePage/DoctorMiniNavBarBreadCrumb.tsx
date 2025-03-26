@@ -1,26 +1,26 @@
 import React from "react";
 import { Flex, Link, Text } from "@radix-ui/themes";
 
-interface BreadcrumbItem {
+export interface BreadcrumbItem {
   label: string;
   onClick?: () => void;
 }
 
-interface BreadcrumbProps {
+export interface BreadcrumbProps {
   items: BreadcrumbItem[];
 }
 
 const CustomBreadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
   return (
     <Flex align="center">
-      {items.map((item, index) => (
+      {items.length > 0 && items.map((item, index) => (
         <React.Fragment key={index}>
           {item.onClick ? (
             <Link onClick={item.onClick}>{item.label}</Link>
           ) : (
             <Text>{item.label}</Text>
           )}
-          {index < items.length - 1 && <Text> / </Text>}
+          {index < items.length - 1 && <Text>{ " / " }</Text>}
         </React.Fragment>
       ))}
     </Flex>

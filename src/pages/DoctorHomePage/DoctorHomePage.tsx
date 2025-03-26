@@ -9,6 +9,8 @@ import ThemeColorPallate from "../../assets/ThemeColorPallate";
 import { createContext, useContext, useState } from "react";
 import { iPatientDto, iPatientFullData } from "../../dtos/PatientDto";
 import { iExcerciseDataDto } from "../../models/ExcerciseInterface";
+import { BreadcrumbItem } from "./DoctorMiniNavBarBreadCrumb";
+// import { useNewPatientBreadcrumbItems } from "./DoctorHomeLandingPage";
 // import { iPatientDto } from "../../dtos/PatientDto";
 
 export enum DoctorHomeMainScreen {
@@ -23,6 +25,10 @@ interface DoctorContext {
   setCurrentMainScreen: React.Dispatch<
     React.SetStateAction<DoctorHomeMainScreen>
   >;
+
+  breadCrumbItems: BreadcrumbItem[]
+  setBreadCrumbItems: React.Dispatch<React.SetStateAction<BreadcrumbItem[]>>;
+
   currentPatientDetails?: iPatientFullData;
   setCurrentPatientDetails?: React.Dispatch<React.SetStateAction<iPatientFullData>>;
   isPatientDetailsScreenRefresh: boolean;
@@ -60,6 +66,9 @@ export const DoctorHomePage = () => {
     DoctorHomeMainScreen.NEW_PATIENT_ENTRY
   );
 
+  // const newPatientBreadcrumbItems: BreadcrumbItem[] = useNewPatientBreadcrumbItems();
+  const [breadCrumbItems, setBreadCrumbItems] = useState({} as BreadcrumbItem[]);
+
   const [patientDetailsLoading, setPatientDetailsLoading] = useState(false);
   const [isExcerciseBuilderLoading, setIsExcerciseBuilderLoading] = useState(false);
 
@@ -85,6 +94,8 @@ export const DoctorHomePage = () => {
     <>
       <CurrentMainScreenContext.Provider
         value={{
+          breadCrumbItems, 
+          setBreadCrumbItems,
           currentMainScreen,
           setCurrentMainScreen,
           currentPatientDetails,
