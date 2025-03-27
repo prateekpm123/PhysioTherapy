@@ -2,7 +2,7 @@ import { iExcercisePlanDto } from "../models/ExcerciseInterface";
 import { BaseAPIDto } from "./BaseAPIDto";
 
 export interface iPatientDto {
-    d_id?: string;
+    p_id: string;
     name: string;
     age: number;
     country_code: string;

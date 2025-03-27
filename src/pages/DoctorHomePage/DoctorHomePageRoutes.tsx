@@ -1,14 +1,14 @@
 // DoctorHomePageRoutes.tsx
 import { Routes, Route } from "react-router-dom";
 import { DoctorHomePage } from "./DoctorHomePage";
-import NewPatientEntry from "./NewPatientEntry"; // Example component
+import NewPatientEntry from "./MainPages/NewPatientEntry"; // Example component
 // import DoctorHomePageCentre  from "./DoctorHomePageCentre";
-import PatientList from "./PatientLIst";
-import PatientDetails from "./PatientDetails";
+import PatientList from "./MainPages/PatientLIst";
+import PatientDetails from "./MainPages/PatientDetails";
 import PatientTreatmentHistory from "./PatientTreatmentHistory";
 import PatientTreatmentBuilder from "./PatientTreatmentBuilder";
-import DoctorHomeLandingPage from "./DoctorHomeLandingPage";
-import CreateExcercisePlanPage from "../CreateExcercisePlanPage";
+import DoctorHomeLandingPage from "./MainPages/DoctorHomeLandingPage";
+import CreateExcercisePlanPage from "./MainPages/CreateExcercisePlanPage";
 // import { iExcerciseDataDto } from "../../models/ExcerciseInterface";
 // import CreateExcercisePlanPage from "../CreateExcercisePlanPage";
 // import { useState } from "react";

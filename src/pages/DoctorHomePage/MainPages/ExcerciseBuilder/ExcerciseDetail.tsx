@@ -6,8 +6,8 @@ import {
   ScrollArea,
   Text,
 } from "@radix-ui/themes";
-import { iExcerciseData } from "../models/ExcerciseInterface";
-import ThemeColorPallate from "../assets/ThemeColorPallate";
+import { iExcerciseData } from "../../../../models/ExcerciseInterface";
+import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
 import { BiExpand } from "react-icons/bi";
 
 export interface iExcerciseDetailProps {

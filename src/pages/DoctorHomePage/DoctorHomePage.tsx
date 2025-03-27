@@ -6,10 +6,10 @@ import DoctorNavBar from "./DoctorNavBar";
 // import { Flex, Text } from "@radix-ui/themes";
 import { Outlet } from "react-router-dom";
 import ThemeColorPallate from "../../assets/ThemeColorPallate";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { iPatientDto, iPatientFullData } from "../../dtos/PatientDto";
 import { iExcerciseDataDto } from "../../models/ExcerciseInterface";
-import { BreadcrumbItem } from "./DoctorMiniNavBarBreadCrumb";
+import { BreadcrumbItem } from "./MainPages/DoctorMiniNavBarBreadCrumb";
 // import { useNewPatientBreadcrumbItems } from "./DoctorHomeLandingPage";
 // import { iPatientDto } from "../../dtos/PatientDto";
 
@@ -61,6 +61,7 @@ export const DoctorHomePage = () => {
   const isSignedIn = useSelector(
     (state: UserSessionStateType) => state.userSession.isSignedIn
   );
+  const navigate = useNavigate();
 
   const [currentMainScreen, setCurrentMainScreen] = useState(
     DoctorHomeMainScreen.NEW_PATIENT_ENTRY
@@ -82,14 +83,17 @@ export const DoctorHomePage = () => {
   const [isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh] = useState(false);
   const [excerciseBuilderPlannerList, setExcerciseBuilderPlannerList] = useState([] as iExcerciseDataDto[]);
 
+  useEffect(()=>{
+    if (!isSignedIn) {
+      navigate("/signup");
+      return;
+    }
+  })
+
   // const user: User = useSelector(
   // (state: UserSessionStateType) => state.userSession.user
   // );
-  const navigate = useNavigate();
-  if (!isSignedIn) {
-    navigate("/signin");
-    return;
-  }
+ 
   return (
     <>
       <CurrentMainScreenContext.Provider

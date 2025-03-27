@@ -4,15 +4,15 @@ import React, { useState } from "react";
 import * as Form from "@radix-ui/react-form";
 // import ThemeColorPallate from "../../assets/ThemeColorPallate";
 // import { useState } from "react";
-import { DefaultToastTiming, useToast } from "../../stores/ToastContext";
-import { ToastColors } from "../../components/Toast";
-import iPatients from "../../models/iPatients";
-import { createPatient } from "../../controllers/PatientsController";
-import { FailedResponseDto } from "../../dtos/FailedResponseDto";
+import { DefaultToastTiming, useToast } from "../../../stores/ToastContext";
+import { ToastColors } from "../../../components/Toast";
+import iPatients from "../../../models/iPatients";
+import { createPatient } from "../../../controllers/PatientsController";
+import { FailedResponseDto } from "../../../dtos/FailedResponseDto";
 import { useSelector } from "react-redux";
-import { UserSessionStateType } from "../../stores/userSessionStore";
-import ErrorHandler from "../../errorHandlers/ErrorHandler";
-import { useCurrentMainScreenContext } from "./DoctorHomePage";
+import { UserSessionStateType } from "../../../stores/userSessionStore";
+import ErrorHandler from "../../../errorHandlers/ErrorHandler";
+import { useCurrentMainScreenContext } from "../DoctorHomePage";
 // import { PatientListProps } from "./PatientLIst";
 
 // interface iNewPatientEntry {

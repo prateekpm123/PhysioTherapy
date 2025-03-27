@@ -9,16 +9,17 @@ import {
   Skeleton,
   //   ScrollView,
 } from "@radix-ui/themes";
-import { getAllPatients } from "../../controllers/PatientsController";
-import { iGetAllPatientDto, iPatientDto } from "../../dtos/PatientDto";
+import { getAllPatients } from "../../../controllers/PatientsController";
+import { iGetAllPatientDto, iPatientDto } from "../../../dtos/PatientDto";
 import { useSelector } from "react-redux";
-import { UserSessionStateType } from "../../stores/userSessionStore";
+import { UserSessionStateType } from "../../../stores/userSessionStore";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import ErrorHandler from "../../errorHandlers/ErrorHandler";
+import ErrorHandler from "../../../errorHandlers/ErrorHandler";
 import {
   DoctorHomeMainScreen,
   useCurrentMainScreenContext,
-} from "./DoctorHomePage";
+} from "../DoctorHomePage";
+import { useNavigate } from "react-router-dom";
 
 export interface PatientListProps {
   // patients: iPatientDto[];
@@ -27,12 +28,20 @@ export interface PatientListProps {
   refreshTrigger: boolean;
 }
 
-const PatientList= () => {
+const PatientList = () => {
   const [patients, setPatients] = useState([] as iPatientDto[]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const {setBreadCrumbItems, setCurrentMainScreen, setCurrentPatientDetails, isPatientListScreenRefresh, setIsPatientListScreenRefresh, isPatientDetailsScreenRefresh, setIsPatientDetailScreenRefresh} =
-    useCurrentMainScreenContext();
+  const navigate = useNavigate();
+  const {
+    setBreadCrumbItems,
+    setCurrentMainScreen,
+    setCurrentPatientDetails,
+    isPatientListScreenRefresh,
+    setIsPatientListScreenRefresh,
+    isPatientDetailsScreenRefresh,
+    setIsPatientDetailScreenRefresh,
+  } = useCurrentMainScreenContext();
   const filteredData: iPatientDto[] = patients.filter((item: iPatientDto) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -46,15 +55,17 @@ const PatientList= () => {
   };
 
   const onPatientCardClick = (patientData: iPatientDto) => {
+    navigate("/doctorhome/main/patientDetails/" + patientData.p_id);
     setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
     setIsPatientDetailScreenRefresh(!isPatientDetailsScreenRefresh);
     setBreadCrumbItems([
       {
         label: "Patient Details",
-        onClick: () => {setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS)
+        onClick: () => {
+          setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
         },
-      }
-    ])
+      },
+    ]);
     if (setCurrentPatientDetails) {
       setCurrentPatientDetails(patientData);
     }
@@ -107,7 +118,7 @@ const PatientList= () => {
           <Skeleton loading={isLoading}>
             <Card
               onClick={() => onPatientCardClick(item)}
-              key={item.d_id}
+              key={item.p_id}
               size="3"
               style={{ minHeight: "120px" }}
             >

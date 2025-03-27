@@ -1,10 +1,10 @@
 // Header.tsx
 import { styled } from "@stitches/react";
-import { Flex, Link, Text,Avatar, DropdownMenu, Box, Button } from "@radix-ui/themes";
+import { Flex, Text,Avatar, DropdownMenu, Box, Button } from "@radix-ui/themes";
 import { Avatar as Avatar2}  from "radix-ui";
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../stores/userSessionStore";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ThemeColorPallate from "../../assets/ThemeColorPallate";
 import { DoctorHomeMainScreen, useCurrentMainScreenContext } from "./DoctorHomePage";
 
@@ -63,12 +63,12 @@ const DoctorNavBar = () => {
         {/* Use a div with padding */}
         <Flex justify="between" align="center" style={{ width: "100%" }} gap="4">
           <Logo href="#">PhysioCare</Logo>
-          <Flex style={{ flexGrow: 1, justifyContent: "center" }}>
+          <Flex style={{ flexGrow: 1, justifyContent: "center" }} gap="4">
             <Link onClick={()=> navigate('/doctorhome')} href="#" style={{color: "white"}} >Home Center</Link>
-            {/* <NavLink href="#">Features</NavLink>
-            <NavLink href="#">For Physiotherapists</NavLink>
-            <NavLink href="#">For Individuals</NavLink>
-            <NavLink href="#">Contact</NavLink> */}
+            <Link to={'/doctorhome/newPatient'} href="#">New Patient</Link>
+            <Link href="#">For Physiotherapists</Link>
+            <Link href="#">For Individuals</Link>
+            <Link href="#">Contact</Link>
           </Flex>
           <Flex
             style={{ justifyContent: "flex-end", marginRight: "1rem" }}

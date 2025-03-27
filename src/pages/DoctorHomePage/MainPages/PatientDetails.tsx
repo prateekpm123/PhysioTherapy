@@ -1,7 +1,7 @@
 import {
   DoctorHomeMainScreen,
   useCurrentMainScreenContext,
-} from "./DoctorHomePage";
+} from "../DoctorHomePage";
 import {
   Flex,
   Heading,
@@ -18,11 +18,12 @@ import {
 // import ThemeColorPallate from "../../assets/ThemeColorPallate";
 // import { ReloadIcon } from "@radix-ui/react-icons";
 import { useEffect } from "react";
-import { findPatient } from "../../controllers/PatientsController";
-import { iPatientDto } from "../../dtos/PatientDto";
-import ErrorHandler from "../../errorHandlers/ErrorHandler";
-import { getExcercisePlans } from "../../controllers/ExcerciseController";
-import { iExcercisePlanDto } from "../../models/ExcerciseInterface";
+import { findPatient } from "../../../controllers/PatientsController";
+import { iPatientDto } from "../../../dtos/PatientDto";
+import ErrorHandler from "../../../errorHandlers/ErrorHandler";
+import { getExcercisePlans } from "../../../controllers/ExcerciseController";
+import { iExcercisePlanDto } from "../../../models/ExcerciseInterface";
+import { useNavigate, useParams } from "react-router-dom";
 
 const PatientDetails = () => {
   const {
@@ -34,22 +35,25 @@ const PatientDetails = () => {
     setPatientDetailsLoading,
     patientDetailsLoading,
   } = useCurrentMainScreenContext();
-  //   const navigate = useNavigate();
 
+    const navigate = useNavigate();
+  const { pid } = useParams();
   const onCreateNewPlan = () => {
+    navigate("/doctorhome/main/buildPlan");
     setBreadCrumbItems([
       {
         label: "Patient Details",
         onClick: () => {
           setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
-          setBreadCrumbItems([  // setting the breadcrumb again here, so that Excercise Builder gets removed
+          setBreadCrumbItems([
+            // setting the breadcrumb again here, so that Excercise Builder gets removed
             {
               label: "Patient Details",
               onClick: () => {
                 setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
               },
-            }
-          ])
+            },
+          ]);
         },
       },
       {
@@ -67,7 +71,9 @@ const PatientDetails = () => {
     setPatientDetailsLoading(true);
     async function refreshPatientDetails() {
       await findPatient({
-        data: currentPatientDetails,
+        data: {
+          p_id: pid,
+        },
         afterAPISuccess: (response) => {
           const patient: iPatientDto = response.patient;
           if (setCurrentPatientDetails) {
@@ -83,7 +89,9 @@ const PatientDetails = () => {
         },
       }).then(() => {
         getExcercisePlans({
-          data: currentPatientDetails,
+          data: {
+            p_id: pid,
+          },
           afterAPISuccess: (res) => {
             const temp = res.excercisePlans as iExcercisePlanDto[];
             const temp2 = currentPatientDetails;

@@ -1,8 +1,8 @@
 import { RiDeleteBinLine } from "react-icons/ri";
-import { IPlannerItem } from "../models/IPlannerItems";
+import { IPlannerItem } from "../../../../models/IPlannerItems";
 import { useState } from "react";
 import { Flex, Text } from "@radix-ui/themes";
-import ThemeColorPallate from "../assets/ThemeColorPallate";
+import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
 
 // import DraggableDiv from "./DraggableDiv";
 

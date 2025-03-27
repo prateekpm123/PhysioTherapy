@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { iExcerciseData } from "../models/ExcerciseInterface";
+import { iExcerciseData } from "../../../../models/ExcerciseInterface";
 // import DatabaseController from "../databaseConnections/DatabaseController";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../databaseConnections/FireBaseConnection";
+import { storage } from "../../../../databaseConnections/FireBaseConnection";
 // import { storage } from "../databaseConnections/FireBaseStorageInstance";
 import { isMobile } from "react-device-detect";
 import { Flex, Heading, Text, Button, Dialog } from "@radix-ui/themes";
-import { createExcercise } from "../controllers/ExcerciseController";
+import { createExcercise } from "../../../../controllers/ExcerciseController";
 import { IoMdAdd } from "react-icons/io";
 import { useSelector } from "react-redux";
-import { UserSessionStateType } from "../stores/userSessionStore";
-import { useCurrentMainScreenContext } from "../pages/DoctorHomePage/DoctorHomePage";
-import ThemeColorPallate from "../assets/ThemeColorPallate";
+import { UserSessionStateType } from "../../../../stores/userSessionStore";
+import { useCurrentMainScreenContext } from "../../DoctorHomePage";
+import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
 
 export const AddExcercise = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);

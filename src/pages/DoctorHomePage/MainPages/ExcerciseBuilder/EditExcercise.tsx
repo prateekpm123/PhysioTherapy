@@ -1,14 +1,14 @@
 import React, { useRef, useState } from "react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { H4, H6 } from "./TextTags";
-import { iExcerciseDataDto } from "../models/ExcerciseInterface";
+import { H4, H6 } from "../../../../components/TextTags";
+import { iExcerciseDataDto } from "../../../../models/ExcerciseInterface";
 // import DatabaseController from "../databaseConnections/DatabaseController";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../databaseConnections/FireBaseConnection";
+import { storage } from "../../../../databaseConnections/FireBaseConnection";
 // import { storage } from "../databaseConnections/FireBaseStorageInstance";
 import { isMobile } from "react-device-detect";
 import { Flex, Heading, Text, Button, Dialog } from "@radix-ui/themes";
-import { updateExcercise } from "../controllers/ExcerciseController";
+import { updateExcercise } from "../../../../controllers/ExcerciseController";
 
 interface iEditExcercise {
   excercise: iExcerciseDataDto | undefined;

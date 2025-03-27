@@ -82,7 +82,7 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
     
       onSave();
     } else {
-      navigate("/doctorhome");
+      navigate("/doctorhome/main");
     }
     console.log("Doctor details were created successfully");
   };

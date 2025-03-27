@@ -1,19 +1,19 @@
 import { Suspense, useEffect, useState } from "react";
-import { ExcerciseTile } from "../components/ExcerciseTile";
-import { ExcerciseType, iExcerciseDataDto } from "../models/ExcerciseInterface";
-import { PlannerList } from "../components/PlannerList";
-import { ExcerciseDetail } from "../components/ExcerciseDetail";
-import Modal from "../components/Modal";
-import { PDFPreview } from "../components/PDFPreview";
+import { ExcerciseTile } from "./ExcerciseBuilder/ExcerciseTile";
+import { ExcerciseType, iExcerciseDataDto } from "../../../models/ExcerciseInterface";
+import { PlannerList } from "./ExcerciseBuilder/PlannerList";
+import { ExcerciseDetail } from "./ExcerciseBuilder/ExcerciseDetail";
+import Modal from "../../../components/Modal";
+import { PDFPreview } from "../../../components/PDFPreview";
 // import { IoMdAdd } from "react-icons/io";
-import { AddExcercise } from "../components/AddExcercise";
-import { EditExcercise } from "../components/EditExcercise";
+import { AddExcercise } from "./ExcerciseBuilder/AddExcercise";
+import { EditExcercise } from "./ExcerciseBuilder/EditExcercise";
 import { isMobile } from "react-device-detect";
 import React from "react";
 import { Box, Flex, TextField } from "@radix-ui/themes";
-import { getAllExcercises } from "../controllers/ExcerciseController";
-import ThemeColorPallate from "../assets/ThemeColorPallate";
-import { useCurrentMainScreenContext } from "./DoctorHomePage/DoctorHomePage";
+import { getAllExcercises } from "../../../controllers/ExcerciseController";
+import ThemeColorPallate from "../../../assets/ThemeColorPallate";
+import { useCurrentMainScreenContext } from "../DoctorHomePage";
 
 export const ExcerciseBuilder = () => {
   const [data2, setData2] = useState<iExcerciseDataDto[] | null>();

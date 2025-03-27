@@ -3,16 +3,16 @@ import {
   ExcerciseType,
   iExcerciseDataDto,
   iExcerciseTile,
-} from "../models/ExcerciseInterface";
+} from "../../../../models/ExcerciseInterface";
 // import P_EmptyCard from "./EmptyCard";
 import { Card, Flex, Text, Button, Skeleton } from "@radix-ui/themes";
 import { EditExcercise } from "./EditExcercise";
 import { ExcerciseDetail } from "./ExcerciseDetail";
-import { useCurrentMainScreenContext } from "../pages/DoctorHomePage/DoctorHomePage";
-import { deleteOriginalExcercise } from "../controllers/ExcerciseController";
-import ErrorHandler from "../errorHandlers/ErrorHandler";
-import { DefaultToastTiming, useToast } from "../stores/ToastContext";
-import { ToastColors } from "./Toast";
+import { useCurrentMainScreenContext } from "../../DoctorHomePage";
+import { deleteOriginalExcercise } from "../../../../controllers/ExcerciseController";
+import ErrorHandler from "../../../../errorHandlers/ErrorHandler";
+import { DefaultToastTiming, useToast } from "../../../../stores/ToastContext";
+import { ToastColors } from "../../../../components/Toast";
 // import { IoMdAdd } from "react-icons/io";
 
 export const ExcerciseTile = (data: iExcerciseTile) => {

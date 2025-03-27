@@ -84,7 +84,7 @@ export const LoginPage = () => {
     dispatch(setUser(data));
     dispatch(setDoctorDetails(data.userGoogleAuthData.doctorDetails));
     dispatch(setIsSignedIn(true));
-    navigate("/doctorhome");
+    navigate("/doctorhome/main/newPatient");
   };
 
   const afterLoginFail = (response: FailedResponseDto) => {

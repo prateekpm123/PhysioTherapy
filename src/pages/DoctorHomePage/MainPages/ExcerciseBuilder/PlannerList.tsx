@@ -1,11 +1,12 @@
 import React, { Suspense, useRef } from "react";
-import { iExcerciseDataDto } from "../models/ExcerciseInterface";
+import { iExcerciseDataDto } from "../../../../models/ExcerciseInterface";
 import { PlannerItem } from "./PlannerItem";
 import { Flex, Heading, Box, Button } from "@radix-ui/themes";
-import ThemeColorPallate from "../assets/ThemeColorPallate";
+import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
 // import { useNavigate } from "react-router-dom";
 // import CreateExcercisePlanPage from "../pages/CreateExcercisePlanPage";
-import { DoctorHomeMainScreen, useCurrentMainScreenContext } from "../pages/DoctorHomePage/DoctorHomePage";
+import { DoctorHomeMainScreen, useCurrentMainScreenContext } from "../../DoctorHomePage";
+import { useNavigate } from "react-router-dom";
 // import { saveExcercisePlan } from "../controllers/ExcerciseController";
 // import { useCurrentMainScreenContext } from "../pages/DoctorHomePage/DoctorHomePage";
 // import { useSelector } from "react-redux";
@@ -20,7 +21,7 @@ export interface PlannerListProps {
 export const PlannerList = (inputs: PlannerListProps) => {
   const {breadCrumbItems, setBreadCrumbItems, excerciseBuilderPlannerList, setExcerciseBuilderPlannerList, setCurrentMainScreen} = useCurrentMainScreenContext();
   const plannerListRef = useRef<HTMLDivElement>(null);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const onDelete = (excercise: iExcerciseDataDto) => {
     const index = excerciseBuilderPlannerList.findIndex(
       (item) => item.excercise_name === excercise.excercise_name
@@ -38,7 +39,8 @@ export const PlannerList = (inputs: PlannerListProps) => {
 
 
   const handleCreateExcercisePlan = () =>{
-    setCurrentMainScreen(DoctorHomeMainScreen.CREATE_EXCERCISE_PLAN);
+    navigate("/doctorhome/main/createPlan");
+    // setCurrentMainScreen(DoctorHomeMainScreen.CREATE_EXCERCISE_PLAN);
     setBreadCrumbItems(
       [
         {

@@ -1,11 +1,15 @@
 import React from "react";
 import { Flex, Heading, TextField, Button } from "@radix-ui/themes";
-import { iExcerciseDataDto } from "../models/ExcerciseInterface";
-import { saveExcercisePlan } from "../controllers/ExcerciseController";
-import { DoctorHomeMainScreen, useCurrentMainScreenContext } from "./DoctorHomePage/DoctorHomePage";
-import ErrorHandler from "../errorHandlers/ErrorHandler";
-import { DefaultToastTiming, useToast } from "../stores/ToastContext";
-import { ToastColors } from "../components/Toast";
+import { iExcerciseDataDto } from "../../../models/ExcerciseInterface";
+import { saveExcercisePlan } from "../../../controllers/ExcerciseController";
+import {
+  DoctorHomeMainScreen,
+  useCurrentMainScreenContext,
+} from "../DoctorHomePage";
+import ErrorHandler from "../../../errorHandlers/ErrorHandler";
+import { DefaultToastTiming, useToast } from "../../../stores/ToastContext";
+import { ToastColors } from "../../../components/Toast";
+import { useNavigate } from "react-router-dom";
 
 // interface CreateExcercisePlanPageProps {
 //   exercises: iExcerciseDataDto[];
@@ -21,9 +25,8 @@ const CreateExcercisePlanPage = () => {
     setBreadCrumbItems,
   } = useCurrentMainScreenContext();
 
-
-  const { showToast} = useToast();
-
+  const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -40,8 +43,6 @@ const CreateExcercisePlanPage = () => {
     setExcerciseBuilderPlannerList(updatedExercises);
   };
 
-
-
   const onExcercisePlanSave = () => {
     const data = {
       excercises: excerciseBuilderPlannerList,
@@ -50,10 +51,15 @@ const CreateExcercisePlanPage = () => {
     saveExcercisePlan({
       data: data,
       afterAPISuccess: (response) => {
-        showToast("Excercise Plan created successfully", DefaultToastTiming, ToastColors.GREEN);
+        showToast(
+          "Excercise Plan created successfully",
+          DefaultToastTiming,
+          ToastColors.GREEN
+        );
         breadCrumbItems.pop();
         breadCrumbItems.pop();
         setBreadCrumbItems(breadCrumbItems);
+        navigate("/doctorhome/main/patientDetails/" + currentPatientDetails?.p_id);
         setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
         console.log(response);
       },

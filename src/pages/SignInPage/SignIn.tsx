@@ -19,7 +19,7 @@ import {
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { FcGoogle, FcVoicemail } from "react-icons/fc"; // Google icon
 import { FaFacebook } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { SignInDto } from "../../dtos/SignInDto";
 import { useDispatch } from "react-redux";
 import { setIsSignedIn, setUser } from "../../stores/userSessionSlice";
@@ -94,7 +94,7 @@ export const SignIn = () => {
     console.log("Sign-in success:", data);
     dispatch(setUser(data));
     dispatch(setIsSignedIn(true));
-    navigate("/doctor/details")
+    navigate("/details")
     // navigate("/doctorhome");
   };
 
@@ -120,6 +120,7 @@ export const SignIn = () => {
         align="center"
         style={{ padding: "50px" }}
       >
+        <Outlet></Outlet>
         <Box width="500px">
           <Card size="5">
             <Flex gap="4" align="start" direction={"column"}>
