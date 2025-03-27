@@ -1,6 +1,9 @@
 import { Suspense, useEffect, useState } from "react";
 import { ExcerciseTile } from "./ExcerciseBuilder/ExcerciseTile";
-import { ExcerciseType, iExcerciseDataDto } from "../../../models/ExcerciseInterface";
+import {
+  ExcerciseType,
+  iExcerciseDataDto,
+} from "../../../models/ExcerciseInterface";
 import { PlannerList } from "./ExcerciseBuilder/PlannerList";
 import { ExcerciseDetail } from "./ExcerciseBuilder/ExcerciseDetail";
 import Modal from "../../../components/Modal";
@@ -14,12 +17,18 @@ import { Box, Flex, TextField } from "@radix-ui/themes";
 import { getAllExcercises } from "../../../controllers/ExcerciseController";
 import ThemeColorPallate from "../../../assets/ThemeColorPallate";
 import { useCurrentMainScreenContext } from "../DoctorHomePage";
+import { Outlet } from "react-router-dom";
 
 export const ExcerciseBuilder = () => {
   const [data2, setData2] = useState<iExcerciseDataDto[] | null>();
   const [excercises, setExcercises] = useState<iExcerciseDataDto[]>();
   // const [plannerItems, setPlannerItems] = useState<iExcerciseDataDto[]>([]);
-  const {isExcerciseBuilderRefresh, setIsExcerciseBuilderLoading, excerciseBuilderPlannerList, setExcerciseBuilderPlannerList} = useCurrentMainScreenContext();
+  const {
+    isExcerciseBuilderRefresh,
+    setIsExcerciseBuilderLoading,
+    excerciseBuilderPlannerList,
+    setExcerciseBuilderPlannerList,
+  } = useCurrentMainScreenContext();
   const [isPlannerListModalOpen, setIsPlannerListModalOpen] =
     useState<boolean>(false);
   const [isExcerciseDetailModalOpen, setIsExcerciseDetailModalOpen] =
@@ -32,6 +41,7 @@ export const ExcerciseBuilder = () => {
     useState<boolean>(false);
   const [currentClickedExcerciseTile, setCurrentClickedExcerciseTile] =
     useState<iExcerciseDataDto>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [currentExcerciseTileEditClick, setCurrentExcerciseTileEditClick] =
     useState<iExcerciseDataDto>();
 
@@ -50,7 +60,10 @@ export const ExcerciseBuilder = () => {
   };
 
   const onAdd = (clickedExcercise: iExcerciseDataDto) => {
-    setExcerciseBuilderPlannerList((excerciseBuilderPlannerList) => [...excerciseBuilderPlannerList, clickedExcercise]);
+    setExcerciseBuilderPlannerList((excerciseBuilderPlannerList) => [
+      ...excerciseBuilderPlannerList,
+      clickedExcercise,
+    ]);
   };
 
   const onExcerciseTileForDetailClicked = (
@@ -80,7 +93,7 @@ export const ExcerciseBuilder = () => {
         console.log(response);
         setIsExcerciseBuilderLoading(false);
       },
-    });   
+    });
   };
 
   // const onAddExcerciseClick = () => {
@@ -105,147 +118,156 @@ export const ExcerciseBuilder = () => {
   }, [isExcerciseBuilderRefresh]);
 
   return (
-    <Flex direction="row" className="h-screen" width="100%"  height="100%">
-      <Flex
-        direction="column"
-        width="100%"  height="100%"
-        // className="bg-slate-800"
-        // style={{
-        //   flex: isMobile ? "1 1 100%" : "5 1 100%",
-        //   padding: isMobile ? "12px" : "32px",
-        // }}
-      >
-        <Box
-          style={{
-            display: "grid",
-            gap: "16px",
-            width:"100%",
-            height: "100%",
-            maxHeight:"80vh",
-            overflow: "auto",
-            gridTemplateColumns: isMobile
-              ? "1fr"
-              : "repeat(auto-fill, minmax(280px, 1fr))",
-          }}
+    <>
+      <Outlet />
+      <Flex direction="row" className="h-screen" width="100%" height="100%">
+        <Flex
+          direction="column"
+          width="100%"
+          height="100%"
+          // className="bg-slate-800"
+          // style={{
+          //   flex: isMobile ? "1 1 100%" : "5 1 100%",
+          //   padding: isMobile ? "12px" : "32px",
+          // }}
         >
-          <Suspense fallback={<div>Loading...</div>}>
-            {excercises &&
-              Object.entries(excercises).map(([key, excercise]) => (
-                <ExcerciseTile
-                  key={key}
-                  excerciseKey={key}
-                  excercise={excercise}
-                  onAdd={onAdd}
-                  onEdit={() => onEditExcerciseClick(excercise, key)}
-                  onExcerciseTileClick={onEditExcerciseClick}
-                  onClick={() =>
-                    onExcerciseTileForDetailClicked(excercise, key)
-                  }
-                  refreshExcercise={fetchExcerciseData}
-                  viewType={
-                    isMobile
-                      ? ExcerciseType.MOBILE_VIEW
-                      : ExcerciseType.FULL_VIEW
-                  }
-                />
-              ))}
-          </Suspense>
-        </Box>
-        <AddExcercise/>
-        <TextField.Root
-          placeholder="Search"
-          size="3"
-          radius="full"
-          style={{
-            position: "relative", // Sticks to the bottom
-            bottom: "0", // Aligns to the bottom of the screen
-            left: "0",
-            width: "100%", // Full width
-            height: "60px", // Increased height
-            backgroundColor: ThemeColorPallate.background,
-            color: "white",
-            padding: "10px",
-            boxSizing: "border-box",
-          }}
-          onChange={(e) => search(e as React.ChangeEvent<HTMLInputElement>)}
-        />
-      </Flex>
-      {!isMobile && (
-        <Box style={{ flex: "1 1 35%", marginLeft: "12px", boxShadow: "-9px 0px 15px 0px rgba(0,0,0,0.75)", minWidth:"20rem" }}>
-          <PlannerList
-            testId={"homePlannerList"}
-            isPDFPreviewModelRequired={isPDFPreviewModalOpen}
-            setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
-          />
-        </Box>
-      )}
-      {/* Modals */}
-      {isExcerciseDetailModalOpen && (
-        <Modal
-          testId={"ExcerciseDetailModal"}
-          title={"Excercise Detail"}
-          pIsOpen={isExcerciseDetailModalOpen}
-          setIsModelOpen={setIsExcerciseDetailModalOpen}
-        >
-          {currentClickedExcerciseTile && (
-            <ExcerciseDetail
-              excercise={currentClickedExcerciseTile}
-            />
-          )}
-        </Modal>
-      )}
-      {isPDFPreviewModalOpen && (
-        <Modal
-          testId={"ExcerciseDetailModal"}
-          title={"PDF Preview"}
-          pIsOpen={isPDFPreviewModalOpen}
-          setIsModelOpen={setIsPDFPreviewModalOpen}
-        >
-          <PDFPreview plannerList={excerciseBuilderPlannerList} />
-        </Modal>
-      )}
-      {isAddExcerciseModalOpen && (
-        <Modal
-          testId={"AddExcerciseModal"}
-          title={"Add Excercise"}
-          pIsOpen={isAddExcerciseModalOpen}
-          setIsModelOpen={setIsAddExcerciseModalOpen}
-        >
+          <Box
+            style={{
+              display: "grid",
+              gap: "16px",
+              width: "100%",
+              height: "100%",
+              maxHeight: "80vh",
+              overflow: "auto",
+              gridTemplateColumns: isMobile
+                ? "1fr"
+                : "repeat(auto-fill, minmax(280px, 1fr))",
+            }}
+          >
+            <Suspense fallback={<div>Loading...</div>}>
+              {excercises &&
+                Object.entries(excercises).map(([key, excercise]) => (
+                  <ExcerciseTile
+                    key={key}
+                    excerciseKey={key}
+                    excercise={excercise}
+                    onAdd={onAdd}
+                    onEdit={() => onEditExcerciseClick(excercise, key)}
+                    onExcerciseTileClick={onEditExcerciseClick}
+                    onClick={() =>
+                      onExcerciseTileForDetailClicked(excercise, key)
+                    }
+                    refreshExcercise={fetchExcerciseData}
+                    viewType={
+                      isMobile
+                        ? ExcerciseType.MOBILE_VIEW
+                        : ExcerciseType.FULL_VIEW
+                    }
+                  />
+                ))}
+            </Suspense>
+          </Box>
           <AddExcercise />
-        </Modal>
-      )}
-      {isEditExcerciseModalOpen && (
-        <Modal
-          testId={"EditExcerciseModal"}
-          title={"Edit Excercise"}
-          pIsOpen={isEditExcerciseModalOpen}
-          setIsModelOpen={setIsEditExcerciseModalOpen}
-        >
-          <EditExcercise
-            excercise={currentExcerciseTileEditClick}
-            e_id={
-              currentExcerciseTileEditClick
-                ? currentExcerciseTileEditClick.e_id
-                : ""
-            }
+          <TextField.Root
+            placeholder="Search"
+            size="3"
+            radius="full"
+            style={{
+              position: "relative", // Sticks to the bottom
+              bottom: "0", // Aligns to the bottom of the screen
+              left: "0",
+              width: "100%", // Full width
+              height: "60px", // Increased height
+              backgroundColor: ThemeColorPallate.background,
+              color: "white",
+              padding: "10px",
+              boxSizing: "border-box",
+            }}
+            onChange={(e) => search(e as React.ChangeEvent<HTMLInputElement>)}
           />
-        </Modal>
-      )}
-      {isPlannerListModalOpen && (
-        <Modal
-          testId={"PlannerListModal"}
-          title={"Planner list"}
-          pIsOpen={isPlannerListModalOpen}
-          setIsModelOpen={setIsPlannerListModalOpen}
-        >
-          <PlannerList
-            testId={"mobilFullPlannerList"}
-            isPDFPreviewModelRequired={isPDFPreviewModalOpen}
-            setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
-          ></PlannerList>
-        </Modal>
-      )}
-    </Flex>
+        </Flex>
+        {!isMobile && (
+          <Box
+            style={{
+              flex: "1 1 35%",
+              marginLeft: "12px",
+              boxShadow: "-9px 0px 15px 0px rgba(0,0,0,0.75)",
+              minWidth: "20rem",
+            }}
+          >
+            <PlannerList
+              testId={"homePlannerList"}
+              isPDFPreviewModelRequired={isPDFPreviewModalOpen}
+              setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
+            />
+          </Box>
+        )}
+        {/* Modals */}
+        {isExcerciseDetailModalOpen && (
+          <Modal
+            testId={"ExcerciseDetailModal"}
+            title={"Excercise Detail"}
+            pIsOpen={isExcerciseDetailModalOpen}
+            setIsModelOpen={setIsExcerciseDetailModalOpen}
+          >
+            {currentClickedExcerciseTile && (
+              <ExcerciseDetail />
+            )}
+          </Modal>
+        )}
+        {isPDFPreviewModalOpen && (
+          <Modal
+            testId={"ExcerciseDetailModal"}
+            title={"PDF Preview"}
+            pIsOpen={isPDFPreviewModalOpen}
+            setIsModelOpen={setIsPDFPreviewModalOpen}
+          >
+            <PDFPreview plannerList={excerciseBuilderPlannerList} />
+          </Modal>
+        )}
+        {isAddExcerciseModalOpen && (
+          <Modal
+            testId={"AddExcerciseModal"}
+            title={"Add Excercise"}
+            pIsOpen={isAddExcerciseModalOpen}
+            setIsModelOpen={setIsAddExcerciseModalOpen}
+          >
+            <AddExcercise />
+          </Modal>
+        )}
+        {isEditExcerciseModalOpen && (
+          <Modal
+            testId={"EditExcerciseModal"}
+            title={"Edit Excercise"}
+            pIsOpen={isEditExcerciseModalOpen}
+            setIsModelOpen={setIsEditExcerciseModalOpen}
+          >
+            <EditExcercise
+              // excercise={currentExcerciseTileEditClick}
+              // e_id={
+              //   currentExcerciseTileEditClick
+              //     ? currentExcerciseTileEditClick.e_id
+              //     : ""
+              // }
+            />
+          </Modal>
+        )}
+        {isPlannerListModalOpen && (
+          <Modal
+            testId={"PlannerListModal"}
+            title={"Planner list"}
+            pIsOpen={isPlannerListModalOpen}
+            setIsModelOpen={setIsPlannerListModalOpen}
+          >
+            <PlannerList
+              testId={"mobilFullPlannerList"}
+              isPDFPreviewModelRequired={isPDFPreviewModalOpen}
+              setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
+            ></PlannerList>
+          </Modal>
+        )}
+      </Flex>
+    </>
   );
 };
 

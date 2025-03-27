@@ -47,6 +47,11 @@ const DoctorNavBar = () => {
       .then((data) => console.log(data));
   };
 
+  const onSettingsClick = (e: { preventDefault: () => void }) => {
+    e.preventDefault(); 
+    navigate('/doctorhome/settings');
+  }
+
   const onClickNewPatient = ()=>{
     setBreadCrumbItems([
       {
@@ -111,7 +116,7 @@ const DoctorNavBar = () => {
                       </Box>
                     </Flex>
               </DropdownMenu.Item>
-              <DropdownMenu.Item shortcut="⌘ ,">Setting</DropdownMenu.Item>
+              <DropdownMenu.Item onClick={onSettingsClick} shortcut="⌘ ,">Setting</DropdownMenu.Item>
               <DropdownMenu.Item shortcut="⌘ D">Duplicate</DropdownMenu.Item>
               <DropdownMenu.Separator />
               <DropdownMenu.Item shortcut="⌘ N">Archive</DropdownMenu.Item>

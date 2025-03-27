@@ -19,8 +19,12 @@ import DoctorHomeLandingPage from "./pages/DoctorHomePage/MainPages/DoctorHomeLa
 import { ExcerciseBuilder } from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder";
 import DoctorSettings from "./pages/DoctorHomePage/DoctorSettings";
 import NotFound from "./pages/NotFound";
+import Modal from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder/TestModal";
+import { EditExcercise } from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder/EditExcercise";
+import { ExcerciseDetail } from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder/ExcerciseDetail";
 
 const App: React.FC = () => {
+  // const {oeid} = useParams();
   return (
     <Router basename="/PhysioTherapy">
       <Routes>
@@ -36,7 +40,10 @@ const App: React.FC = () => {
           <Route path="main" element={<DoctorHomeLandingPage />}>
             <Route path="newPatient" element={<NewPatientEntry />} />
             <Route path="patientDetails/:pid" element={<PatientDetails />}/>
-            <Route path="patientDetails/:pid/buildPlan" element={<ExcerciseBuilder />} />
+            <Route path="patientDetails/:pid/buildPlan" element={<ExcerciseBuilder />} >
+              <Route path="editExcercise/:oeid" element={<EditExcercise />}/>
+              <Route path="excerciseDetails/:oeid" element={<ExcerciseDetail />}/>
+            </Route>
             <Route path="patientDetails/:pid/buildPlan/createPlan" element={<CreateExcercisePlanPage />} />
           </Route>
           <Route path="settings" element={<DoctorSettings />} />

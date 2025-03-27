@@ -41,8 +41,9 @@ const Toast: React.FC<ToastProps> = ({
 
   return (
     <Callout.Root
+      variant="soft"
       color={color}
-      style={{ position: "fixed", top: 40, right: 20, zIndex: 1000 }}
+      style={{ position: "fixed", top: 40, right: 20, zIndex: 1000, opacity: 1 }}
     >
       <Callout.Icon>
         <InfoCircledIcon />

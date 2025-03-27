@@ -6,28 +6,36 @@ import {
 } from "../../../../models/ExcerciseInterface";
 // import P_EmptyCard from "./EmptyCard";
 import { Card, Flex, Text, Button, Skeleton } from "@radix-ui/themes";
-import { EditExcercise } from "./EditExcercise";
-import { ExcerciseDetail } from "./ExcerciseDetail";
+// import { EditExcercise } from "./EditExcercise";
+// import { ExcerciseDetail } from "./ExcerciseDetail";
 import { useCurrentMainScreenContext } from "../../DoctorHomePage";
 import { deleteOriginalExcercise } from "../../../../controllers/ExcerciseController";
 // import ErrorHandler from "../../../../errorHandlers/ErrorHandler";
 import { DefaultToastTiming, useToast } from "../../../../stores/ToastContext";
 import { ToastColors } from "../../../../components/Toast";
+import { useNavigate, useParams } from "react-router-dom";
+import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
+import { BiExpand } from "react-icons/bi";
 // import { IoMdAdd } from "react-icons/io";
 
 export const ExcerciseTile = (data: iExcerciseTile) => {
   const [mouseShape, setMouseShape] = useState("pointer");
-  const {showToast} = useToast();
-  const {isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh} = useCurrentMainScreenContext();
+  const { showToast } = useToast();
+  const { isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh } =
+    useCurrentMainScreenContext();
 
   const deleteExcercise = async (excercise: iExcerciseDataDto) => {
     try {
       deleteOriginalExcercise({
         data: {
-          e_id: excercise.e_id
+          e_id: excercise.e_id,
         },
         afterAPISuccess: (res) => {
-          showToast("Excercise deleted successfully", DefaultToastTiming, ToastColors.GREEN);
+          showToast(
+            "Excercise deleted successfully",
+            DefaultToastTiming,
+            ToastColors.GREEN
+          );
           setIsExcerciseBuilderRefresh(!isExcerciseBuilderRefresh);
           console.log("Excercise deleted successfully:", res);
         },
@@ -83,12 +91,33 @@ const ExcerciseTileFullView = ({
       data.excercise.excercise_image_url
     );
   };
-
+  const { pid } = useParams();
+  const navigate = useNavigate();
   const { isExcerciseBuilderLoading } = useCurrentMainScreenContext();
 
   const handleImageError = () => {
     setIsLoading(false); // Update loading state
     // console.error("Failed to load image:", data.excercise.excercise_image_url);
+  };
+
+  const onExcerciseTileAdd = () => {
+    data.onAdd(data.excercise);
+  };
+
+  const onExcerciseDetailsClick = () =>{
+    navigate(
+      "/doctorhome/main/patientDetails/" +pid +"/buildPlan/excerciseDetails/" +data.excercise.e_id,
+      { state: { excercise: data.excercise } }
+    );
+  }
+  const onExcerciseEditClick = () => {
+    navigate(
+      "/doctorhome/main/patientDetails/" +
+        pid +
+        "/buildPlan/editExcercise/" +
+        data.excercise.e_id,
+      { state: { excercise: data.excercise } }
+    );
   };
 
   return (
@@ -173,18 +202,34 @@ const ExcerciseTileFullView = ({
           {data.excercise.excercise_type}
         </Text>
         <Flex gap="2" justify="center">
-          <Button
-            variant="soft"
-            size="3"
-            onClick={() => data.onAdd(data.excercise)}
-          >
+          <Button variant="soft" size="3" onClick={onExcerciseTileAdd}>
             Add
           </Button>
-          <EditExcercise
+          <Button variant="soft" size="3" onClick={onExcerciseEditClick}>
+            Edit
+          </Button>
+          {/* <EditExcercise
             excercise={data.excercise}
             e_id={data.excercise.e_id}
-          ></EditExcercise>
-          <ExcerciseDetail excercise={data.excercise}></ExcerciseDetail>
+          ></EditExcercise> */}
+          <BiExpand
+            className="text-1xl text-slate-700"
+            onClick={onExcerciseDetailsClick}
+            style={{
+              position: "absolute",
+              bottom: "85%",
+              backdropFilter: "blur(10px)",
+              right: "10%",
+              zIndex: 2,
+              borderRadius: "50%",
+              padding: "0.5rem",
+              width: "2.5rem",
+              height: "2.5rem",
+              boxShadow: "1px 2px 44px 5px rgba(0,0,0, 0.75)",
+              color: ThemeColorPallate.cardFontColorBlack,
+            }}
+          />
+          {/* <ExcerciseDetail></ExcerciseDetail> */}
           {/* <Button
             variant="soft"
             size="3"
