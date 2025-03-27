@@ -18,6 +18,8 @@ import { getAllExcercises } from "../../../controllers/ExcerciseController";
 import ThemeColorPallate from "../../../assets/ThemeColorPallate";
 import { useCurrentMainScreenContext } from "../DoctorHomePage";
 import { Outlet } from "react-router-dom";
+import { DefaultToastTiming, useToast } from "../../../stores/ToastContext";
+import { ToastColors } from "../../../components/Toast";
 
 export const ExcerciseBuilder = () => {
   const [data2, setData2] = useState<iExcerciseDataDto[] | null>();
@@ -29,6 +31,7 @@ export const ExcerciseBuilder = () => {
     excerciseBuilderPlannerList,
     setExcerciseBuilderPlannerList,
   } = useCurrentMainScreenContext();
+  const {showToast} = useToast();
   const [isPlannerListModalOpen, setIsPlannerListModalOpen] =
     useState<boolean>(false);
   const [isExcerciseDetailModalOpen, setIsExcerciseDetailModalOpen] =
@@ -60,6 +63,11 @@ export const ExcerciseBuilder = () => {
   };
 
   const onAdd = (clickedExcercise: iExcerciseDataDto) => {
+    // Check if the excercise is already added
+    if (excerciseBuilderPlannerList.find((item) => item.e_id === clickedExcercise.e_id)) {
+        showToast("Excercise already added", DefaultToastTiming, ToastColors.YELLOW);
+      return;
+    } 
     setExcerciseBuilderPlannerList((excerciseBuilderPlannerList) => [
       ...excerciseBuilderPlannerList,
       clickedExcercise,

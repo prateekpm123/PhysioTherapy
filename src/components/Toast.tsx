@@ -14,7 +14,8 @@ interface ToastProps {
 export enum ToastColors {
     BLUE = "blue",
     RED = "red",
-    GREEN = "green"
+    GREEN = "green",
+    YELLOW = "yellow"
 }
 
 const Toast: React.FC<ToastProps> = ({
