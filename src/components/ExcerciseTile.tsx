@@ -1,30 +1,41 @@
 import { useState } from "react";
-import { ExcerciseType, iExcerciseTile } from "../models/ExcerciseInterface";
+import {
+  ExcerciseType,
+  iExcerciseDataDto,
+  iExcerciseTile,
+} from "../models/ExcerciseInterface";
 // import P_EmptyCard from "./EmptyCard";
-import { database } from "../databaseConnections/FireBaseConnection";
-import { ref, remove } from "firebase/database";
 import { Card, Flex, Text, Button, Skeleton } from "@radix-ui/themes";
 import { EditExcercise } from "./EditExcercise";
 import { ExcerciseDetail } from "./ExcerciseDetail";
 import { useCurrentMainScreenContext } from "../pages/DoctorHomePage/DoctorHomePage";
+import { deleteOriginalExcercise } from "../controllers/ExcerciseController";
+import ErrorHandler from "../errorHandlers/ErrorHandler";
+import { DefaultToastTiming, useToast } from "../stores/ToastContext";
+import { ToastColors } from "./Toast";
 // import { IoMdAdd } from "react-icons/io";
-
 
 export const ExcerciseTile = (data: iExcerciseTile) => {
   const [mouseShape, setMouseShape] = useState("pointer");
+  const {showToast} = useToast();
+  const {isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh} = useCurrentMainScreenContext();
 
-  const deleteExcercise = async (nodePath: string) => {
+  const deleteExcercise = async (excercise: iExcerciseDataDto) => {
     try {
-      console.log("Inside delete function \n Deleting node:", nodePath);
-      const nodeRef = ref(database, "excercises/" + nodePath);
-      remove(nodeRef)
-        .then(() => {
-          console.log("Node deleted successfully!");
-          data.refreshExcercise();
-        })
-        .catch((error) => {
-          console.error("Error deleting node:", error);
-        });
+      deleteOriginalExcercise({
+        data: {
+          e_id: excercise.e_id
+        },
+        afterAPISuccess: (res) => {
+          showToast("Excercise deleted successfully", DefaultToastTiming, ToastColors.GREEN);
+          setIsExcerciseBuilderRefresh(!isExcerciseBuilderRefresh);
+          console.log("Excercise deleted successfully:", res);
+        },
+        afterAPIFail: (res) => {
+          ErrorHandler(res);
+          console.error("Excercise delete failed:", res);
+        },
+      });
     } catch (error) {
       console.error("Error deleting node:", error);
     }
@@ -33,7 +44,7 @@ export const ExcerciseTile = (data: iExcerciseTile) => {
     return (
       <ExcerciseTileFullView
         data={data}
-        deleteExcercise={deleteExcercise}
+        deleteExcercise={() => deleteExcercise(data.excercise)}
         mouseShape={mouseShape}
         setMouseShape={setMouseShape}
       />
@@ -42,7 +53,7 @@ export const ExcerciseTile = (data: iExcerciseTile) => {
     return (
       <ExcerciseTileMobileView
         data={data}
-        deleteExcercise={deleteExcercise}
+        deleteExcercise={() => deleteExcercise(data.excercise)}
         mouseShape={mouseShape}
         setMouseShape={setMouseShape}
       />
@@ -104,7 +115,7 @@ const ExcerciseTileFullView = ({
             boxShadow: "1px 2px 44px 5px rgba(0,0,0, 0.75)",
           }}
         > */}
-          {/* <BiExpand
+        {/* <BiExpand
             className="text-1xl text-slate-700"
             style={{
               position: "absolute",

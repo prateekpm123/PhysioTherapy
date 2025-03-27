@@ -2,7 +2,10 @@ import React from "react";
 import { Flex, Heading, TextField, Button } from "@radix-ui/themes";
 import { iExcerciseDataDto } from "../models/ExcerciseInterface";
 import { saveExcercisePlan } from "../controllers/ExcerciseController";
-import { useCurrentMainScreenContext } from "./DoctorHomePage/DoctorHomePage";
+import { DoctorHomeMainScreen, useCurrentMainScreenContext } from "./DoctorHomePage/DoctorHomePage";
+import ErrorHandler from "../errorHandlers/ErrorHandler";
+import { DefaultToastTiming, useToast } from "../stores/ToastContext";
+import { ToastColors } from "../components/Toast";
 
 // interface CreateExcercisePlanPageProps {
 //   exercises: iExcerciseDataDto[];
@@ -12,8 +15,15 @@ const CreateExcercisePlanPage = () => {
   const {
     currentPatientDetails,
     excerciseBuilderPlannerList,
+    setCurrentMainScreen,
     setExcerciseBuilderPlannerList,
+    breadCrumbItems,
+    setBreadCrumbItems,
   } = useCurrentMainScreenContext();
+
+
+  const { showToast} = useToast();
+
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -30,6 +40,8 @@ const CreateExcercisePlanPage = () => {
     setExcerciseBuilderPlannerList(updatedExercises);
   };
 
+
+
   const onExcercisePlanSave = () => {
     const data = {
       excercises: excerciseBuilderPlannerList,
@@ -38,9 +50,15 @@ const CreateExcercisePlanPage = () => {
     saveExcercisePlan({
       data: data,
       afterAPISuccess: (response) => {
+        showToast("Excercise Plan created successfully", DefaultToastTiming, ToastColors.GREEN);
+        breadCrumbItems.pop();
+        breadCrumbItems.pop();
+        setBreadCrumbItems(breadCrumbItems);
+        setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
         console.log(response);
       },
       afterAPIFail: (response) => {
+        ErrorHandler(response);
         console.log(response);
       },
     });
