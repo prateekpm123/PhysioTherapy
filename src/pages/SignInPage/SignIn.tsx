@@ -96,7 +96,7 @@ export const SignIn = () => {
     console.log("Sign-in success:", data);
     dispatch(setUser(data));
     dispatch(setIsSignedIn(true));
-    navigate("/details")
+    navigate("/signup/details");
     // navigate("/doctorhome");
   };
 
