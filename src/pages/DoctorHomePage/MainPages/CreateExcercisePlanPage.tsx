@@ -1,15 +1,15 @@
-import React from "react";
-import { Flex, Heading, TextField, Button } from "@radix-ui/themes";
+import React, { useState } from "react";
+import { Flex, Heading, TextField, Button, Skeleton } from "@radix-ui/themes";
 import { iExcerciseDataDto } from "../../../models/ExcerciseInterface";
 import { saveExcercisePlan } from "../../../controllers/ExcerciseController";
 import {
   DoctorHomeMainScreen,
   useCurrentMainScreenContext,
 } from "../DoctorHomePage";
-import ErrorHandler from "../../../errorHandlers/ErrorHandler";
+// import ErrorHandler from "../../../errorHandlers/ErrorHandler";
 import { DefaultToastTiming, useToast } from "../../../stores/ToastContext";
 import { ToastColors } from "../../../components/Toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 // interface CreateExcercisePlanPageProps {
 //   exercises: iExcerciseDataDto[];
@@ -27,7 +27,8 @@ const CreateExcercisePlanPage = () => {
 
   const { showToast } = useToast();
   const navigate = useNavigate();
-
+  const { pid} = useParams();
+  const [isLoading, setIsLoading] = useState(false);
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     index: number,
@@ -46,11 +47,13 @@ const CreateExcercisePlanPage = () => {
   const onExcercisePlanSave = () => {
     const data = {
       excercises: excerciseBuilderPlannerList,
-      patientData: currentPatientDetails,
+      patientId: pid,
     };
+    setIsLoading(true);
     saveExcercisePlan({
       data: data,
       afterAPISuccess: (response) => {
+    setIsLoading(false);
         showToast(
           "Excercise Plan created successfully",
           DefaultToastTiming,
@@ -59,13 +62,16 @@ const CreateExcercisePlanPage = () => {
         breadCrumbItems.pop();
         breadCrumbItems.pop();
         setBreadCrumbItems(breadCrumbItems);
+        setExcerciseBuilderPlannerList([])
         navigate("/doctorhome/main/patientDetails/" + currentPatientDetails?.p_id);
         setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
         console.log(response);
       },
       afterAPIFail: (response) => {
-        ErrorHandler(response);
-        console.log(response);
+        setIsLoading(false);
+        showToast(response.message, DefaultToastTiming, ToastColors.RED);
+        // ErrorHandler(response);
+        // console.log(response);
       },
     });
   };
@@ -139,7 +145,9 @@ const CreateExcercisePlanPage = () => {
           </Flex>
         ))}
       </Flex>
+      <Skeleton loading={isLoading}>
       <Button onClick={() => onExcercisePlanSave()}>Create Plan</Button>
+      </Skeleton>
     </Flex>
   );
 };

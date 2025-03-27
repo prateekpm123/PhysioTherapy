@@ -11,7 +11,7 @@ import { createPatient } from "../../../controllers/PatientsController";
 import { FailedResponseDto } from "../../../dtos/FailedResponseDto";
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../../stores/userSessionStore";
-import ErrorHandler from "../../../errorHandlers/ErrorHandler";
+// import ErrorHandler from "../../../errorHandlers/ErrorHandler";
 import { useCurrentMainScreenContext } from "../DoctorHomePage";
 // import { PatientListProps } from "./PatientLIst";
 
@@ -79,7 +79,8 @@ const NewPatientEntry= () => {
     console.log("Patient was created succesfully");
   };
   const onCreateFail = (response: FailedResponseDto) => {
-    ErrorHandler(response);
+    showToast(response.message, DefaultToastTiming, ToastColors.RED);
+    // ErrorHandler(response);
   };
 
   return (

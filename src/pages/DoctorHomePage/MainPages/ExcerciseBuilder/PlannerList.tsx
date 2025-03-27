@@ -19,7 +19,7 @@ export interface PlannerListProps {
 }
 
 export const PlannerList = (inputs: PlannerListProps) => {
-  const {breadCrumbItems, setBreadCrumbItems, excerciseBuilderPlannerList, setExcerciseBuilderPlannerList, setCurrentMainScreen} = useCurrentMainScreenContext();
+  const {breadCrumbItems, setBreadCrumbItems, currentPatientDetails, excerciseBuilderPlannerList, setExcerciseBuilderPlannerList, setCurrentMainScreen} = useCurrentMainScreenContext();
   const plannerListRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const onDelete = (excercise: iExcerciseDataDto) => {
@@ -39,7 +39,8 @@ export const PlannerList = (inputs: PlannerListProps) => {
 
 
   const handleCreateExcercisePlan = () =>{
-    navigate("/doctorhome/main/createPlan");
+    navigate("/doctorhome/main/patientDetails/"+ currentPatientDetails?.p_id + "/buildPlan/createPlan");
+
     // setCurrentMainScreen(DoctorHomeMainScreen.CREATE_EXCERCISE_PLAN);
     setBreadCrumbItems(
       [

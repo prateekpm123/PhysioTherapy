@@ -10,7 +10,7 @@ import { EditExcercise } from "./EditExcercise";
 import { ExcerciseDetail } from "./ExcerciseDetail";
 import { useCurrentMainScreenContext } from "../../DoctorHomePage";
 import { deleteOriginalExcercise } from "../../../../controllers/ExcerciseController";
-import ErrorHandler from "../../../../errorHandlers/ErrorHandler";
+// import ErrorHandler from "../../../../errorHandlers/ErrorHandler";
 import { DefaultToastTiming, useToast } from "../../../../stores/ToastContext";
 import { ToastColors } from "../../../../components/Toast";
 // import { IoMdAdd } from "react-icons/io";
@@ -32,7 +32,8 @@ export const ExcerciseTile = (data: iExcerciseTile) => {
           console.log("Excercise deleted successfully:", res);
         },
         afterAPIFail: (res) => {
-          ErrorHandler(res);
+          showToast(res.message, DefaultToastTiming, ToastColors.RED);
+          // ErrorHandler(res);
           console.error("Excercise delete failed:", res);
         },
       });

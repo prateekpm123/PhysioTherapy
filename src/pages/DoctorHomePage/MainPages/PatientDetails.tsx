@@ -20,10 +20,11 @@ import {
 import { useEffect } from "react";
 import { findPatient } from "../../../controllers/PatientsController";
 import { iPatientDto } from "../../../dtos/PatientDto";
-import ErrorHandler from "../../../errorHandlers/ErrorHandler";
 import { getExcercisePlans } from "../../../controllers/ExcerciseController";
 import { iExcercisePlanDto } from "../../../models/ExcerciseInterface";
-import { useNavigate, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { DefaultToastTiming, useToast } from "../../../stores/ToastContext";
+import { ToastColors } from "../../../components/Toast";
 
 const PatientDetails = () => {
   const {
@@ -36,10 +37,16 @@ const PatientDetails = () => {
     patientDetailsLoading,
   } = useCurrentMainScreenContext();
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const { pid } = useParams();
+  const {showToast} = useToast();
   const onCreateNewPlan = () => {
-    navigate("/doctorhome/main/buildPlan");
+    // navigate("/doctorhome/main/buildPlan");
+    navigate(
+      "/doctorhome/main/patientDetails/" +
+        currentPatientDetails?.p_id +
+        "/buildPlan"
+    );
     setBreadCrumbItems([
       {
         label: "Patient Details",
@@ -83,7 +90,8 @@ const PatientDetails = () => {
           console.log(response);
         },
         afterAPIFail: (response) => {
-          ErrorHandler(response);
+          showToast(response.message, DefaultToastTiming, ToastColors.RED);
+          // ErrorHandler(response);
           setPatientDetailsLoading(false);
           console.log(response);
         },
@@ -114,6 +122,7 @@ const PatientDetails = () => {
 
   return (
     <ScrollArea style={{ height: "80vh" }}>
+      <Outlet></Outlet>
       <Flex direction="column" gap="4" p="4" width="100%">
         {/* Patient Header */}
         <Flex direction="row" justify="between">
@@ -212,3 +221,4 @@ const PatientDetails = () => {
 };
 
 export default PatientDetails;
+

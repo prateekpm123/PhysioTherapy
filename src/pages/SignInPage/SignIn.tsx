@@ -26,7 +26,9 @@ import { setIsSignedIn, setUser } from "../../stores/userSessionSlice";
 import { sendIdTokenToBackendSignUp } from "../../controllers/authController";
 import { FailedResponseDto } from "../../dtos/FailedResponseDto";
 import { StatusAndErrorType } from "../../models/StatusAndErrorType.enum";
-import { useToast } from "../../stores/ToastContext";
+import { DefaultToastTiming, useToast } from "../../stores/ToastContext";
+// import ErrorHandler from "../../errorHandlers/ErrorHandler";
+import { ToastColors } from "../../components/Toast";
 // import { ToastColors } from "../../components/Toast";
 
 export const SignIn = () => {
@@ -109,6 +111,8 @@ export const SignIn = () => {
     } else {
       console.log("Sign-in Fail:");
     }
+    showToast(response.message, DefaultToastTiming, ToastColors.RED)
+    // ErrorHandler(response);
     dispatch(setIsSignedIn(false));
   };
 

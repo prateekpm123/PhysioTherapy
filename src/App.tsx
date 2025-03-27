@@ -28,17 +28,16 @@ const App: React.FC = () => {
         <Route path="*" element={<NotFound />} />
         <Route path="/login" element={<LoginPage />} />
 
-        <Route path="/signup" element={<SignIn />}>
-        </Route>
+        <Route path="/signup" element={<SignIn />}></Route>
         <Route path="/details" element={<DoctorDetails />} />
         {/* <Route path="/doctorhome" element={<DoctorHomePage />} /> */}
         {/* <Route path="/doctorhome/*" element={<DoctorHomePageRoutes />} /> */}
         <Route path="/doctorhome" element={<DoctorHomePage />}>
           <Route path="main" element={<DoctorHomeLandingPage />}>
             <Route path="newPatient" element={<NewPatientEntry />} />
-            <Route path="patientDetails/:pid" element={<PatientDetails />} />
-            <Route path="buildPlan" element={<ExcerciseBuilder />} />
-            <Route path="createPlan" element={<CreateExcercisePlanPage />} />
+            <Route path="patientDetails/:pid" element={<PatientDetails />}/>
+            <Route path="patientDetails/:pid/buildPlan" element={<ExcerciseBuilder />} />
+            <Route path="patientDetails/:pid/buildPlan/createPlan" element={<CreateExcercisePlanPage />} />
           </Route>
           <Route path="settings" element={<DoctorSettings />} />
           <Route path="patientList" element={<PatientList />} />

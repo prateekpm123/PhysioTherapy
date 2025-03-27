@@ -18,4 +18,9 @@ export enum StatusAndErrorType {
     DoctorNotDeleted = 5004,
     DoctorAlreadyExists = 5005,
     DoctorNotVerified = 5006,
+    ExcercisePlanNotCreated = 6001,
+    ExcercisePlanNotFound = 6002,
+    ExcercisePlanNotUpdated = 6003,
+    ExcercisePlanNotDeleted = 6004,
+    ExcercisePlanAlreadyExists = 6005,
 }

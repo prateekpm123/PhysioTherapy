@@ -14,12 +14,14 @@ import { iGetAllPatientDto, iPatientDto } from "../../../dtos/PatientDto";
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../../stores/userSessionStore";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import ErrorHandler from "../../../errorHandlers/ErrorHandler";
+// import ErrorHandler from "../../../errorHandlers/ErrorHandler";
 import {
   DoctorHomeMainScreen,
   useCurrentMainScreenContext,
 } from "../DoctorHomePage";
 import { useNavigate } from "react-router-dom";
+import { DefaultToastTiming, useToast } from "../../../stores/ToastContext";
+import { ToastColors } from "../../../components/Toast";
 
 export interface PatientListProps {
   // patients: iPatientDto[];
@@ -45,6 +47,8 @@ const PatientList = () => {
   const filteredData: iPatientDto[] = patients.filter((item: iPatientDto) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const {showToast} = useToast();
   const doctorData = useSelector(
     (state: UserSessionStateType) => state.userSession.doctorDetails
   );
@@ -81,7 +85,9 @@ const PatientList = () => {
         console.log(response);
       },
       afterAPIFail: (response) => {
-        ErrorHandler(response);
+            showToast(response.message, DefaultToastTiming, ToastColors.RED);
+        
+        // ErrorHandler(response);
         setIsLoading(false);
         console.log(response);
       },
