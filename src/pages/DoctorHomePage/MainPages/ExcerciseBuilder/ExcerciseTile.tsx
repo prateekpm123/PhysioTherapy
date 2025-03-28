@@ -9,10 +9,10 @@ import { Card, Flex, Text, Button, Skeleton } from "@radix-ui/themes";
 // import { EditExcercise } from "./EditExcercise";
 // import { ExcerciseDetail } from "./ExcerciseDetail";
 import { useCurrentMainScreenContext } from "../../DoctorHomePage";
-import { deleteOriginalExcercise } from "../../../../controllers/ExcerciseController";
+// import { deleteOriginalExcercise } from "../../../../controllers/ExcerciseController";
 // import ErrorHandler from "../../../../errorHandlers/ErrorHandler";
-import { DefaultToastTiming, useToast } from "../../../../stores/ToastContext";
-import { ToastColors } from "../../../../components/Toast";
+// import { DefaultToastTiming, useToast } from "../../../../stores/ToastContext";
+// import { ToastColors } from "../../../../components/Toast";
 import { useNavigate, useParams } from "react-router-dom";
 import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
 import { BiExpand } from "react-icons/bi";
@@ -20,40 +20,32 @@ import { BiExpand } from "react-icons/bi";
 
 export const ExcerciseTile = (data: iExcerciseTile) => {
   const [mouseShape, setMouseShape] = useState("pointer");
-  const { showToast } = useToast();
-  const { isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh } =
-    useCurrentMainScreenContext();
-
-  const deleteExcercise = async (excercise: iExcerciseDataDto) => {
-    try {
-      deleteOriginalExcercise({
-        data: {
-          e_id: excercise.e_id,
-        },
-        afterAPISuccess: (res) => {
-          showToast(
-            "Excercise deleted successfully",
-            DefaultToastTiming,
-            ToastColors.GREEN
-          );
-          setIsExcerciseBuilderRefresh(!isExcerciseBuilderRefresh);
-          console.log("Excercise deleted successfully:", res);
-        },
-        afterAPIFail: (res) => {
-          showToast(res.message, DefaultToastTiming, ToastColors.RED);
-          // ErrorHandler(res);
-          console.error("Excercise delete failed:", res);
-        },
-      });
-    } catch (error) {
-      console.error("Error deleting node:", error);
-    }
-  };
+  // const { showToast } = useToast();
+  // const { isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh } =
+  //   useCurrentMainScreenContext();
+  const navigate = useNavigate();
+  const {pid} = useParams();
+  const onDeleteButtonClick = (data: iExcerciseDataDto)=>{
+    // navigate("doctorhome/main/patientDetails/a4cc96da-1977-486c-91c4-cf0dd561e884/buildPlan", {
+    navigate("/doctorhome/main/patientDetails/" + pid + "/buildPlan/deleteExcercise", {
+      state: { 
+        // onActionButtonClick: deleteExcercise,
+        actionButtonClickParams: data, 
+        title: "Are you sure you want to delete ?", 
+        message: "This excercise will be deleted permanently. Are you sure you want to go ahead?",
+        actionButtonText: "Delete",
+        closeButtonText: "Cancel"
+      },
+    });
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+  // const deleteExcercise = async (checking: iExcerciseDataDto, timepass:any) => {
+  
   if (data.viewType == ExcerciseType.FULL_VIEW) {
     return (
       <ExcerciseTileFullView
         data={data}
-        deleteExcercise={() => deleteExcercise(data.excercise)}
+        deleteExcercise={() => onDeleteButtonClick(data.excercise)}
         mouseShape={mouseShape}
         setMouseShape={setMouseShape}
       />
@@ -62,7 +54,7 @@ export const ExcerciseTile = (data: iExcerciseTile) => {
     return (
       <ExcerciseTileMobileView
         data={data}
-        deleteExcercise={() => deleteExcercise(data.excercise)}
+        deleteExcercise={() => onDeleteButtonClick(data.excercise)}
         mouseShape={mouseShape}
         setMouseShape={setMouseShape}
       />

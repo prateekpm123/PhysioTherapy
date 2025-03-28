@@ -7,13 +7,18 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../databaseConnections/FireBaseConnection";
 // import { storage } from "../databaseConnections/FireBaseStorageInstance";
 import { isMobile } from "react-device-detect";
-import { Flex, Heading, Text, Button, Dialog } from "@radix-ui/themes";
+import { Flex, Heading, Text, Button } from "@radix-ui/themes";
 import { createExcercise } from "../../../../controllers/ExcerciseController";
-import { IoMdAdd } from "react-icons/io";
+// import { IoMdAdd } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../../../stores/userSessionStore";
 import { useCurrentMainScreenContext } from "../../DoctorHomePage";
+// import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
+import Modal from "./TestModal";
 import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
+import { useToast } from "../../../../stores/ToastContext";
+import { ToastColors } from "../../../../components/Toast";
+import { useNavigate } from "react-router-dom";
 
 export const AddExcercise = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -22,12 +27,12 @@ export const AddExcercise = () => {
   //   {} as iExcerciseData
   // );
 
-  const [reset, setReset] = useState<number>(0);
   const excercise = {} as iExcerciseData;
   const doctorData = useSelector(
-    (state: UserSessionStateType)=> state.userSession.user 
+    (state: UserSessionStateType) => state.userSession.user
   );
-  const {isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh} = useCurrentMainScreenContext();
+  const { isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh } =
+    useCurrentMainScreenContext();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [creeateExcerciseBtnText, setCreateExcerciseBtnText] =
     useState<string>("Create Excercise");
@@ -35,6 +40,9 @@ export const AddExcercise = () => {
   const [uploadBtnText, setUploadBtnText] = useState<string>("Upload");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [uploadBtnColor, setUploadBtnColor] = useState<string>("bg-slate-800");
+
+  const {showToast} = useToast();
+  const navigate = useNavigate();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -48,6 +56,7 @@ export const AddExcercise = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     field: keyof iExcerciseData
   ) => {
+    e.stopPropagation();
     if (field === "excercise_reps" || field === "excercise_sets") {
       excercise[field] = parseInt(e.target.value, 10);
       // setExcercise({ ...excercise, [field]: parseInt(e.target.value, 10) });
@@ -70,15 +79,18 @@ export const AddExcercise = () => {
     try {
       const apiData = {
         doctorId: doctorData.uid,
-        excercise: newExcercise
-      }
+        excercise: newExcercise,
+      };
       createExcercise({
         data: apiData,
         afterAPIFail: (res) => {
+          showToast("Failed to create excercise", 5000, ToastColors.RED);
           console.log(res);
         },
         afterAPISuccess(res) {
-          setReset(reset + 1);
+          navigate(-1);
+          // setReset(reset + 1);
+          showToast("Excercise created successfully", 5000, ToastColors.GREEN);
           setIsExcerciseBuilderRefresh(!isExcerciseBuilderRefresh);
           setCreateExcerciseBtnText("Created");
           console.log(res);
@@ -119,215 +131,172 @@ export const AddExcercise = () => {
   };
 
   return (
-    <Dialog.Root>
-      <Dialog.Trigger>
-        <Button
-          variant="solid"
-          size="3"
+    <Modal onActionButtonClick={onCreateBtnClick} actionButtonText="Create Excercise" title="Add Excercise">
+    <Flex
+      direction="column"
+      gap="4"
+      p="4"
+      width="100%"
+      style={{
+        gridTemplateColumns: isMobile ? "1fr" : "4fr 8fr",
+        display: "grid",
+      }}
+    >
+      <Flex direction="column" gap="4" style={{ height: "fit-content" }}>
+        <Heading size="8" style={{color: ThemeColorPallate.cardFontColorBlack}}>
+          Upload Image
+        </Heading>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
           style={{
-            position: "absolute",
-            bottom: "10%",
-            right: isMobile ? "3%" : "20%",
-            borderRadius: "50%",
-            width: "64px",
-            height: "64px",
-            boxShadow: "1px 2px 44px 5px rgba(0,0,0)",
+            backgroundColor: "rgb(30, 41, 59)",
+            padding: "8px",
+            borderRadius: "6px",
+            width: "100%",
+            margin: "4px 0",
+            color: "rgb(241, 245, 249)",
           }}
-        >
-          <IoMdAdd className="text-6xl text-slate-700" style={{color: ThemeColorPallate.cardFontColorBlack}} />
-        </Button>
-      </Dialog.Trigger>
+        />
 
-      <Dialog.Content minWidth="80rem" width="100%" key={reset}>
-        <Dialog.Title>Create Excercise</Dialog.Title>
+        {preview && (
+          <div>
+            <img src={preview} alt="Preview" style={{ width: "100%" }} />
+          </div>
+        )}
+        <Button
+          variant="soft"
+          size="3"
+          onClick={handleUpload}
+          disabled={!selectedImage}
+        >
+          {uploadBtnText}
+        </Button>
+      </Flex>
+      <Flex direction="column" gap="4" style={{ height: "fit-content" }}>
+        <Heading size="8" style={{color: ThemeColorPallate.cardFontColorBlack}}>
+          Details
+        </Heading>
         <Flex
-          direction="column"
-          gap="4"
-          p="4"
-          width="100%"
           style={{
-            gridTemplateColumns: isMobile ? "1fr" : "4fr 8fr",
+            gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
             display: "grid",
+            gap: "16px",
+            marginTop: "8px",
           }}
         >
           <Flex direction="column" gap="4" style={{ height: "fit-content" }}>
-            <Heading size="8" color="gray">
-              Upload Image
-            </Heading>
+            <Text size="3" style={{color: ThemeColorPallate.cardFontColorBlack}}>
+              No of Sets
+            </Text>
             <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
               style={{
-                backgroundColor: "rgb(30, 41, 59)",
-                padding: "8px",
-                borderRadius: "6px",
                 width: "100%",
-                margin: "4px 0",
+                padding: "8px",
+                marginBottom: "16px",
+                backgroundColor: "rgb(30, 41, 59)",
                 color: "rgb(241, 245, 249)",
               }}
+              type="number"
+              data-testid="setNumberInput"
+              onChange={(e) => handleOnChange(e, "excercise_sets")}
             />
-
-            {preview && (
-              <div>
-                <img src={preview} alt="Preview" style={{ width: "100%" }} />
-              </div>
-            )}
-            <Button
-              variant="soft"
-              size="3"
-              onClick={handleUpload}
-              disabled={!selectedImage}
-            >
-              {uploadBtnText}
-            </Button>
+            <Text size="3" style={{color: ThemeColorPallate.cardFontColorBlack}}>
+              Set Description
+            </Text>
+            <input
+              style={{
+                width: "100%",
+                padding: "8px",
+                marginBottom: "24px",
+                backgroundColor: "rgb(30, 41, 59)",
+                color: "rgb(241, 245, 249)",
+              }}
+              data-testid="setDescriptionInput"
+              onChange={(e) => handleOnChange(e, "excercise_sets_description")}
+              // onChange={(e) =>
+              //   handleInputChangeString(e, setSetDescription)
+              // }
+            />
+            <Text size="3" style={{color: ThemeColorPallate.cardFontColorBlack}}>
+              Repetition
+            </Text>
+            <input
+              style={{
+                width: "100%",
+                padding: "8px",
+                marginBottom: "24px",
+                backgroundColor: "rgb(30, 41, 59)",
+                color: "rgb(241, 245, 249)",
+              }}
+              type="number"
+              data-testid="repititionNumberInput"
+              onChange={(e) => handleOnChange(e, "excercise_reps")}
+              // onChange={(e) =>
+              //   handleInputChangeNumber(e, setRepetitionNumberState)
+              // }
+            />
+            <Text size="3" style={{color: ThemeColorPallate.cardFontColorBlack}}>
+              Description
+            </Text>
+            <textarea
+              style={{
+                width: "100%",
+                padding: "8px",
+                height: "128px",
+                backgroundColor: "rgb(30, 41, 59)",
+                color: "rgb(241, 245, 249)",
+              }}
+              onChange={(e) => handleOnChange(e, "excercise_reps_description")}
+              data-testid="repititionDescriptionInput"
+              // onChange={(e) =>
+              //   handleInputChangeString(e, setRepetitionDescriptionState)
+              // }
+            />
           </Flex>
           <Flex direction="column" gap="4" style={{ height: "fit-content" }}>
-            <Heading size="8" color="gray">
-              Details
-            </Heading>
-            <Flex
+            <Text size="3" style={{color: ThemeColorPallate.cardFontColorBlack}}>
+              Excercise Name
+            </Text>
+            <input
               style={{
-                gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
-                display: "grid",
-                gap: "16px",
-                marginTop: "8px",
+                width: "100%",
+                padding: "8px",
+                marginBottom: "16px",
+                backgroundColor: "rgb(30, 41, 59)",
+                color: "rgb(241, 245, 249)",
               }}
-            >
-              <Flex
-                direction="column"
-                gap="4"
-                style={{ height: "fit-content" }}
-              >
-                <Text size="3" color="gray">
-                  No of Sets
-                </Text>
-                <input
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    marginBottom: "16px",
-                    backgroundColor: "rgb(30, 41, 59)",
-                    color: "rgb(241, 245, 249)",
-                  }}
-                  type="number"
-                  data-testid="setNumberInput"
-                  onChange={(e) => handleOnChange(e, "excercise_sets")}
-                />
-                <Text size="3" color="gray">
-                  Set Description
-                </Text>
-                <input
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    marginBottom: "24px",
-                    backgroundColor: "rgb(30, 41, 59)",
-                    color: "rgb(241, 245, 249)",
-                  }}
-                  data-testid="setDescriptionInput"
-                  onChange={(e) =>
-                    handleOnChange(e, "excercise_sets_description")
-                  }
-                  // onChange={(e) =>
-                  //   handleInputChangeString(e, setSetDescription)
-                  // }
-                />
-                <Text size="3" color="gray">
-                  Repetition
-                </Text>
-                <input
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    marginBottom: "24px",
-                    backgroundColor: "rgb(30, 41, 59)",
-                    color: "rgb(241, 245, 249)",
-                  }}
-                  type="number"
-                  data-testid="repititionNumberInput"
-                  onChange={(e) => handleOnChange(e, "excercise_reps")}
-                  // onChange={(e) =>
-                  //   handleInputChangeNumber(e, setRepetitionNumberState)
-                  // }
-                />
-                <Text size="3" color="gray">
-                  Description
-                </Text>
-                <textarea
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    height: "128px",
-                    backgroundColor: "rgb(30, 41, 59)",
-                    color: "rgb(241, 245, 249)",
-                  }}
-                  onChange={(e) =>
-                    handleOnChange(e, "excercise_reps_description")
-                  }
-                  data-testid="repititionDescriptionInput"
-                  // onChange={(e) =>
-                  //   handleInputChangeString(e, setRepetitionDescriptionState)
-                  // }
-                />
-              </Flex>
-              <Flex
-                direction="column"
-                gap="4"
-                style={{ height: "fit-content" }}
-              >
-                <Text size="3" color="gray">
-                  Excercise Name
-                </Text>
-                <input
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    marginBottom: "16px",
-                    backgroundColor: "rgb(30, 41, 59)",
-                    color: "rgb(241, 245, 249)",
-                  }}
-                  onChange={(e) => handleOnChange(e, "excercise_name")}
-                  data-testid="excerciseNameInput"
-                  // onChange={(e) =>
-                  //   handleInputChangeString(e, setExcerciseNameState)
-                  // }
-                />
-                <Text size="3" color="gray">
-                  Description
-                </Text>
-                <textarea
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    height: "384px",
-                    backgroundColor: "rgb(30, 41, 59)",
-                    color: "rgb(241, 245, 249)",
-                  }}
-                  // ref={excerciseDescription}
-                  placeholder={"1. \n2. \n3. \n4."}
-                  data-testid="excerciseDescriptionInput"
-                  onChange={(e) => handleOnChange(e, "excercise_description")}
-                  // value={excerciseDescriptionState.join("\n")}
-                  // onChange={(e) =>
-                  //   handleInputChangeArray(e, setExcerciseDescriptionState)
-                  // }
-                />
-              </Flex>
-            </Flex>
+              onChange={(e) => handleOnChange(e, "excercise_name")}
+              data-testid="excerciseNameInput"
+              // onChange={(e) =>
+              //   handleInputChangeString(e, setExcerciseNameState)
+              // }
+            />
+            <Text size="3" style={{color: ThemeColorPallate.cardFontColorBlack}}>
+              Description
+            </Text>
+            <textarea
+              style={{
+                width: "100%",
+                padding: "8px",
+                height: "384px",
+                backgroundColor: "rgb(30, 41, 59)",
+                color: "rgb(241, 245, 249)",
+              }}
+              // ref={excerciseDescription}
+              placeholder={"1. \n2. \n3. \n4."}
+              data-testid="excerciseDescriptionInput"
+              onChange={(e) => handleOnChange(e, "excercise_description")}
+              // value={excerciseDescriptionState.join("\n")}
+              // onChange={(e) =>
+              //   handleInputChangeArray(e, setExcerciseDescriptionState)
+              // }
+            />
           </Flex>
         </Flex>
-        <Flex gap="3" mt="4" justify="end">
-          <Dialog.Close>
-            <Button variant="soft" color="gray">
-              Cancel
-            </Button>
-          </Dialog.Close>
-          <Dialog.Close>
-            <Button onClick={onCreateBtnClick}>{creeateExcerciseBtnText}</Button>
-          </Dialog.Close>
-        </Flex>
-      </Dialog.Content>
-    </Dialog.Root>
+      </Flex>
+    </Flex>
+    </Modal>
   );
 };

@@ -13,13 +13,14 @@ import { AddExcercise } from "./ExcerciseBuilder/AddExcercise";
 import { EditExcercise } from "./ExcerciseBuilder/EditExcercise";
 import { isMobile } from "react-device-detect";
 import React from "react";
-import { Box, Flex, TextField } from "@radix-ui/themes";
+import { Box, Button, Flex, TextField } from "@radix-ui/themes";
 import { getAllExcercises } from "../../../controllers/ExcerciseController";
 import ThemeColorPallate from "../../../assets/ThemeColorPallate";
 import { useCurrentMainScreenContext } from "../DoctorHomePage";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { DefaultToastTiming, useToast } from "../../../stores/ToastContext";
 import { ToastColors } from "../../../components/Toast";
+import { IoMdAdd } from "react-icons/io";
 
 export const ExcerciseBuilder = () => {
   const [data2, setData2] = useState<iExcerciseDataDto[] | null>();
@@ -31,7 +32,7 @@ export const ExcerciseBuilder = () => {
     excerciseBuilderPlannerList,
     setExcerciseBuilderPlannerList,
   } = useCurrentMainScreenContext();
-  const {showToast} = useToast();
+  const { showToast } = useToast();
   const [isPlannerListModalOpen, setIsPlannerListModalOpen] =
     useState<boolean>(false);
   const [isExcerciseDetailModalOpen, setIsExcerciseDetailModalOpen] =
@@ -47,6 +48,9 @@ export const ExcerciseBuilder = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [currentExcerciseTileEditClick, setCurrentExcerciseTileEditClick] =
     useState<iExcerciseDataDto>();
+
+    const navigate = useNavigate();
+    const {pid} = useParams();
 
   const search = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value;
@@ -64,10 +68,18 @@ export const ExcerciseBuilder = () => {
 
   const onAdd = (clickedExcercise: iExcerciseDataDto) => {
     // Check if the excercise is already added
-    if (excerciseBuilderPlannerList.find((item) => item.e_id === clickedExcercise.e_id)) {
-        showToast("Excercise already added", DefaultToastTiming, ToastColors.YELLOW);
+    if (
+      excerciseBuilderPlannerList.find(
+        (item) => item.e_id === clickedExcercise.e_id
+      )
+    ) {
+      showToast(
+        "Excercise already added",
+        DefaultToastTiming,
+        ToastColors.YELLOW
+      );
       return;
-    } 
+    }
     setExcerciseBuilderPlannerList((excerciseBuilderPlannerList) => [
       ...excerciseBuilderPlannerList,
       clickedExcercise,
@@ -175,7 +187,28 @@ export const ExcerciseBuilder = () => {
                 ))}
             </Suspense>
           </Box>
-          <AddExcercise />
+          <Button
+            variant="solid"
+            size="3"
+            style={{
+              position: "absolute",
+              bottom: "10%",
+              right: isMobile ? "3%" : "20%",
+              borderRadius: "50%",
+              width: "64px",
+              height: "64px",
+              boxShadow: "1px 2px 44px 5px rgba(0,0,0)",
+            }}
+            onClick={() => {
+              navigate("/doctorhome/main/patientDetails/"+ pid + "/buildPlan/addExcercise");}
+            }
+          >
+            <IoMdAdd
+              className="text-6xl text-slate-700"
+              style={{ color: ThemeColorPallate.cardFontColorBlack }}
+            />
+          </Button>
+          {/* <AddExcercise /> */}
           <TextField.Root
             placeholder="Search"
             size="3"
@@ -218,9 +251,7 @@ export const ExcerciseBuilder = () => {
             pIsOpen={isExcerciseDetailModalOpen}
             setIsModelOpen={setIsExcerciseDetailModalOpen}
           >
-            {currentClickedExcerciseTile && (
-              <ExcerciseDetail />
-            )}
+            {currentClickedExcerciseTile && <ExcerciseDetail />}
           </Modal>
         )}
         {isPDFPreviewModalOpen && (
@@ -251,12 +282,12 @@ export const ExcerciseBuilder = () => {
             setIsModelOpen={setIsEditExcerciseModalOpen}
           >
             <EditExcercise
-              // excercise={currentExcerciseTileEditClick}
-              // e_id={
-              //   currentExcerciseTileEditClick
-              //     ? currentExcerciseTileEditClick.e_id
-              //     : ""
-              // }
+            // excercise={currentExcerciseTileEditClick}
+            // e_id={
+            //   currentExcerciseTileEditClick
+            //     ? currentExcerciseTileEditClick.e_id
+            //     : ""
+            // }
             />
           </Modal>
         )}
