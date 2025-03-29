@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../stores/userSessionStore";
-import { useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 // import { User } from "../../models/IUser";
 import DoctorNavBar from "./DoctorNavBar";
 // import { Flex, Text } from "@radix-ui/themes";
@@ -62,6 +62,7 @@ export const DoctorHomePage = () => {
     (state: UserSessionStateType) => state.userSession.isSignedIn
   );
   const navigate = useNavigate();
+  // const location = useLocation();
 
   const [currentMainScreen, setCurrentMainScreen] = useState(
     DoctorHomeMainScreen.NEW_PATIENT_ENTRY

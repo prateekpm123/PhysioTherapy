@@ -48,7 +48,7 @@ const PatientList = () => {
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const {showToast} = useToast();
+  const { showToast } = useToast();
   const doctorData = useSelector(
     (state: UserSessionStateType) => state.userSession.doctorDetails
   );
@@ -67,6 +67,7 @@ const PatientList = () => {
         label: "Patient Details",
         onClick: () => {
           setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
+          navigate("/doctorhome/main/patientDetails/" + patientData.p_id);
         },
       },
     ]);
@@ -85,8 +86,8 @@ const PatientList = () => {
         console.log(response);
       },
       afterAPIFail: (response) => {
-            showToast(response.message, DefaultToastTiming, ToastColors.RED);
-        
+        showToast(response.message, DefaultToastTiming, ToastColors.RED);
+
         // ErrorHandler(response);
         setIsLoading(false);
         console.log(response);

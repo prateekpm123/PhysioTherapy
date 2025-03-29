@@ -4,6 +4,7 @@ import { Flex, Text } from "@radix-ui/themes";
 
 export interface BreadcrumbItem {
   label: string;
+  // element: React.ReactNode;
   onClick?: () => void;
 }
 

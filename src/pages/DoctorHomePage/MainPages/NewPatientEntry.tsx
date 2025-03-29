@@ -13,13 +13,15 @@ import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../../stores/userSessionStore";
 // import ErrorHandler from "../../../errorHandlers/ErrorHandler";
 import { useCurrentMainScreenContext } from "../DoctorHomePage";
+import { useNavigate } from "react-router-dom";
+import { iPatientDto } from "../../../dtos/PatientDto";
 // import { PatientListProps } from "./PatientLIst";
 
 // interface iNewPatientEntry {
 //   onSave: () => void;
 // }
 
-const NewPatientEntry= () => {
+const NewPatientEntry = () => {
   // const userData = useSelector(
   //   (state: UserSessionStateType) => state.userSession.user
   // );
@@ -27,7 +29,11 @@ const NewPatientEntry= () => {
     (state: UserSessionStateType) => state.userSession.doctorDetails
   );
 
-  const { setIsPatientListScreenRefresh, isPatientListScreenRefresh }  = useCurrentMainScreenContext();
+  const {
+    setIsPatientListScreenRefresh,
+    isPatientListScreenRefresh,
+    setCurrentPatientDetails,
+  } = useCurrentMainScreenContext();
 
   console.log("Doctor settings ", doctorData);
   const [formData, setFormData] = useState<iPatients>({
@@ -42,7 +48,7 @@ const NewPatientEntry= () => {
     doctorId: "",
   });
   const { showToast } = useToast();
-
+  const navigate = useNavigate();
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -69,12 +75,15 @@ const NewPatientEntry= () => {
     console.log("Collected Form Data:", formData);
   };
 
-  const onCreateSuccess = () => {
+  const onCreateSuccess = async (data: iPatientDto) => {
     showToast(
       "Form submitted successfully",
       DefaultToastTiming,
       ToastColors.GREEN
     );
+    // await navigate(-1);
+    navigate("/doctorhome/main/patientDetails/" + data.p_id);
+    if (setCurrentPatientDetails) setCurrentPatientDetails(data);
     setIsPatientListScreenRefresh(!isPatientListScreenRefresh);
     console.log("Patient was created succesfully");
   };
@@ -84,7 +93,10 @@ const NewPatientEntry= () => {
   };
 
   return (
-    <div className="pl-40 pr-40 pt-6 mx-auto" style={{ width: "100%", overflow: "auto", maxHeight: "85dvh" }}>
+    <div
+      className="pl-40 pr-40 pt-6 mx-auto"
+      style={{ width: "100%", overflow: "auto", maxHeight: "85dvh" }}
+    >
       <h1 className="text-2xl font-bold mb-4">New Patient Entry</h1>
       <Form.Root className="space-y-4" onSubmit={handleSubmit}>
         {/* Patient Name */}
@@ -183,6 +195,8 @@ const NewPatientEntry= () => {
                 <input
                   type="tel"
                   name="phoneNumber"
+                  minLength={10}
+                  maxLength={10}
                   value={formData.phoneNumber}
                   onChange={handleChange}
                   className="border rounded-r px-3 py-2 w-full"

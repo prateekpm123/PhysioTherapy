@@ -5,7 +5,10 @@ import { Flex, Heading, Box, Button } from "@radix-ui/themes";
 import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
 // import { useNavigate } from "react-router-dom";
 // import CreateExcercisePlanPage from "../pages/CreateExcercisePlanPage";
-import { DoctorHomeMainScreen, useCurrentMainScreenContext } from "../../DoctorHomePage";
+import {
+  DoctorHomeMainScreen,
+  useCurrentMainScreenContext,
+} from "../../DoctorHomePage";
 import { useNavigate } from "react-router-dom";
 // import { saveExcercisePlan } from "../controllers/ExcerciseController";
 // import { useCurrentMainScreenContext } from "../pages/DoctorHomePage/DoctorHomePage";
@@ -19,7 +22,14 @@ export interface PlannerListProps {
 }
 
 export const PlannerList = (inputs: PlannerListProps) => {
-  const {breadCrumbItems, setBreadCrumbItems, currentPatientDetails, excerciseBuilderPlannerList, setExcerciseBuilderPlannerList, setCurrentMainScreen} = useCurrentMainScreenContext();
+  const {
+    breadCrumbItems,
+    setBreadCrumbItems,
+    currentPatientDetails,
+    excerciseBuilderPlannerList,
+    setExcerciseBuilderPlannerList,
+    setCurrentMainScreen,
+  } = useCurrentMainScreenContext();
   const plannerListRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const onDelete = (excercise: iExcerciseDataDto) => {
@@ -37,42 +47,55 @@ export const PlannerList = (inputs: PlannerListProps) => {
     inputs.setIsPDFPreviewModelRequired(true);
   };
 
+  const handleCreateExcercisePlan = () => {
+    navigate(
+      "/doctorhome/main/patientDetails/" +
+        currentPatientDetails?.p_id +
+        "/buildPlan/createPlan"
+    );
 
-  const handleCreateExcercisePlan = () =>{
-    navigate("/doctorhome/main/patientDetails/"+ currentPatientDetails?.p_id + "/buildPlan/createPlan");
-
-    // setCurrentMainScreen(DoctorHomeMainScreen.CREATE_EXCERCISE_PLAN);
-    setBreadCrumbItems(
-      [
-        {
-          label: "Patient Details",
-          onClick: () => {
-            setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
-            breadCrumbItems.pop();
-            // breadCrumbItems.pop();
-            setBreadCrumbItems(breadCrumbItems);
-          },
+    setCurrentMainScreen(DoctorHomeMainScreen.CREATE_EXCERCISE_PLAN);
+    setBreadCrumbItems([
+      {
+        label: "Patient Details",
+        onClick: () => {
+          navigate(
+            "/doctorhome/main/patientDetails/" + currentPatientDetails?.p_id
+          );
+          // setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
+          breadCrumbItems.pop();
+          // breadCrumbItems.pop();
+          setBreadCrumbItems(breadCrumbItems);
         },
-        {
-          label: "Exercise Builder",
-          onClick: () => {
-            setCurrentMainScreen(DoctorHomeMainScreen.EXCERCISE_BUILDER);
-            // breadCrumbItems.pop();
-            setBreadCrumbItems(breadCrumbItems);
-            // const 
-            // setBreadCrumbItems()
-          },
+      },
+      {
+        label: "Exercise Builder",
+        onClick: () => {
+          navigate(
+            "/doctorhome/main/patientDetails/" +
+              currentPatientDetails?.p_id +
+              "/buildPlan"
+          );
+          // setCurrentMainScreen(DoctorHomeMainScreen.EXCERCISE_BUILDER);
+          // breadCrumbItems.pop();
+          setBreadCrumbItems(breadCrumbItems);
+          // const
+          // setBreadCrumbItems()
         },
-        {
-          label: "Create Excercise Plan",
-          onClick: () => {
-            setCurrentMainScreen(DoctorHomeMainScreen.CREATE_EXCERCISE_PLAN);
-          },
-        }
-      ]
-    )
-  }
-  
+      },
+      {
+        label: "Create Excercise Plan",
+        onClick: () => {
+          navigate(
+            "/doctorhome/main/patientDetails/" +
+              currentPatientDetails?.p_id +
+              "/buildPlan/createPlan"
+          );
+          // setCurrentMainScreen(DoctorHomeMainScreen.CREATE_EXCERCISE_PLAN);
+        },
+      },
+    ]);
+  };
 
   return (
     <Flex

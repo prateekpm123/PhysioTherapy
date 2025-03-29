@@ -13,7 +13,7 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { styled } from "@stitches/react";
 import CustomBreadcrumb from "./DoctorMiniNavBarBreadCrumb";
 import CreateExcercisePlanPage from "./CreateExcercisePlanPage";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation, useMatch } from "react-router-dom";
 
 const Nav = styled("nav", {
   padding: "1rem 0",
@@ -27,45 +27,19 @@ const Nav = styled("nav", {
 
 const DoctorHomeLandingPage = () => {
   const { breadCrumbItems, currentMainScreen, isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh, setIsPatientDetailScreenRefresh, isPatientDetailsScreenRefresh } = useCurrentMainScreenContext();
-  // const renderComponent = () => {
-  //   if (currentMainScreen === DoctorHomeMainScreen.NEW_PATIENT_ENTRY) {
-  //     return <NewPatientEntry />;
-  //   } else if (currentMainScreen === DoctorHomeMainScreen.PATIENT_DETAILS) {
-  //     return <PatientDetails />;
-  //   } else if (currentMainScreen === DoctorHomeMainScreen.EXCERCISE_BUILDER) {
-  //     return <ExcerciseBuilder />;
-  //   } else if(currentMainScreen === DoctorHomeMainScreen.CREATE_EXCERCISE_PLAN) {
-  //     return <CreateExcercisePlanPage/>;
-  //   } else {
-  //     return <div>Please log in.</div>;
-  //   }
-  // };
+  const location = useLocation();
+  
+  const isExcerciseBuilder = useMatch("/doctorhome/main/patientDetails/:pid/buildPlan")
+  const isPatientDetails = useMatch("/doctorhome/main/patientDetails/:pid")
+
 
   const onMiniNavBarReloadClick = () =>{
-    if(currentMainScreen === DoctorHomeMainScreen.PATIENT_DETAILS){
-      // setPatientDetailsLoading(true);
+     if(isPatientDetails){
       setIsPatientDetailScreenRefresh(!isPatientDetailsScreenRefresh);
-    } else if(currentMainScreen === DoctorHomeMainScreen.EXCERCISE_BUILDER){
+    } else if(isExcerciseBuilder){
       setIsExcerciseBuilderRefresh(!isExcerciseBuilderRefresh);
-    } 
+    }
   }
-
-  // const component = renderComponent();
-
-  // const items = [
-  //   {
-  //     label: "Doctor Details",
-  //     onClick: ()=> {
-  //       console.log("Doctor Details");
-  //     }
-  //   },
-  //   {
-  //     label: "Excercise Planner",
-  //     onClick: ()=> {
-  //       console.log("planner");
-  //     }
-  //   }
-  // ]
 
   return (
     <>

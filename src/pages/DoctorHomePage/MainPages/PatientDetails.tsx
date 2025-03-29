@@ -39,7 +39,7 @@ const PatientDetails = () => {
 
   const navigate = useNavigate();
   const { pid } = useParams();
-  const {showToast} = useToast();
+  const { showToast } = useToast();
   const onCreateNewPlan = () => {
     // navigate("/doctorhome/main/buildPlan");
     navigate(
@@ -52,12 +52,19 @@ const PatientDetails = () => {
         label: "Patient Details",
         onClick: () => {
           setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
+          navigate(
+            "/doctorhome/main/patientDetails/" + currentPatientDetails?.p_id
+          );
           setBreadCrumbItems([
             // setting the breadcrumb again here, so that Excercise Builder gets removed
             {
               label: "Patient Details",
               onClick: () => {
-                setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
+                navigate(
+                  "/doctorhome/main/patientDetails/" +
+                    currentPatientDetails?.p_id
+                );
+                // setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
               },
             },
           ]);
@@ -66,11 +73,16 @@ const PatientDetails = () => {
       {
         label: "Exercise Builder",
         onClick: () => {
+          navigate(
+            "/doctorhome/main/patientDetails/" +
+              currentPatientDetails?.p_id +
+              "/buildPlan"
+          );
           setCurrentMainScreen(DoctorHomeMainScreen.EXCERCISE_BUILDER);
         },
       },
     ]);
-    setCurrentMainScreen(DoctorHomeMainScreen.EXCERCISE_BUILDER);
+    // setCurrentMainScreen(DoctorHomeMainScreen.EXCERCISE_BUILDER);
   };
 
   // Fetch data from API
@@ -221,4 +233,3 @@ const PatientDetails = () => {
 };
 
 export default PatientDetails;
-

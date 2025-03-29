@@ -59,6 +59,7 @@ const DoctorNavBar = () => {
         onClick: () => {}
       }
     ])
+    navigate('/doctorhome/main/newPatient');
     setCurrentMainScreen(DoctorHomeMainScreen.NEW_PATIENT_ENTRY);
   }
 
