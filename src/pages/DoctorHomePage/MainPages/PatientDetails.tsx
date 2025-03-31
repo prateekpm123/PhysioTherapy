@@ -201,7 +201,7 @@ const PatientDetails = () => {
                 <Card key={plan.ep_id} mt="4">
                   <Skeleton loading={patientDetailsLoading}>
                     <Heading size="3" mb="2">
-                      Exercise Plan {plan.ep_id}
+                      Exercise Plan: Date {plan.date_created.toString().slice(0, 10)}
                     </Heading>
                   </Skeleton>
                   {plan.excercise.map((exercise) => (
@@ -209,14 +209,14 @@ const PatientDetails = () => {
                       <Card key={exercise.e_id} mt="2">
                         <Heading size="2">{exercise.excercise_name}</Heading>
                         <Text>
-                          Description: {exercise.excercise_description}
+                          <b>Description:</b> {exercise.excercise_description + "  "}
                         </Text>
                         <Text>
-                          Reps: {exercise.excercise_reps}{" "}
-                          {exercise.excercise_reps_description}
+                          <b>Reps:</b> {exercise.excercise_reps}{" "}
+                          {exercise.excercise_reps_description + "  "}
                         </Text>
                         <Text>
-                          Sets: {exercise.excercise_sets}{" "}
+                          <b>Sets:</b> {exercise.excercise_sets}{" "}
                           {exercise.excercise_sets_description}
                         </Text>
                       </Card>

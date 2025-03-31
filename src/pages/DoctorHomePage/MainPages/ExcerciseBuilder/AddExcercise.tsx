@@ -18,7 +18,7 @@ import Modal from "./TestModal";
 import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
 import { useToast } from "../../../../stores/ToastContext";
 import { ToastColors } from "../../../../components/Toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const AddExcercise = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -27,7 +27,16 @@ export const AddExcercise = () => {
   //   {} as iExcerciseData
   // );
 
-  const excercise = {} as iExcerciseData;
+  const excercise = {
+    excercise_name: "",
+    excercise_description: "",
+    excercise_reps: 0,
+    excercise_reps_description: "",
+    excercise_sets: 0,
+    excercise_sets_description: "",
+    excercise_image_url: "",
+  } as iExcerciseData;
+
   const doctorData = useSelector(
     (state: UserSessionStateType) => state.userSession.user
   );
@@ -43,6 +52,7 @@ export const AddExcercise = () => {
 
   const {showToast} = useToast();
   const navigate = useNavigate();
+  const { pid} = useParams();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -88,7 +98,8 @@ export const AddExcercise = () => {
           console.log(res);
         },
         afterAPISuccess(res) {
-          navigate(-1);
+          // navigate(-1);
+          navigate("/doctorhome/main/patientDetails/" + pid+ "/buildPlan");
           // setReset(reset + 1);
           showToast("Excercise created successfully", 5000, ToastColors.GREEN);
           setIsExcerciseBuilderRefresh(!isExcerciseBuilderRefresh);

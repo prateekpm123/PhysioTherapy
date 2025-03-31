@@ -14,6 +14,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
 import { useToast } from "../../../../stores/ToastContext";
 import { ToastColors } from "../../../../components/Toast";
+import { uploadImageToFirebase } from "../../../../controllers/ImageController";
 
 // interface iEditExcercise {
 //   excercise: iExcerciseDataDto | undefined;
