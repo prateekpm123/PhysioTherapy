@@ -71,10 +71,10 @@ export interface iExcerciseTile {
 
 export interface iExcerciseCompletionData {
   excercisePlanId: string;
-  excercisePlan: iExcercisePlanDto;
+//   excercisePlan: iExcercisePlanDto;
   excerciseId: string;
-  excercises: iExcerciseDataDto[];
-  excercise_completion: iExcerciseCompletionDto[];
+//   excercises: iExcerciseDataDto[];
+//   excercise_completion: iExcerciseCompletionDto[];
   date: string;
   completed: boolean;
 }

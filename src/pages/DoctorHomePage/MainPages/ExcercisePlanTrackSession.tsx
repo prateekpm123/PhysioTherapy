@@ -22,7 +22,11 @@ import {
   iExcerciseCompletionDto,
   iExcerciseDataDto,
 } from "../../../models/ExcerciseInterface";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import {
+  saveExcerciseCompletionData,
+  saveExcercisePlanNotes,
+} from "../../../controllers/ExcerciseController";
 // import { useExcercisePlanDetails } from "./ExcercisePlanDetailsPage";
 // import { iExcerciseTrackingOnSubmitProps } from './ExcercisePlanDetailsPage';
 
@@ -30,10 +34,11 @@ const ExcercisePlanTrackSession: React.FC = () => {
   const [exerciseCompletions, setExerciseCompletions] = useState<
     iExcerciseCompletionDto[]
   >([]);
-//   const { onExcercisePlanTodaysTrackingSubmit } = useExcercisePlanDetails();
+  //   const { onExcercisePlanTodaysTrackingSubmit } = useExcercisePlanDetails();
   const [notes, setNotes] = useState("");
   const location = useLocation();
-  const {excercisePlan} = location.state || {};
+  const { epid } = useParams();
+  const { excercisePlan } = location.state || {};
   const today = useMemo(() => new Date(), []);
 
   const isTodayInSession = useMemo(() => {
@@ -63,13 +68,13 @@ const ExcercisePlanTrackSession: React.FC = () => {
         return [
           ...prev,
           {
-            ec_id: `${exerciseId}-${today.toISOString()}`, // Generate a unique ID
+            // ec_id: `${exerciseId}-${today.toISOString()}`, // Generate a unique ID
             excerciseId: exerciseId,
             completed,
             excercisePlanId: excercisePlan.ep_id, // Assuming `excercisePlan.id` exists
-            excercisePlan: excercisePlan, // Assuming `excercisePlan` is the full object
-            excercises: [], // Provide a default or relevant value
-            excercise_completion: [],
+            // excercisePlan: excercisePlan, // Assuming `excercisePlan` is the full object
+            // excercises: [], // Provide a default or relevant value
+            // excercise_completion: [],
             date: today.toISOString(), // Use today's date
           },
         ];
@@ -80,6 +85,27 @@ const ExcercisePlanTrackSession: React.FC = () => {
   const handleSubmit = () => {
     // if (onExcercisePlanTodaysTrackingSubmit)
     //   onExcercisePlanTodaysTrackingSubmit({
+    saveExcerciseCompletionData({
+      data: exerciseCompletions,
+      afterAPISuccess: (res) => {
+        console.log(notes, res);
+      },
+      afterAPIFail: (res) => {
+        console.log(res);
+      },
+    });
+    saveExcercisePlanNotes({
+      data: {
+        notes: notes,
+        ep_id: epid,
+      },
+      afterAPISuccess: (res) => {
+        console.log(notes, res);
+      },
+      afterAPIFail: (res) => {
+        console.log(res);
+      },
+    });
     //     excerciseCompletion: exerciseCompletions,
     //     notes,
     //   });
@@ -91,28 +117,30 @@ const ExcercisePlanTrackSession: React.FC = () => {
 
   return (
     <div>
-      <Text size="5" weight="bold">Today's Exercises</Text>
+      <Text size="5" weight="bold">
+        Today's Exercises
+      </Text>
       <ScrollArea style={{ height: "20vh" }}>
-      {excercisePlan.excercise.map((exercise: iExcerciseDataDto) => (
-        <Flex direction="row" key={exercise.e_id} align="center" gap="2">
-          <Flex direction="column" gap="4" style={{ width: "30%" }}>
-            <label>{exercise.excercise_name}</label>
+        {excercisePlan.excercise.map((exercise: iExcerciseDataDto) => (
+          <Flex direction="row" key={exercise.e_id} align="center" gap="2">
+            <Flex direction="column" gap="4" style={{ width: "30%" }}>
+              <label>{exercise.excercise_name}</label>
+            </Flex>
+            <Flex direction="column" gap="4">
+              <input
+                type="checkbox"
+                checked={
+                  exerciseCompletions.find(
+                    (item) => item.excerciseId === exercise.e_id
+                  )?.completed || false
+                }
+                onChange={(e) =>
+                  handleCheckboxChange(exercise.e_id, e.target.checked)
+                }
+              />
+            </Flex>
           </Flex>
-          <Flex direction="column" gap="4">
-            <input
-              type="checkbox"
-              checked={
-                exerciseCompletions.find(
-                  (item) => item.excerciseId === exercise.e_id
-                )?.completed || false
-              }
-              onChange={(e) =>
-                handleCheckboxChange(exercise.e_id, e.target.checked)
-              }
-            />
-          </Flex>
-        </Flex>
-      ))}
+        ))}
       </ScrollArea>
 
       <TextArea
