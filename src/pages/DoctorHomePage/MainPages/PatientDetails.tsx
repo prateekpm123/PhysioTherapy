@@ -132,6 +132,10 @@ const PatientDetails = () => {
     refreshPatientDetails();
   }, [isPatientDetailsScreenRefresh]);
 
+  const onExcercisePlanOpenClick = (epid: string)=>{
+    navigate("/doctorhome/main/patientDetails/"+pid+"/excercisePlans/"+epid);
+  }
+
   return (
     <ScrollArea style={{ height: "80vh" }}>
       <Outlet></Outlet>
@@ -200,24 +204,29 @@ const PatientDetails = () => {
               currentPatientDetails?.excercisePlans.map((plan) => (
                 <Card key={plan.ep_id} mt="4">
                   <Skeleton loading={patientDetailsLoading}>
-                    <Heading size="3" mb="2">
-                      Exercise Plan: Date {plan.date_created.toString().slice(0, 10)}
-                    </Heading>
+                    <Flex direction="row">
+                      <Heading size="3" mb="2" style={{marginRight: "55rem"}}>
+                        Exercise Plan: Date{" "}
+                        {plan.date_created.toString().slice(0, 10)}
+                      </Heading>
+                      <Button variant="outline" onClick={() => onExcercisePlanOpenClick(plan.ep_id)}>Open plan</Button>
+                    </Flex>
                   </Skeleton>
                   {plan.excercise.map((exercise) => (
                     <Skeleton loading={patientDetailsLoading}>
                       <Card key={exercise.e_id} mt="2">
                         <Heading size="2">{exercise.excercise_name}</Heading>
                         <Text>
-                          <b>Description:</b> {exercise.excercise_description + "  "}
-                        </Text>
-                        <Text>
-                          <b>Reps:</b> {exercise.excercise_reps}{" "}
-                          {exercise.excercise_reps_description + "  "}
+                          <b>Description:</b>{" "}
+                          {exercise.excercise_description + "  "}
                         </Text>
                         <Text>
                           <b>Sets:</b> {exercise.excercise_sets}{" "}
-                          {exercise.excercise_sets_description}
+                          {exercise.excercise_sets_description + "  "}
+                        </Text>
+                        <Text>
+                          <b>Reps:</b> {exercise.excercise_reps}{" "}
+                          {exercise.excercise_reps_description}
                         </Text>
                       </Card>
                     </Skeleton>

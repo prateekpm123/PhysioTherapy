@@ -24,6 +24,8 @@ import { EditExcercise } from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder
 import { ExcerciseDetail } from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder/ExcerciseDetail";
 import { AddExcercise } from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder/AddExcercise";
 import DeleteExcercise from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder/DeleteExcercise";
+import ExcercisePlanDetailsPage from "./pages/DoctorHomePage/MainPages/ExcercisePlanDetailsPage";
+import ExcercisePlanTrackSession from "./pages/DoctorHomePage/MainPages/ExcercisePlanTrackSession";
 
 const App: React.FC = () => {
   // const {oeid} = useParams();
@@ -42,6 +44,8 @@ const App: React.FC = () => {
           <Route path="main" element={<DoctorHomeLandingPage />}>
             <Route path="newPatient" element={<NewPatientEntry />} />
             <Route path="patientDetails/:pid" element={<PatientDetails />}/>
+            <Route path="patientDetails/:pid/excercisePlans/:epid" element={<ExcercisePlanDetailsPage  />} />
+            <Route path="patientDetails/:pid/excercisePlans/:epid/trackSession" element={<ExcercisePlanTrackSession />} />
             <Route path="patientDetails/:pid/buildPlan" element={<ExcerciseBuilder />} >
               <Route path="editExcercise/:oeid" element={<EditExcercise />}/>
               <Route path="excerciseDetails/:oeid" element={<ExcerciseDetail />}/>

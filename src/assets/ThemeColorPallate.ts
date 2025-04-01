@@ -4,6 +4,7 @@ const ThemeColorPallate = {
   tertiary: "#faad14",
   foreground: "#202020",
   background: "#191919",
+  secondGreyBackground:  "#4b4b4b",
   cardBackGroundColorBlue: "#152f4e",
   cardFontColorBlue: "#6abaff",
   cardBackGroundColorBlack: "#191919",
