@@ -69,6 +69,7 @@ const ExcercisePlanTrackSession: React.FC = () => {
             excercisePlanId: excercisePlan.ep_id, // Assuming `excercisePlan.id` exists
             excercisePlan: excercisePlan, // Assuming `excercisePlan` is the full object
             excercises: [], // Provide a default or relevant value
+            excercise_completion: [],
             date: today.toISOString(), // Use today's date
           },
         ];

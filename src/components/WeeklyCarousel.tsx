@@ -169,7 +169,7 @@
 //   onChange,
 // }: iWeeklyCarouselProps) {
 //   const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
-//   const [completionData, setCompletionData] = useState([]); // State to store data for API
+//   const [excerciseCompletionData, setExcerciseCompletionData] = useState([]); // State to store data for API
 
 //   const weeks = useMemo(() => {
 //     if (!startDate || !endDate) return [];
@@ -238,7 +238,7 @@
 //   };
 
 //   const isChecked = (e_id: string, date: Date) => {
-//     const found = completionData.find(
+//     const found = excerciseCompletionData.find(
 //       (item: iExcerciseCompletionDto) => item.excercisePlanId === e_id && item.date === date.toISOString()
 //     );
 //     return !!found && found[0];
@@ -246,7 +246,7 @@
 
 //   const handleCheckboxChange = (e_id: string, date: Date, checked: boolean) => {
 //     const dateStr = date.toISOString();
-//     setCompletionData((prevData) => {
+//     setExcerciseCompletionData((prevData) => {
 //       const existing = prevData.find(
 //         (item: iExcerciseCompletionDto) => item.excerciseId === e_id && item.date === dateStr
 //       );
@@ -264,9 +264,9 @@
 
 //   useEffect(() => {
 //     if (onChange) {
-//       onChange(completionData);
+//       onChange(excerciseCompletionData);
 //     }
-//   }, [completionData, onChange]);
+//   }, [excerciseCompletionData, onChange]);
 
 //   const selectedDaysArray = useMemo(
 //     () => selectedDays.split(",").map(Number),
@@ -361,8 +361,10 @@ import React, { useState, useMemo, useEffect } from "react";
 import {
   iExcerciseDataDto,
   iExcerciseCompletionDto,
+  // iExcerciseCompletionData,
 } from "../models/ExcerciseInterface";
 import ThemeColorPallate from "../assets/ThemeColorPallate";
+import { useExcercisePlanDetails } from "../pages/DoctorHomePage/MainPages/ExcercisePlanDetailsPage";
 
 interface iWeeklyCarouselProps {
   startDate: Date;
@@ -379,13 +381,15 @@ function WeeklyCarousel({
   endDate,
   excercises,
   selectedDays,
-  excercisePlan, // Destructure excercisePlan prop
   onChange,
 }: iWeeklyCarouselProps) {
+  const { excercisePlan, excerciseCompletionData, setExcerciseCompletionData } =
+    useExcercisePlanDetails();
+
   const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
-  const [completionData, setCompletionData] = useState<iExcerciseCompletionDto[]>(
-    []
-  );
+  // const [excerciseCompletionData, setExcerciseCompletionData] = useState<
+  //   iExcerciseCompletionDto[]
+  // >(excercisePlan?.excercise_completion || []);
 
   const weeks = useMemo(() => {
     if (!startDate || !endDate) return [];
@@ -454,9 +458,13 @@ function WeeklyCarousel({
   };
 
   const isChecked = (e_id: string, date: Date) => {
-    const found = completionData.find(
-      (item: iExcerciseCompletionDto) =>
-        item.excerciseId === e_id && item.date.slice(0, 10) == date.toISOString().slice(0,10)
+    const found = excerciseCompletionData.find(
+      (item: iExcerciseCompletionDto) => {
+        return (
+          item.excerciseId === e_id &&
+          item.date.slice(0, 10) == date.toISOString().slice(0, 10)
+        );
+      }
     );
     if (found) {
       return true;
@@ -472,11 +480,12 @@ function WeeklyCarousel({
     date: Date
   ) => {
     const isChecked = e.target.checked;
-    const dateString = date.toISOString().slice(0,10);
+    const dateString = date.toISOString().slice(0, 10);
 
-    setCompletionData((prevData) => {
+    setExcerciseCompletionData((prevData) => {
       const existingIndex = prevData.findIndex(
-        (item) => item.excerciseId === e_id && item.date.slice(0,10) === dateString
+        (item) =>
+          item.excerciseId === e_id && item.date.slice(0, 10) === dateString
       );
 
       if (existingIndex !== -1) {
@@ -490,11 +499,12 @@ function WeeklyCarousel({
         return [
           ...prevData,
           {
-            ec_id: `${e_id}-${dateString}`,
+            // ec_id: `${e_id}-${dateString}`,
             excercisePlanId: excercisePlan.ep_id, // Use excercisePlan.ep_id
             excercisePlan: excercisePlan, // Add excercisePlan
             excerciseId: e_id,
             excercises: excercises.filter((ex) => ex.e_id === e_id), // Add excercises
+            excercise_completion: [], // Add an empty array for excercise_completion
             date: dateString,
             completed: isChecked,
           },
@@ -505,9 +515,9 @@ function WeeklyCarousel({
 
   useEffect(() => {
     if (onChange) {
-      onChange(completionData);
+      onChange(excerciseCompletionData);
     }
-  }, [completionData, onChange]);
+  }, [excerciseCompletionData, onChange]);
 
   const selectedDaysArray = useMemo(() => {
     return selectedDays ? selectedDays.split(",").map(Number) : [];
@@ -571,7 +581,7 @@ function WeeklyCarousel({
               backgroundColor: isSelectedDay(date)
                 ? ThemeColorPallate.foreground
                 : isCurrentDay(date)
-                ? ThemeColorPallate.secondGreyBackground
+                ? ThemeColorPallate.primary
                 : "transparent",
             }}
           >
@@ -596,6 +606,6 @@ function WeeklyCarousel({
       </Flex>
     </div>
   );
-    }
+}
 
 export default WeeklyCarousel;

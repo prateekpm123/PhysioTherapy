@@ -50,6 +50,7 @@ export interface iExcercisePlanDto {
   version: string;
   patient_id: string;
   excercise: iExcerciseDataDto[];
+  excercise_completion: iExcerciseCompletionDto[];
   excercise_plan_created_on: string;
   excercise_plan_notes: string[];
 }
@@ -73,12 +74,13 @@ export interface iExcerciseCompletionData {
   excercisePlan: iExcercisePlanDto;
   excerciseId: string;
   excercises: iExcerciseDataDto[];
+  excercise_completion: iExcerciseCompletionDto[];
   date: string;
   completed: boolean;
 }
 
 export interface iExcerciseCompletionDto extends iExcerciseCompletionData {
-    ec_id: string;
+    ec_id?: string;
 }
 
 export enum ExcerciseType {
