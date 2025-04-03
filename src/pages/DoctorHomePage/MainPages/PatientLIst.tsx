@@ -3,18 +3,15 @@ import React, { useEffect, useState } from "react";
 import {
   Flex,
   Heading,
-  TextField,
   Card,
   Text,
   Skeleton,
-  //   ScrollView,
 } from "@radix-ui/themes";
 import { getAllPatients } from "../../../controllers/PatientsController";
 import { iGetAllPatientDto, iPatientDto } from "../../../dtos/PatientDto";
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../../stores/userSessionStore";
-import { ReloadIcon } from "@radix-ui/react-icons";
-// import ErrorHandler from "../../../errorHandlers/ErrorHandler";
+import { ReloadIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import {
   DoctorHomeMainScreen,
   useCurrentMainScreenContext,
@@ -22,15 +19,132 @@ import {
 import { useNavigate } from "react-router-dom";
 import { DefaultToastTiming, useToast } from "../../../stores/ToastContext";
 import { ToastColors } from "../../../components/Toast";
+import { styled } from "@stitches/react";
+import { themeColors, spacing, theme } from "../../../theme/theme";
 
-export interface PatientListProps {
-  // patients: iPatientDto[];
-  // setPatients: Dispatch<SetStateAction<iPatientDto[]>>;
-  setPatientListRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  refreshTrigger: boolean;
+interface PatientListProps {
+  onCloseMobileMenu?: () => void;
 }
 
-const PatientList = () => {
+const SearchFooter = styled(Flex, {
+  padding: spacing.md,
+  borderTop: `1px solid ${themeColors.background.elevation2}`,
+  backgroundColor: themeColors.background.paper,
+  position: "sticky",
+  bottom: 0,
+  left: 0,
+  right: 0,
+  zIndex: 2,
+});
+
+const ListContainer = styled(Flex, {
+  height: "100vh",
+  backgroundColor: themeColors.background.dark,
+  flexDirection: "column",
+  position: "relative",
+});
+
+const HeaderBar = styled(Flex, {
+  padding: spacing.md,
+  borderBottom: `1px solid ${themeColors.background.elevation2}`,
+  backgroundColor: themeColors.background.paper,
+  position: "sticky",
+  top: 0,
+  zIndex: 2,
+});
+
+const SearchInput = styled("div", {
+  backgroundColor: themeColors.background.elevation1,
+  border: `1px solid ${themeColors.background.elevation3}`,
+  borderRadius: "8px",
+  padding: `${spacing.xs} ${spacing.sm}`,
+  width: "100%",
+  transition: "all 0.2s ease",
+  color: themeColors.text.primary,
+  display: "flex",
+  alignItems: "center",
+  gap: spacing.sm,
+  
+  "&:focus-within": {
+    boxShadow: `0 0 0 2px ${themeColors.primary[700]}`,
+    borderColor: themeColors.primary[500],
+  },
+});
+
+const StyledInput = styled("input", {
+  flex: 1,
+  border: "none",
+  background: "transparent",
+  color: themeColors.text.primary,
+  fontSize: "14px",
+  outline: "none",
+  padding: `${spacing.xs} 0`,
+
+  "&::placeholder": {
+    color: themeColors.text.disabled,
+  },
+});
+
+const PatientCard = styled(Card, {
+  cursor: "pointer",
+  transition: "all 0.2s ease",
+  border: "none",
+  backgroundColor: themeColors.background.elevation1,
+  margin: `0 ${spacing.md}`,
+  padding: spacing.md,
+  
+  "&:hover": {
+    backgroundColor: themeColors.background.elevation2,
+    transform: "translateY(-2px)",
+    boxShadow: theme.shadows[2],
+  },
+
+  "@media (max-width: 768px)": {
+    margin: `0 ${spacing.sm}`,
+    padding: spacing.sm,
+  }
+});
+
+const ScrollArea = styled(Flex, {
+  flex: 1,
+  overflowY: "auto",
+  padding: `${spacing.sm} 0`,
+  backgroundColor: themeColors.background.dark,
+  
+  "&::-webkit-scrollbar": {
+    width: "6px",
+  },
+  
+  "&::-webkit-scrollbar-track": {
+    background: themeColors.background.paper,
+  },
+  
+  "&::-webkit-scrollbar-thumb": {
+    background: themeColors.background.elevation3,
+    borderRadius: "3px",
+    
+    "&:hover": {
+      background: themeColors.background.elevation2,
+    }
+  }
+});
+
+const HeaderContainer = styled(Flex, {
+  justifyContent: "space-between",
+  alignItems: "center",
+  width: "100%",
+  gap: spacing.md,
+});
+
+const StyledHeading = styled(Heading, {
+  color: themeColors.text.primary,
+  fontSize: "1.25rem",
+  "@media (max-width: 768px)": {
+    fontSize: "1.1rem",
+  }
+});
+
+const PatientList: React.FC<PatientListProps> = ({ onCloseMobileMenu }) => {
   const [patients, setPatients] = useState([] as iPatientDto[]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -44,6 +158,7 @@ const PatientList = () => {
     isPatientDetailsScreenRefresh,
     setIsPatientDetailScreenRefresh,
   } = useCurrentMainScreenContext();
+
   const filteredData: iPatientDto[] = patients.filter((item: iPatientDto) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -74,74 +189,91 @@ const PatientList = () => {
     if (setCurrentPatientDetails) {
       setCurrentPatientDetails(patientData);
     }
+    if (onCloseMobileMenu) {
+      onCloseMobileMenu();
+    }
   };
 
-  // Fetch data from API
   useEffect(() => {
     getAllPatients({
       data: { d_id: doctorData.d_id },
       afterAPISuccess: (response: iGetAllPatientDto) => {
         setPatients(response.patients);
         setIsLoading(false);
-        console.log(response);
       },
       afterAPIFail: (response) => {
         showToast(response.message, DefaultToastTiming, ToastColors.RED);
-
-        // ErrorHandler(response);
         setIsLoading(false);
-        console.log(response);
       },
     });
   }, [isPatientListScreenRefresh]);
 
   return (
-    <Flex
-      direction="column"
-      gap="4"
-      p="4"
-      style={{ height: "100%", width: "100%" }}
-    >
-      <Flex direction="row" gap="4" p="4" align="center" justify="between">
-        <Heading size="6">Patient List</Heading>
-        <ReloadIcon
-          onClick={onPatientLisRefresh}
-          width="28" // Adjust size as needed
-          height="28" // Adjust size as needed
-        />
-      </Flex>
+    <ListContainer>
+      <HeaderBar>
+        <HeaderContainer>
+          <StyledHeading>Patient List</StyledHeading>
+          <ReloadIcon
+            onClick={onPatientLisRefresh}
+            width="20"
+            height="20"
+            style={{ 
+              cursor: "pointer",
+              color: themeColors.text.secondary
+            }}
+          />
+        </HeaderContainer>
+      </HeaderBar>
 
-      <TextField.Root
-        placeholder="Search patients..."
-        value={searchTerm}
-        onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
-          setSearchTerm(e.target.value)
-        }
-      ></TextField.Root>
-
-      {/* <ScrollView style={{ maxHeight: '400px' }}> */}
-      <Flex direction="column" gap="3" height="78dvh" overflow="auto">
-        {filteredData.map((item: iPatientDto) => (
-          <Skeleton loading={isLoading}>
-            <Card
-              onClick={() => onPatientCardClick(item)}
-              key={item.p_id}
-              size="3"
-              style={{ minHeight: "120px" }}
-            >
-              <Flex direction="column" gap="1">
-                <Text size="3" weight="medium">
+      <ScrollArea direction="column" gap="2">
+        {isLoading
+          ? Array(3)
+              .fill(0)
+              .map((_, index) => (
+                <Skeleton
+                  key={index}
+                  style={{
+                    height: "80px",
+                    margin: `0 ${spacing.md}`,
+                    marginBottom: spacing.sm,
+                  }}
+                />
+              ))
+          : filteredData.map((item: iPatientDto) => (
+              <PatientCard key={item.p_id} onClick={() => onPatientCardClick(item)}>
+                <Text
+                  size="5"
+                  weight="bold"
+                  style={{ color: themeColors.text.primary }}
+                >
                   {item.name}
                 </Text>
-                <Text size="2">Age: {item.age}</Text>
-                <Text size="2">Condition: {item.chiefComplaint}</Text>
-              </Flex>
-            </Card>
-          </Skeleton>
-        ))}
-      </Flex>
-      {/* </ScrollView> */}
-    </Flex>
+                <Text size="2" style={{ color: themeColors.text.secondary }}>
+                  Age: {item.age}
+                </Text>
+                <Text size="2" style={{ color: themeColors.text.secondary }}>
+                  Condition: {item.chiefComplaint}
+                </Text>
+              </PatientCard>
+            ))}
+      </ScrollArea>
+
+      <SearchFooter>
+        <SearchInput>
+          <MagnifyingGlassIcon
+            height="16"
+            width="16"
+            style={{ color: themeColors.text.disabled }}
+          />
+          <StyledInput
+            type="text"
+            placeholder="Search patients..."
+            value={searchTerm}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+          />
+        </SearchInput>
+      </SearchFooter>
+    </ListContainer>
   );
 };
 

@@ -70,11 +70,11 @@ const DoctorNavBar = () => {
         <Flex justify="between" align="center" style={{ width: "100%" }} gap="4">
           <Logo href="#">PhysioCare</Logo>
           <Flex style={{ flexGrow: 1, justifyContent: "center" }} gap="4">
-            <Link onClick={()=> navigate('/doctorhome')} href="#" style={{color: "white"}} >Home Center</Link>
+            {/* <Link onClick={()=> navigate('/doctorhome')} href="#" style={{color: "white"}} >Home Center</Link>
             <Link to={'/doctorhome/newPatient'} href="#">New Patient</Link>
             <Link href="#">For Physiotherapists</Link>
             <Link href="#">For Individuals</Link>
-            <Link href="#">Contact</Link>
+            <Link href="#">Contact</Link> */}
           </Flex>
           <Flex
             style={{ justifyContent: "flex-end", marginRight: "1rem" }}

@@ -94,7 +94,7 @@ const NewPatientEntry = () => {
 
   return (
     <div
-      className="pl-40 pr-40 pt-6 mx-auto"
+      className="pt-6 mx-auto"
       style={{ width: "100%", overflow: "auto", maxHeight: "85dvh" }}
     >
       <h1 className="text-2xl font-bold mb-4">New Patient Entry</h1>
