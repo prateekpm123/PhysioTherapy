@@ -248,9 +248,11 @@ const PatientList: React.FC<PatientListProps> = ({ onCloseMobileMenu }) => {
                 >
                   {item.name}
                 </Text>
+                <br></br>
                 <Text size="2" style={{ color: themeColors.text.secondary }}>
                   Age: {item.age}
                 </Text>
+                <br></br>
                 <Text size="2" style={{ color: themeColors.text.secondary }}>
                   Condition: {item.chiefComplaint}
                 </Text>
