@@ -11,9 +11,8 @@ import { PDFPreview } from "../../../components/PDFPreview";
 // import { IoMdAdd } from "react-icons/io";
 import { AddExcercise } from "./ExcerciseBuilder/AddExcercise";
 import { EditExcercise } from "./ExcerciseBuilder/EditExcercise";
-import { isMobile } from "react-device-detect";
 import React from "react";
-import { Box, Button, Flex, TextField } from "@radix-ui/themes";
+import { Box, Button, TextField } from "@radix-ui/themes";
 import { getAllExcercises } from "../../../controllers/ExcerciseController";
 import ThemeColorPallate from "../../../assets/ThemeColorPallate";
 import { useCurrentMainScreenContext } from "../DoctorHomePage";
@@ -21,6 +20,97 @@ import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { DefaultToastTiming, useToast } from "../../../stores/ToastContext";
 import { ToastColors } from "../../../components/Toast";
 import { IoMdAdd } from "react-icons/io";
+import { styled } from "@stitches/react";
+
+const BuilderContainer = styled('div', {
+  display: 'flex',
+  flexDirection: 'row',
+  width: '100%',
+  height: '100vh',
+  position: 'relative',
+  backgroundColor: ThemeColorPallate.background,
+});
+
+const MainContent = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  height: '100%',
+  padding: '20px',
+  position: 'relative',
+
+  '@media (max-width: 768px)': {
+    padding: '12px',
+  }
+});
+
+const ExerciseGrid = styled(Box, {
+  display: 'grid',
+  gap: '16px',
+  width: '100%',
+  height: '100%',
+  maxHeight: 'calc(100vh - 140px)', // Account for search bar and padding
+  overflow: 'auto',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+  padding: '8px',
+
+  '@media (max-width: 768px)': {
+    gridTemplateColumns: '1fr',
+    gap: '12px',
+  }
+});
+
+const SearchContainer = styled('div', {
+  position: 'sticky',
+  bottom: 0,
+  left: 0,
+  width: '100%',
+  padding: '16px',
+  backgroundColor: ThemeColorPallate.background,
+  boxShadow: '0px -4px 10px rgba(0, 0, 0, 0.1)',
+  zIndex: 10,
+
+  '@media (max-width: 768px)': {
+    padding: '12px',
+  }
+});
+
+const AddButton = styled(Button, {
+  position: 'fixed',
+  bottom: '80px',
+  right: '20px',
+  borderRadius: '50%',
+  width: '56px',
+  height: '56px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+  transition: 'transform 0.2s ease',
+  zIndex: 20,
+
+  '&:hover': {
+    transform: 'scale(1.05)',
+  },
+
+  '@media (max-width: 768px)': {
+    bottom: '90px',
+    right: '16px',
+    width: '48px',
+    height: '48px',
+  }
+});
+
+const PlannerSidebar = styled(Box, {
+  flex: '0 0 350px',
+  marginLeft: '12px',
+  boxShadow: '-4px 0px 15px rgba(0, 0, 0, 0.15)',
+  backgroundColor: ThemeColorPallate.background,
+  
+  '@media (max-width: 992px)': {
+    display: 'none',
+  }
+});
 
 export const ExcerciseBuilder = () => {
   const [data2, setData2] = useState<iExcerciseDataDto[] | null>();
@@ -139,30 +229,9 @@ export const ExcerciseBuilder = () => {
   return (
     <>
       <Outlet />
-      <Flex direction="row" className="h-screen" width="100%" height="100%">
-        <Flex
-          direction="column"
-          width="100%"
-          height="100%"
-          // className="bg-slate-800"
-          // style={{
-          //   flex: isMobile ? "1 1 100%" : "5 1 100%",
-          //   padding: isMobile ? "12px" : "32px",
-          // }}
-        >
-          <Box
-            style={{
-              display: "grid",
-              gap: "16px",
-              width: "100%",
-              height: "100%",
-              maxHeight: "80vh",
-              overflow: "auto",
-              gridTemplateColumns: isMobile
-                ? "1fr"
-                : "repeat(auto-fill, minmax(280px, 1fr))",
-            }}
-          >
+      <BuilderContainer>
+        <MainContent>
+          <ExerciseGrid>
             <Suspense fallback={<div>Loading...</div>}>
               {excercises &&
                 Object.entries(excercises).map(([key, excercise]) => (
@@ -177,76 +246,47 @@ export const ExcerciseBuilder = () => {
                       onExcerciseTileForDetailClicked(excercise, key)
                     }
                     refreshExcercise={fetchExcerciseData}
-                    viewType={
-                      isMobile
-                        ? ExcerciseType.MOBILE_VIEW
-                        : ExcerciseType.FULL_VIEW
-                    }
+                    viewType={ExcerciseType.FULL_VIEW}
                   />
                 ))}
             </Suspense>
-          </Box>
-          <Button
-            variant="solid"
-            size="3"
-            style={{
-              position: "absolute",
-              bottom: "10%",
-              right: isMobile ? "3%" : "20%",
-              borderRadius: "50%",
-              width: "64px",
-              height: "64px",
-              boxShadow: "1px 2px 44px 5px rgba(0,0,0)",
-            }}
-            onClick={() => {
-              navigate("/doctorhome/main/patientDetails/"+ pid + "/buildPlan/addExcercise");}
-            }
+          </ExerciseGrid>
+          
+          <AddButton 
+            variant="solid" 
+            onClick={() => navigate(`/doctorhome/main/patientDetails/${pid}/buildPlan/addExcercise`)}
           >
-            <IoMdAdd
-              className="text-6xl text-slate-700"
-              style={{ color: ThemeColorPallate.cardFontColorBlack }}
+            <IoMdAdd size={24} style={{ color: ThemeColorPallate.cardFontColorBlack }} />
+          </AddButton>
+
+          <SearchContainer>
+            <TextField.Root
+              placeholder="Search exercises..."
+              size="3"
+              radius="full"
+              style={{
+                width: '100%',
+                backgroundColor: ThemeColorPallate.background,
+                color: 'white',
+              }}
+              onChange={(e) => search(e as React.ChangeEvent<HTMLInputElement>)}
             />
-          </Button>
-          {/* <AddExcercise /> */}
-          <TextField.Root
-            placeholder="Search"
-            size="3"
-            radius="full"
-            style={{
-              position: "relative", // Sticks to the bottom
-              bottom: "0", // Aligns to the bottom of the screen
-              left: "0",
-              width: "100%", // Full width
-              height: "60px", // Increased height
-              backgroundColor: ThemeColorPallate.background,
-              color: "white",
-              padding: "10px",
-              boxSizing: "border-box",
-            }}
-            onChange={(e) => search(e as React.ChangeEvent<HTMLInputElement>)}
+          </SearchContainer>
+        </MainContent>
+
+        <PlannerSidebar>
+          <PlannerList
+            testId={"homePlannerList"}
+            isPDFPreviewModelRequired={isPDFPreviewModalOpen}
+            setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
           />
-        </Flex>
-        {!isMobile && (
-          <Box
-            style={{
-              flex: "1 1 35%",
-              marginLeft: "12px",
-              boxShadow: "-9px 0px 15px 0px rgba(0,0,0,0.75)",
-              minWidth: "20rem",
-            }}
-          >
-            <PlannerList
-              testId={"homePlannerList"}
-              isPDFPreviewModelRequired={isPDFPreviewModalOpen}
-              setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
-            />
-          </Box>
-        )}
+        </PlannerSidebar>
+
         {/* Modals */}
         {isExcerciseDetailModalOpen && (
           <Modal
             testId={"ExcerciseDetailModal"}
-            title={"Excercise Detail"}
+            title={"Exercise Detail"}
             pIsOpen={isExcerciseDetailModalOpen}
             setIsModelOpen={setIsExcerciseDetailModalOpen}
           >
@@ -304,7 +344,7 @@ export const ExcerciseBuilder = () => {
             ></PlannerList>
           </Modal>
         )}
-      </Flex>
+      </BuilderContainer>
     </>
   );
 };
