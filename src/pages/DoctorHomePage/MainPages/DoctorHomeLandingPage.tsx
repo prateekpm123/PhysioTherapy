@@ -55,6 +55,14 @@ const TopBar = styled("header", {
   position: "sticky",
   top: 0,
   zIndex: 10,
+  gap: spacing.md,
+});
+
+const BreadcrumbContainer = styled(Flex, {
+  flex: 1,
+  minWidth: 0,
+  alignItems: 'center',
+  gap: spacing.sm,
 });
 
 const MenuButton = styled("button", {
@@ -166,7 +174,7 @@ const DoctorHomeLandingPage = () => {
 
       <MainContent>
         <TopBar>
-          <Flex align="center" gap="4">
+          <BreadcrumbContainer>
             <MenuButton onClick={toggleMobileMenu}>
               {isMobileMenuOpen ? (
                 <Cross1Icon style={{ color: themeColors.text.primary }} />
@@ -175,7 +183,8 @@ const DoctorHomeLandingPage = () => {
               )}
             </MenuButton>
             <CustomBreadcrumb items={breadCrumbItems} />
-          </Flex>
+          </BreadcrumbContainer>
+
           <ReloadIcon
             onClick={onMiniNavBarReloadClick}
             width="24"
@@ -183,6 +192,7 @@ const DoctorHomeLandingPage = () => {
             style={{ 
               cursor: "pointer",
               color: themeColors.text.secondary,
+              flexShrink: 0,
             }}
           />
         </TopBar>
