@@ -8,12 +8,12 @@ import {
   Text,
   Button,
   Card,
-  Grid,
   Skeleton,
   ScrollArea,
 } from "@radix-ui/themes";
+import { styled } from "@stitches/react";
+import { themeColors, spacing } from "../../../theme/theme";
 // import { Link } from "@radix-ui/themes";
-// import { styled } from "@stitches/react";
 // import { useNavigate } from "react-router-dom";
 // import ThemeColorPallate from "../../assets/ThemeColorPallate";
 // import { ReloadIcon } from "@radix-ui/react-icons";
@@ -25,6 +25,47 @@ import { iExcercisePlanDto } from "../../../models/ExcerciseInterface";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { DefaultToastTiming, useToast } from "../../../stores/ToastContext";
 import { ToastColors } from "../../../components/Toast";
+
+const ExercisePlanCard = styled(Card, {
+  width: "100%",
+  backgroundColor: themeColors.background.elevation1,
+  marginBottom: spacing.md,
+
+  "@media (max-width: 768px)": {
+    padding: spacing.sm,
+  }
+});
+
+const ExerciseTitle = styled(Text, {
+  fontSize: "1rem",
+  fontWeight: "bold",
+  color: themeColors.text.primary,
+  marginBottom: spacing.xs,
+
+  "@media (max-width: 768px)": {
+    fontSize: "0.9rem",
+  }
+});
+
+const StyledButton = styled(Button, {
+  "@media (max-width: 768px)": {
+    width: "100%",
+    marginTop: spacing.sm,
+  }
+});
+
+const ExercisePlanHeader = styled(Flex, {
+  justifyContent: "space-between",
+  alignItems: "center",
+  width: "100%",
+  marginBottom: spacing.md,
+
+  "@media (max-width: 768px)": {
+    flexDirection: "column",
+    alignItems: "stretch",
+    gap: spacing.sm,
+  }
+});
 
 const PatientDetails = () => {
   const {
@@ -203,51 +244,38 @@ const PatientDetails = () => {
         </Card>
 
         {/* Exercise Plans */}
-        <Flex direction="column" gap="2">
-          <Flex direction="row" justify="between" align="center">
-            <Heading size="5">Exercise Plans</Heading>
-            <Button onClick={onCreateNewPlan} variant="soft">
-              Create a new plan
-            </Button>
-          </Flex>
+        <Flex direction="column" gap="4">
+          <ExercisePlanHeader>
+            <Heading size="6">Exercise Plans</Heading>
+            <StyledButton onClick={onCreateNewPlan}>Create a new plan</StyledButton>
+          </ExercisePlanHeader>
 
-          {/* Placeholder for Exercise Plan Cards */}
-          <Grid rows="5" gap="3">
-            {currentPatientDetails?.excercisePlans &&
-              currentPatientDetails?.excercisePlans.map((plan) => (
-                <Card key={plan.ep_id} mt="4">
-                  <Skeleton loading={patientDetailsLoading}>
-                    <Flex direction="row">
-                      <Heading size="3" mb="2" style={{marginRight: "55rem"}}>
-                        Exercise Plan: Date{" "}
-                        {plan.date_created.toString().slice(0, 10)}
-                      </Heading>
-                      <Button variant="outline" onClick={() => onExcercisePlanOpenClick(plan.ep_id)}>Open plan</Button>
-                    </Flex>
+          {currentPatientDetails?.excercisePlans?.map((plan) => (
+            <ExercisePlanCard key={plan.ep_id}>
+              <Flex direction="column" gap="2">
+                <ExerciseTitle>
+                  Exercise Plan: Date {plan.date_created.toString().slice(0, 10)}
+                </ExerciseTitle>
+                {plan.excercise.map((exercise) => (
+                  <Skeleton key={exercise.e_id} loading={patientDetailsLoading}>
+                    <Card mt="2">
+                      <Text size="2">{exercise.excercise_name}</Text>
+                      <Flex>
+                        <Text><b>Description:</b> {exercise.excercise_description}</Text>
+                      </Flex>
+                      <Flex gap="2">
+                        <Text><b>Sets:</b> {exercise.excercise_sets}</Text>
+                        <Text><b>Reps:</b> {exercise.excercise_reps}</Text>
+                      </Flex>
+                    </Card>
                   </Skeleton>
-                  {plan.excercise.map((exercise) => (
-                    <Skeleton loading={patientDetailsLoading}>
-                      <Card key={exercise.e_id} mt="2">
-                        <Heading size="2">{exercise.excercise_name}</Heading>
-                        <Text>
-                          <b>Description:</b>{" "}
-                          {exercise.excercise_description + "  "}
-                        </Text>
-                        <Text>
-                          <b>Sets:</b> {exercise.excercise_sets}{" "}
-                          {exercise.excercise_sets_description + "  "}
-                        </Text>
-                        <Text>
-                          <b>Reps:</b> {exercise.excercise_reps}{" "}
-                          {exercise.excercise_reps_description}
-                        </Text>
-                      </Card>
-                    </Skeleton>
-                  ))}
-                </Card>
-              ))}
-            <Flex align="center" justify="center"></Flex>
-          </Grid>
+                ))}
+                <StyledButton variant="outline" onClick={() => onExcercisePlanOpenClick(plan.ep_id)}>
+                  Open plan
+                </StyledButton>
+              </Flex>
+            </ExercisePlanCard>
+          ))}
         </Flex>
       </Flex>
     </ScrollArea>

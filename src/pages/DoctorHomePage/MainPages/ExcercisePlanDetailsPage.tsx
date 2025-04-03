@@ -19,6 +19,7 @@ import {
   Heading,
   Skeleton,
   Text,
+  ScrollArea
 } from "@radix-ui/themes";
 // import { iExcercisePlanDto } from "../../../models/ExcerciseInterface";
 // import { useCurrentMainScreenContext } from "../DoctorHomePage";
@@ -27,6 +28,8 @@ import React, { createContext, useContext } from "react";
 import { useCurrentMainScreenContext } from "../DoctorHomePage";
 import { DefaultToastTiming, useToast } from "../../../stores/ToastContext";
 import { ToastColors } from "../../../components/Toast";
+import { styled } from "@stitches/react";
+import { themeColors, spacing } from "../../../theme/theme";
 
 interface iExcercisePlanDetailsContext {
   excercisePlan: iExcercisePlanDto;
@@ -54,6 +57,61 @@ export const useExcercisePlanDetails = () => {
   }
   return context;
 };
+
+const PageContainer = styled(Flex, {
+  padding: spacing.lg,
+  backgroundColor: themeColors.background.dark,
+  minHeight: 'calc(100vh - 60px)', // Adjust based on TopBar height
+  flexDirection: 'column',
+  gap: spacing.lg,
+
+  "@media (max-width: 768px)": {
+    padding: spacing.md,
+    gap: spacing.md,
+  }
+});
+
+const ActionButtonsContainer = styled(Flex, {
+  gap: spacing.md,
+  marginTop: spacing.md,
+  width: '100%',
+  maxWidth: '600px', // Limit width on larger screens
+  justifyContent: 'center',
+
+  "@media (max-width: 768px)": {
+    flexDirection: 'column',
+    maxWidth: '100%',
+  },
+
+  '& button': {
+    flex: 1,
+  }
+});
+
+const NotesGrid = styled(Grid, {
+  width: '100%',
+  marginTop: spacing.lg,
+  columns: '2',
+  gap: spacing.md,
+
+  "@media (max-width: 768px)": {
+    columns: '1',
+  }
+});
+
+const NoteCard = styled(Card, {
+  backgroundColor: themeColors.background.elevation1,
+  padding: spacing.md,
+});
+
+const NoteHeading = styled(Heading, {
+  color: themeColors.text.primary,
+  marginBottom: spacing.xs,
+});
+
+const NoteText = styled(Text, {
+  color: themeColors.text.secondary,
+});
 
 const ExcercisePlanDetailsPage = () => {
   const { epid, pid } = useParams();
@@ -189,9 +247,9 @@ const ExcercisePlanDetailsPage = () => {
           >,
       }}
     >
-      <div>
-        <Flex direction="column" gap="4" justify="center" align="center">
-          <Skeleton loading={isExcercisePlanTrackingLoading}>
+      <ScrollArea style={{ height: 'calc(100vh - 60px)' }}>
+        <PageContainer align="center">
+          <Skeleton loading={isExcercisePlanTrackingLoading} style={{ width: '100%' }}>
             <WeeklyCarousel
               excercises={excercisePlan?.excercise || []}
               startDate={startDate}
@@ -202,48 +260,47 @@ const ExcercisePlanDetailsPage = () => {
             />
           </Skeleton>
 
-          <Skeleton loading={isExcercisePlanTrackingLoading}>
-            <Button
-              style={{ width: "200px" }}
-              variant="classic"
-              onClick={() => onTrackTodaySession()}
-            >
-              Track Today's workout
-            </Button>
-            <Button
-              style={{ width: "200px" }}
-              variant="classic"
-              onClick={sumbitExcerciseCompletionData}
-            >
-              Submit so far !
-            </Button>
-          </Skeleton>
+          <ActionButtonsContainer>
+            <Skeleton loading={isExcercisePlanTrackingLoading}>
+              <Button
+                variant="soft"
+                onClick={() => onTrackTodaySession()}
+                highContrast
+              >
+                Track Today's workout
+              </Button>
+            </Skeleton>
+            <Skeleton loading={isExcercisePlanTrackingLoading}>
+              <Button
+                variant="solid"
+                onClick={sumbitExcerciseCompletionData}
+              >
+                Submit Progress
+              </Button>
+            </Skeleton>
+          </ActionButtonsContainer>
 
-          <Skeleton loading={isExcercisePlanTrackingLoading}>
-            {excercisePlan?.excercise_plan_notes && (
-              <Grid columns={"2"} gap="4">
-                {excercisePlan.excercise_plan_notes.map(
-                  (note: iExcercisePlanNote) => (
-                    <Card key={note.epn_id}>
-                      <Heading size="3">
-                        Note:{" "}
-                        <Text size="2">
-                          {" "}
-                          {"   " +
-                            new Date(note.date).toLocaleDateString()}{" "}
+          {excercisePlan?.excercise_plan_notes && excercisePlan.excercise_plan_notes.length > 0 && (
+            <NotesGrid>
+              {excercisePlan.excercise_plan_notes.map(
+                (note: iExcercisePlanNote) => (
+                  <Skeleton key={note.epn_id} loading={isExcercisePlanTrackingLoading}>
+                    <NoteCard>
+                      <NoteHeading size="3">
+                        Note: {" "}
+                        <Text size="2" color="gray">
+                          {new Date(note.date).toLocaleDateString()}
                         </Text>
-                      </Heading>
-                      <Text>{note.notes}</Text>
-                      {/* <Text size={'2'}>Date: {new Date(note.date).toLocaleDateString()}</Text> */}
-                    </Card>
-                  )
-                )}
-              </Grid>
-            )}
-          </Skeleton>
-          {/* Add your content here */}
-        </Flex>
-      </div>
+                      </NoteHeading>
+                      <NoteText>{note.notes}</NoteText>
+                    </NoteCard>
+                  </Skeleton>
+                )
+              )}
+            </NotesGrid>
+          )}
+        </PageContainer>
+      </ScrollArea>
     </ExcercisePlanDetailsContext.Provider>
   );
 };
