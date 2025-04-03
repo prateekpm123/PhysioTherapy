@@ -107,8 +107,9 @@ const ExcercisePlanTrackSession: React.FC = () => {
   const [exerciseCompletions, setExerciseCompletions] = useState<
     iExcerciseCompletionDto[]
   >([]);
-  const { isExcercisePlanTrackingSessionRefresh, setBreadCrumbItems } =
+  const { isExcercisePlanTrackingSessionRefresh, setBreadCrumbItems, breadCrumbItems } =
     useCurrentMainScreenContext();
+  //   const { onExcercisePlanTodaysTrackingSubmit } = useExcercisePlanDetails();
   const [noteText, setNoteText] = useState("");
   const [note, setNote] = useState<iExcercisePlanNote>();
   const [isLoading, setIsLoading] = useState(false);
@@ -130,27 +131,29 @@ const ExcercisePlanTrackSession: React.FC = () => {
   
   // Set breadcrumbs when component is loaded
   useEffect(() => {
-    // Only set breadcrumbs if we have valid plan data
-    if (excercisePlan && sessionDate) {
-        setBreadCrumbItems([
-          {
-            label: "Patient Details",
-            onClick: () => {
-              navigate("/doctorhome/main/patientDetails/" + pid);
-            },
-          },
-          {
-            label: "Exercise Plan",
-            onClick: () => {
-              navigate("/doctorhome/main/patientDetails/" + pid + "/excercisePlans/" + epid);
-            },
-          },
-          {
-            label: `Track Session (${today.toLocaleDateString()})`,
-          },
-        ]);
-    }
-  }, [pid, epid, navigate, setBreadCrumbItems, excercisePlan, sessionDate, today]);
+    setBreadCrumbItems([
+      {
+        label: "Patient Details",
+        onClick: () => {
+          navigate("/doctorhome/main/patientDetails/" + pid);
+          breadCrumbItems.pop();
+          breadCrumbItems.pop();
+          setBreadCrumbItems(breadCrumbItems);
+        },
+      },
+      {
+        label: "Exercise Plan",
+        onClick: () => {
+          breadCrumbItems.pop();
+          setBreadCrumbItems(breadCrumbItems);
+          navigate("/doctorhome/main/patientDetails/" + pid + "/excercisePlans/" + epid);
+        },
+      },
+      {
+        label: "Track Session",
+      },
+    ]);
+  }, [pid, epid, navigate, setBreadCrumbItems]);
   
   const isTodayInSession = useMemo(() => {
     if (!excercisePlan) return false;
@@ -228,11 +231,12 @@ const ExcercisePlanTrackSession: React.FC = () => {
     const completionPromise = saveExcerciseCompletionData({
       data: exerciseCompletions,
       afterAPISuccess: (res) => {
-        console.log("Completion saved:", res);
+        showToast("Tracking data saved", DefaultToastTiming, ToastColors.GREEN)
+        console.log(noteText, res);
       },
       afterAPIFail: (res) => {
         showToast("Failed to save tracking data", DefaultToastTiming, ToastColors.RED)
-        console.error("Completion save failed:", res);
+        console.log(res);
       },
     });
     const notesPromise = saveExcercisePlanNotes({

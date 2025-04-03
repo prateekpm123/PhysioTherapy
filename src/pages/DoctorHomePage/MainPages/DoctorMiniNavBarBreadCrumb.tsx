@@ -37,7 +37,9 @@ const BreadcrumbText = styled(Text, {
 });
 
 const Separator = styled(Text, {
-  padding: "0px 4px",
+  padding: "0px 3px",
+  marginTop: "6px",
+  fontSize: "0.7rem",
   "@media (max-width: 768px)": {
     padding: "0px 2px",
   },
