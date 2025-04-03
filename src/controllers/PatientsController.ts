@@ -21,7 +21,8 @@ export const createPatient = async (inputs: iApiCallInterface) => {
     const responseJson = await response.json();
     if (responseJson.ok) {
       const data = responseJson as unknown;
-      inputs.afterAPISuccess(data.patient);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      inputs.afterAPISuccess((data as { patient: any }).patient);
       console.log("Backend response:", data);
     } else {
       inputs.afterAPIFail(responseJson as FailedResponseDto);

@@ -43,9 +43,9 @@ export const PlannerList = (inputs: PlannerListProps) => {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const previewPDF = () => {
-    inputs.setIsPDFPreviewModelRequired(true);
-  };
+  // const previewPDF = () => {
+  //   inputs.setIsPDFPreviewModelRequired(true);
+  // };
 
   const handleCreateExcercisePlan = () => {
     navigate(

@@ -42,9 +42,7 @@ export const AddExcercise = () => {
   );
   const { isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh } =
     useCurrentMainScreenContext();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [creeateExcerciseBtnText, setCreateExcerciseBtnText] =
-    useState<string>("Create Excercise");
+  // const [createExcerciseBtnText, setCreateExcerciseBtnText] = useState<string>("Create Exercise");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [uploadBtnText, setUploadBtnText] = useState<string>("Upload");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -55,6 +53,7 @@ export const AddExcercise = () => {
   const { pid} = useParams();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("Image changed", uploadBtnColor);
     if (event.target.files && event.target.files[0]) {
       const image = event.target.files[0];
       setSelectedImage(image);
@@ -77,7 +76,7 @@ export const AddExcercise = () => {
   };
 
   const onCreateBtnClick = () => {
-    setCreateExcerciseBtnText("Creating...");
+    // setCreateExcerciseBtnText("Creating...");
     if (imageUrl) {
       excercise.excercise_image_url = imageUrl;
       // setExcercise({ ...excercise, ["excercise_image_url"]: imageUrl });
@@ -103,7 +102,7 @@ export const AddExcercise = () => {
           // setReset(reset + 1);
           showToast("Excercise created successfully", 5000, ToastColors.GREEN);
           setIsExcerciseBuilderRefresh(!isExcerciseBuilderRefresh);
-          setCreateExcerciseBtnText("Created");
+          // setCreateExcerciseBtnText("Created");
           console.log(res);
         },
       });

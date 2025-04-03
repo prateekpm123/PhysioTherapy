@@ -1,24 +1,18 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { H4, H6 } from "../../../../components/TextTags";
 import { iExcerciseDataDto } from "../../../../models/ExcerciseInterface";
-// import DatabaseController from "../databaseConnections/DatabaseController";
+import { updateExcercise } from "../../../../controllers/ExcerciseController";
+import {  useToast } from "../../../../stores/ToastContext";
+import { ToastColors } from "../../../../components/Toast";
+import { Button, Flex, Text , Heading} from "@radix-ui/themes";
+import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useRef } from "react";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../databaseConnections/FireBaseConnection";
-// import { storage } from "../databaseConnections/FireBaseStorageInstance";
 import { isMobile } from "react-device-detect";
-import { Flex, Heading, Text, Button } from "@radix-ui/themes";
-import { updateExcercise } from "../../../../controllers/ExcerciseController";
-import Modal from "./TestModal";
-import { useLocation, useNavigate } from "react-router-dom";
 import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
-import { useToast } from "../../../../stores/ToastContext";
-import { ToastColors } from "../../../../components/Toast";
-
-// interface iEditExcercise {
-//   excercise: iExcerciseDataDto | undefined;
-//   e_id: string | undefined;
-// }
+import Modal from "./TestModal";
 
 export const EditExcercise = () => {
   const location = useLocation();
@@ -52,14 +46,9 @@ export const EditExcercise = () => {
   const repetitionNumber = useRef<HTMLInputElement>(null);
   const repetitionDescription = useRef<HTMLTextAreaElement>(null);
   const excerciseDescription = useRef<HTMLTextAreaElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [editExcerciseBtnText, setEditExcerciseBtnText] =
-    useState<string>("Edit Excercise");
   const excerciseName = useRef<HTMLInputElement>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [uploadBtnText, setUploadBtnText] = useState<string>("Upload");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [uploadBtnColor, setUploadBtnColor] = useState<string>("bg-slate-800");
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -70,7 +59,6 @@ export const EditExcercise = () => {
   };
 
   const onEditExcerciseBtnClick = () => {
-    setEditExcerciseBtnText("Editing...");
     const newExcercise: iExcerciseDataDto = {
       excercise_name: excerciseName.current?.value.toString() || "",
       excercise_image_url:
@@ -131,16 +119,13 @@ export const EditExcercise = () => {
     const storageRef = ref(storage, "images/" + selectedImage.name); // Customize the path/filename
     const uploadTask = uploadBytes(storageRef, selectedImage);
     setUploadBtnText("Uploading...");
-    setUploadBtnColor("bg-slate-800");
     uploadTask
       .then((snapshot) => {
         setUploadBtnText("Uploaded");
-        setUploadBtnColor("bg-green-800");
         console.log("Image uploaded successfully!");
         // Optionally, get the download URL for the uploaded image
         getDownloadURL(snapshot.ref).then((downloadURL) => {
           setImageUrl(downloadURL);
-          // setUploadBtnText("Upload Success");
           console.log("File available at", downloadURL);
           // Store this download URL in Firestore or Realtime Database if needed
         });
@@ -173,15 +158,6 @@ export const EditExcercise = () => {
   };
 
   return (
-    // <Dialog.Root>
-    //   <Dialog.Trigger>
-    //     <Button variant="soft" size="3">
-    //       Edit
-    //     </Button>
-    //   </Dialog.Trigger>
-
-    //   <Dialog.Content minWidth="80rem" width="100%">
-    //     <Dialog.Title>{excercise?.excercise_name}</Dialog.Title>
     <Modal onActionButtonClick={onEditExcerciseBtnClick} title="Edit Excercise">
       <Flex
         direction="column"
@@ -352,17 +328,5 @@ export const EditExcercise = () => {
         </Flex>
       </Flex>
     </Modal>
-    //     <Flex gap="3" mt="4" justify="end">
-    //       <Dialog.Close>
-    //         <Button variant="soft" color="gray">
-    //           Cancel
-    //         </Button>
-    //       </Dialog.Close>
-    //       <Dialog.Close>
-    //         <Button onClick={onEditExcerciseBtnClick}>Edit Excercise</Button>
-    //       </Dialog.Close>
-    //     </Flex>
-    //   </Dialog.Content>
-    // </Dialog.Root>
   );
 };

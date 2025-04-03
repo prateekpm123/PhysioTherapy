@@ -45,9 +45,7 @@ export const ExcerciseBuilder = () => {
     useState<boolean>(false);
   const [currentClickedExcerciseTile, setCurrentClickedExcerciseTile] =
     useState<iExcerciseDataDto>();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [currentExcerciseTileEditClick, setCurrentExcerciseTileEditClick] =
-    useState<iExcerciseDataDto>();
+  const [currentExcerciseTile, setCurrentExcerciseTile] = useState<iExcerciseDataDto | null>(null);
 
     const navigate = useNavigate();
     const {pid} = useParams();
@@ -78,6 +76,7 @@ export const ExcerciseBuilder = () => {
         DefaultToastTiming,
         ToastColors.YELLOW
       );
+      console.log(currentExcerciseTile);
       return;
     }
     setExcerciseBuilderPlannerList((excerciseBuilderPlannerList) => [
@@ -129,7 +128,7 @@ export const ExcerciseBuilder = () => {
     excerciseKey: string
   ) => {
     excercise.e_id = excerciseKey;
-    setCurrentExcerciseTileEditClick(excercise);
+    setCurrentExcerciseTile(excercise);
     setIsEditExcerciseModalOpen(true);
   };
 

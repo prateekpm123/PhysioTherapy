@@ -1,19 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Flex } from "@radix-ui/themes";
 import PatientList from "./PatientLIst";
-import NewPatientEntry from "./NewPatientEntry";
 import ThemeColorPallate from "../../../assets/ThemeColorPallate";
-import PatientDetails from "./PatientDetails";
 import {
-  DoctorHomeMainScreen,
   useCurrentMainScreenContext,
 } from "../DoctorHomePage";
-import { ExcerciseBuilder } from "./ExcerciseBuilder";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { styled } from "@stitches/react";
 import CustomBreadcrumb from "./DoctorMiniNavBarBreadCrumb";
-import CreateExcercisePlanPage from "./CreateExcercisePlanPage";
-import { Outlet, useLocation, useMatch } from "react-router-dom";
+import { Outlet, useMatch } from "react-router-dom";
 
 const Nav = styled("nav", {
   padding: "1rem 0",
@@ -26,8 +21,7 @@ const Nav = styled("nav", {
 });
 
 const DoctorHomeLandingPage = () => {
-  const { breadCrumbItems, currentMainScreen, isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh, setIsPatientDetailScreenRefresh, isPatientDetailsScreenRefresh, isExcercisePlanTrackingRefresh, setIsExcercisePlanTrackingRefresh, isExcercisePlanTrackingSessionRefresh, setIsExcercisePlanTrackingSessionRefresh } = useCurrentMainScreenContext();
-  const location = useLocation();
+  const { breadCrumbItems, isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh, setIsPatientDetailScreenRefresh, isPatientDetailsScreenRefresh, isExcercisePlanTrackingRefresh, setIsExcercisePlanTrackingRefresh, isExcercisePlanTrackingSessionRefresh, setIsExcercisePlanTrackingSessionRefresh } = useCurrentMainScreenContext();
   
   const isExcerciseBuilder = useMatch("/doctorhome/main/patientDetails/:pid/buildPlan")
   const isPatientDetails = useMatch("/doctorhome/main/patientDetails/:pid")

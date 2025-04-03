@@ -190,7 +190,6 @@ const ExcercisePlanDetailsPage = () => {
       }}
     >
       <div>
-        <h1>Excercise Plan Details</h1>
         <Flex direction="column" gap="4" justify="center" align="center">
           <Skeleton loading={isExcercisePlanTrackingLoading}>
             <WeeklyCarousel

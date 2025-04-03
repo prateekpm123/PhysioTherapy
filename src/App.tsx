@@ -6,7 +6,6 @@ import { SignIn } from "./pages/SignInPage/SignIn";
 import LandingPage from "./pages/LandingPage/LandingPage";
 // import { DoctorHomePage } from './pages/DoctorHomePage/DoctorHomePage';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import DoctorHomePageRoutes from "./pages/DoctorHomePage/DoctorHomePageRoutes";
 import DoctorDetails from "./pages/DoctorDetails";
 import { DoctorHomePage } from "./pages/DoctorHomePage/DoctorHomePage";
 import PatientTreatmentBuilder from "./pages/DoctorHomePage/PatientTreatmentBuilder";
