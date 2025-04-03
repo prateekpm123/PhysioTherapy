@@ -101,6 +101,38 @@ const AddButton = styled(Button, {
   }
 });
 
+const CounterButton = styled('button', {
+  position: 'fixed',
+  bottom: '80px',
+  left: '20px',
+  borderRadius: '50%',
+  width: '56px',
+  height: '56px',
+  backgroundColor: ThemeColorPallate.primary,
+  color: 'white',
+  display: 'none',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: '20px',
+  fontWeight: 'bold',
+  border: 'none',
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+  transition: 'transform 0.2s ease',
+  zIndex: 20,
+
+  '&:hover': {
+    transform: 'scale(1.05)',
+  },
+
+  '@media (max-width: 992px)': {
+    display: 'flex',
+    bottom: '90px',
+    left: '16px',
+    width: '48px',
+    height: '48px',
+  }
+});
+
 const PlannerSidebar = styled(Box, {
   flex: '0 0 350px',
   marginLeft: '12px',
@@ -259,6 +291,10 @@ export const ExcerciseBuilder = () => {
             <IoMdAdd size={24} style={{ color: ThemeColorPallate.cardFontColorBlack }} />
           </AddButton>
 
+          <CounterButton onClick={() => setIsPlannerListModalOpen(true)}>
+            {excerciseBuilderPlannerList.length}
+          </CounterButton>
+
           <SearchContainer>
             <TextField.Root
               placeholder="Search exercises..."
@@ -282,7 +318,23 @@ export const ExcerciseBuilder = () => {
           />
         </PlannerSidebar>
 
-        {/* Modals */}
+        {/* Mobile Planner List Modal */}
+        {isPlannerListModalOpen && (
+          <Modal
+            testId={"PlannerListModal"}
+            title={"Patient Plan"}
+            pIsOpen={isPlannerListModalOpen}
+            setIsModelOpen={setIsPlannerListModalOpen}
+          >
+            <PlannerList
+              testId={"mobilePlannerList"}
+              isPDFPreviewModelRequired={isPDFPreviewModalOpen}
+              setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
+            />
+          </Modal>
+        )}
+
+        {/* Other Modals */}
         {isExcerciseDetailModalOpen && (
           <Modal
             testId={"ExcerciseDetailModal"}
@@ -328,20 +380,6 @@ export const ExcerciseBuilder = () => {
             //     : ""
             // }
             />
-          </Modal>
-        )}
-        {isPlannerListModalOpen && (
-          <Modal
-            testId={"PlannerListModal"}
-            title={"Planner list"}
-            pIsOpen={isPlannerListModalOpen}
-            setIsModelOpen={setIsPlannerListModalOpen}
-          >
-            <PlannerList
-              testId={"mobilFullPlannerList"}
-              isPDFPreviewModelRequired={isPDFPreviewModalOpen}
-              setIsPDFPreviewModelRequired={setIsPDFPreviewModalOpen}
-            ></PlannerList>
           </Modal>
         )}
       </BuilderContainer>

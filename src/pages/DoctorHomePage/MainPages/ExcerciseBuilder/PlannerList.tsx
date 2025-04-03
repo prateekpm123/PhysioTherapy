@@ -3,17 +3,62 @@ import { iExcerciseDataDto } from "../../../../models/ExcerciseInterface";
 import { PlannerItem } from "./PlannerItem";
 import { Flex, Heading, Box, Button } from "@radix-ui/themes";
 import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
-// import { useNavigate } from "react-router-dom";
-// import CreateExcercisePlanPage from "../pages/CreateExcercisePlanPage";
-import {
-  DoctorHomeMainScreen,
-  useCurrentMainScreenContext,
-} from "../../DoctorHomePage";
+import { DoctorHomeMainScreen, useCurrentMainScreenContext } from "../../DoctorHomePage";
 import { useNavigate } from "react-router-dom";
-// import { saveExcercisePlan } from "../controllers/ExcerciseController";
-// import { useCurrentMainScreenContext } from "../pages/DoctorHomePage/DoctorHomePage";
-// import { useSelector } from "react-redux";
-// import { UserSessionStateType } from "../stores/userSessionStore";
+import { styled } from "@stitches/react";
+
+const PlannerContainer = styled(Flex, {
+  width: '100%',
+  height: '100%',
+  backgroundColor: ThemeColorPallate.foreground,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '16px',
+  gap: '16px',
+
+  '@media (max-width: 992px)': {
+    minHeight: '60vh',
+    maxHeight: '80vh',
+  }
+});
+
+const PlannerContent = styled(Box, {
+  width: '100%',
+  flex: 1,
+  overflowY: 'auto',
+  padding: '8px',
+  
+  '&::-webkit-scrollbar': {
+    width: '4px',
+  },
+  '&::-webkit-scrollbar-track': {
+    background: 'transparent',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    background: ThemeColorPallate.primary,
+    borderRadius: '4px',
+  }
+});
+
+const CreatePlanButton = styled(Button, {
+  width: '100%',
+  marginTop: 'auto',
+  backgroundColor: ThemeColorPallate.primary,
+  color: 'white',
+  padding: '12px',
+  borderRadius: '8px',
+  transition: 'transform 0.2s ease',
+
+  '&:hover': {
+    transform: 'scale(1.02)',
+  },
+
+  '@media (max-width: 992px)': {
+    position: 'sticky',
+    bottom: 0,
+  }
+});
 
 export interface PlannerListProps {
   isPDFPreviewModelRequired: boolean;
@@ -30,8 +75,10 @@ export const PlannerList = (inputs: PlannerListProps) => {
     setExcerciseBuilderPlannerList,
     setCurrentMainScreen,
   } = useCurrentMainScreenContext();
+  
   const plannerListRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
   const onDelete = (excercise: iExcerciseDataDto) => {
     const index = excerciseBuilderPlannerList.findIndex(
       (item) => item.excercise_name === excercise.excercise_name
@@ -42,16 +89,9 @@ export const PlannerList = (inputs: PlannerListProps) => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const previewPDF = () => {
-  //   inputs.setIsPDFPreviewModelRequired(true);
-  // };
-
   const handleCreateExcercisePlan = () => {
     navigate(
-      "/doctorhome/main/patientDetails/" +
-        currentPatientDetails?.p_id +
-        "/buildPlan/createPlan"
+      `/doctorhome/main/patientDetails/${currentPatientDetails?.p_id}/buildPlan/createPlan`
     );
 
     setCurrentMainScreen(DoctorHomeMainScreen.CREATE_EXCERCISE_PLAN);
@@ -59,82 +99,55 @@ export const PlannerList = (inputs: PlannerListProps) => {
       {
         label: "Patient Details",
         onClick: () => {
-          navigate(
-            "/doctorhome/main/patientDetails/" + currentPatientDetails?.p_id
-          );
-          // setCurrentMainScreen(DoctorHomeMainScreen.PATIENT_DETAILS);
+          navigate(`/doctorhome/main/patientDetails/${currentPatientDetails?.p_id}`);
           breadCrumbItems.pop();
-          // breadCrumbItems.pop();
           setBreadCrumbItems(breadCrumbItems);
         },
       },
       {
         label: "Exercise Builder",
         onClick: () => {
-          navigate(
-            "/doctorhome/main/patientDetails/" +
-              currentPatientDetails?.p_id +
-              "/buildPlan"
-          );
-          // setCurrentMainScreen(DoctorHomeMainScreen.EXCERCISE_BUILDER);
-          // breadCrumbItems.pop();
+          navigate(`/doctorhome/main/patientDetails/${currentPatientDetails?.p_id}/buildPlan`);
           setBreadCrumbItems(breadCrumbItems);
-          // const
-          // setBreadCrumbItems()
         },
       },
       {
-        label: "Create Excercise Plan",
+        label: "Create Exercise Plan",
         onClick: () => {
-          navigate(
-            "/doctorhome/main/patientDetails/" +
-              currentPatientDetails?.p_id +
-              "/buildPlan/createPlan"
-          );
-          // setCurrentMainScreen(DoctorHomeMainScreen.CREATE_EXCERCISE_PLAN);
+          navigate(`/doctorhome/main/patientDetails/${currentPatientDetails?.p_id}/buildPlan/createPlan`);
         },
       },
     ]);
   };
 
   return (
-    <Flex
-      direction="column"
-      align="center"
-      justify="start"
-      width="100%"
-      p="3"
-      height="100%"
-      style={{ backgroundColor: ThemeColorPallate.foreground }} // Equivalent to bg-slate-600
-      data-testid={inputs.testId}
-      ref={plannerListRef}
-    >
-      <Heading size="6" color="gray" style={{ color: "rgb(241, 245, 249)" }}>
-        Patient Plan
+    <PlannerContainer data-testid={inputs.testId} ref={plannerListRef}>
+      <Heading size="6" style={{ color: 'rgb(241, 245, 249)' }}>
+        Patient Plan ({excerciseBuilderPlannerList.length})
       </Heading>
-      <Box style={{ height: "95%", width: "100%", maxHeight: "100dvh" }}>
+      
+      <PlannerContent>
         <Suspense fallback={<div>Loading...</div>}>
-          {excerciseBuilderPlannerList.map((_, i) => (
-            <PlannerItem
-              key={i}
-              excercise={excerciseBuilderPlannerList[i]}
-              plannerListRef={plannerListRef}
-              onDelete={onDelete}
-            />
-          ))}
+          {excerciseBuilderPlannerList.length === 0 ? (
+            <Box style={{ textAlign: 'center', color: 'rgb(156, 163, 175)', padding: '24px' }}>
+              No exercises added yet
+            </Box>
+          ) : (
+            excerciseBuilderPlannerList.map((exercise, i) => (
+              <PlannerItem
+                key={i}
+                excercise={exercise}
+                plannerListRef={plannerListRef}
+                onDelete={onDelete}
+              />
+            ))
+          )}
         </Suspense>
-      </Box>
-      {/* <CreateExcercisePlanPage
-        exercises={excerciseBuilderPlannerList}
-      /> */}
-      <Button
-        variant="surface"
-        size="3"
-        style={{ width: "100%" }}
-        onClick={handleCreateExcercisePlan}
-      >
+      </PlannerContent>
+
+      <CreatePlanButton variant="surface" size="3" onClick={handleCreateExcercisePlan}>
         Create Plan
-      </Button>
-    </Flex>
+      </CreatePlanButton>
+    </PlannerContainer>
   );
 };
