@@ -22,10 +22,172 @@ import { ToastColors } from "../../../components/Toast";
 import { useNavigate, useParams } from "react-router-dom";
 import ThemeColorPallate from "../../../assets/ThemeColorPallate";
 import NumberComponent from "../../../components/NumberComonent";
+import { styled } from "@stitches/react";
 
 // interface CreateExcercisePlanPageProps {
 //   exercises: iExcerciseDataDto[];
 // }
+
+const PageContainer = styled(Flex, {
+  padding: '24px',
+  gap: '24px',
+  backgroundColor: ThemeColorPallate.background,
+  minHeight: '100vh',
+
+  '@media (max-width: 768px)': {
+    padding: '16px',
+    gap: '16px',
+  }
+});
+
+const DatePickerContainer = styled('div', {
+  display: 'flex',
+  flexDirection: 'row',
+  gap: '24px',
+  alignItems: 'start',
+  flexWrap: 'wrap',
+
+  '@media (max-width: 768px)': {
+    flexDirection: 'column',
+    gap: '16px',
+  }
+});
+
+const DateInput = styled('input', {
+  padding: '8px 12px',
+  borderRadius: '8px',
+  border: '1px solid rgba(255, 255, 255, 0.1)',
+  backgroundColor: ThemeColorPallate.foreground,
+  color: 'white',
+  fontSize: '14px',
+  width: '160px',
+
+  '&:focus': {
+    outline: 'none',
+    borderColor: ThemeColorPallate.primary,
+  },
+
+  '@media (max-width: 768px)': {
+    width: '100%',
+  }
+});
+
+const WeekdaySelector = styled('div', {
+  display: 'flex',
+  flexDirection: 'row',
+  gap: '12px',
+  flexWrap: 'wrap',
+  marginTop: '8px',
+
+  '@media (max-width: 768px)': {
+    gap: '8px',
+  }
+});
+
+const WeekdayLabel = styled('label', {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  padding: '8px 12px',
+  borderRadius: '8px',
+  backgroundColor: ThemeColorPallate.foreground,
+  color: 'white',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+
+  '&:hover': {
+    backgroundColor: ThemeColorPallate.primary + '33',
+  },
+
+  'input:checked + &': {
+    backgroundColor: ThemeColorPallate.primary,
+  },
+
+  '@media (max-width: 768px)': {
+    flex: '1 1 calc(33.33% - 8px)',
+    justifyContent: 'center',
+  }
+});
+
+const HiddenCheckbox = styled('input', {
+  position: 'absolute',
+  opacity: 0,
+  width: 0,
+  height: 0,
+});
+
+const ExerciseCard = styled(Flex, {
+  backgroundColor: ThemeColorPallate.foreground,
+  borderRadius: '12px',
+  padding: '24px',
+  marginBottom: '24px',
+  gap: '24px',
+  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+
+  '@media (max-width: 768px)': {
+    padding: '16px',
+    flexDirection: 'column !important',
+  }
+});
+
+const ImageContainer = styled('div', {
+  flex: '0 0 300px',
+  borderRadius: '8px',
+  overflow: 'hidden',
+  backgroundColor: ThemeColorPallate.background,
+
+  '@media (max-width: 768px)': {
+    flex: '1',
+    maxHeight: '200px',
+  },
+
+  'img': {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+  }
+});
+
+const FormSection = styled(Flex, {
+  flex: 1,
+  gap: '16px',
+
+  '@media (max-width: 768px)': {
+    flexDirection: 'column !important',
+  }
+});
+
+const InputGroup = styled(Flex, {
+  gap: '8px',
+  
+  '@media (max-width: 768px)': {
+    'input, textarea': {
+      width: '100% !important',
+    }
+  }
+});
+
+const SaveButton = styled(Button, {
+  marginTop: '24px',
+  width: 'auto',
+  alignSelf: 'flex-end',
+  backgroundColor: ThemeColorPallate.primary,
+  color: 'white',
+  padding: '12px 24px',
+  borderRadius: '8px',
+  transition: 'transform 0.2s ease',
+
+  '&:hover': {
+    transform: 'scale(1.02)',
+  },
+
+  '@media (max-width: 768px)': {
+    width: '100%',
+    position: 'sticky',
+    bottom: '16px',
+    zIndex: 10,
+  }
+});
 
 const CreateExcercisePlanPage = () => {
   const {
@@ -163,325 +325,138 @@ const CreateExcercisePlanPage = () => {
   };
 
   return (
-    <Flex direction="column" gap="4" pl="4" pt="4">
-      <Flex direction="row" gap="4">
-        {/* Can you create a start and end date field
-          Also can you add a week multi select radio button
-        */}
-        {/* Start and End Date fields */}
-        {/* Start and End date fields */}
+    <PageContainer direction="column">
+      <DatePickerContainer>
         <div>
-          <Text size="4" weight="bold">
-            Start Date:
+          <Text size="4" weight="bold" style={{ marginBottom: '8px', color: 'white' }}>
+            Start Date
           </Text>
-          <input ref={startRef} type="date" />
+          <DateInput ref={startRef} type="date" />
         </div>
         <div>
-          <Text size="4" weight="bold">
-            End Date:
+          <Text size="4" weight="bold" style={{ marginBottom: '8px', color: 'white' }}>
+            End Date
           </Text>
-          <input ref={endRef} type="date" />
+          <DateInput ref={endRef} type="date" />
         </div>
-        {/* Week multi-select radio button (using CheckboxGroup) */}
-        <Flex direction="row" gap="2">
-          <Text size="4" weight="bold">
+        <div style={{ flex: 1 }}>
+          <Text size="4" weight="bold" style={{ marginBottom: '8px', color: 'white' }}>
             Select Days
           </Text>
-          {/* Start and End date fields */}
-          {/* Week multi-select radio buttons */}
-          <div>
-            <label>
-              <input
-                type="checkbox"
-                checked={Monday}
-                value="1"
-                onChange={handleCheckboxChange}
-              />{" "}
-              Monday
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={Tuesday}
-                value="2"
-                onChange={handleCheckboxChange}
-              />{" "}
-              Tuesday
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={Wednesday}
-                value="3"
-                onChange={handleCheckboxChange}
-              />{" "}
-              Wednesday
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={Thursday}
-                value="4"
-                onChange={handleCheckboxChange}
-              />{" "}
-              Thursday
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={Friday}
-                value="5"
-                onChange={handleCheckboxChange}
-              />{" "}
-              Friday
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={Saturday}
-                value="6"
-                onChange={handleCheckboxChange}
-              />{" "}
-              Saturday
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={Sunday}
-                value="7"
-                onChange={handleCheckboxChange}
-              />{" "}
-              Sunday
-            </label>
-          </div>
-          {/* <CheckboxGroup.Root
-            style={{ display: "inline-block" }}
-            defaultValue={["1"]}
-            name="example"
-            onChange={handleCheckboxChange}
-          >
-            <CheckboxGroup.Item
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                marginRight: "10px",
-              }}
-              value="1"
-              onChange={handleCheckboxChange}
-            >
-              Monday
-            </CheckboxGroup.Item>
-            <CheckboxGroup.Item
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                marginRight: "10px",
-              }}
-              value="2"
-              onChange={handleCheckboxChange}
-            >
-              Tuesday
-            </CheckboxGroup.Item>
-            <CheckboxGroup.Item
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                marginRight: "10px",
-              }}
-              value="3"
-              onChange={handleCheckboxChange}
-            >
-              Wednesday
-            </CheckboxGroup.Item>
-            <CheckboxGroup.Item
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                marginRight: "10px",
-              }}
-              value="4"
-              onChange={handleCheckboxChange}
-            >
-              Thursday
-            </CheckboxGroup.Item>
-            <CheckboxGroup.Item
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                marginRight: "10px",
-              }}
-              value="5"
-              onChange={handleCheckboxChange}
-            >
-              Friday
-            </CheckboxGroup.Item>
-            <CheckboxGroup.Item
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                marginRight: "10px",
-              }}
-              value="6"
-              onChange={handleCheckboxChange}
-            >
-              Saturday
-            </CheckboxGroup.Item>
-            <CheckboxGroup.Item
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                marginRight: "10px",
-              }}
-              value="7"
-              onChange={handleCheckboxChange}
-            >
-              Sunday
-            </CheckboxGroup.Item>
-          </CheckboxGroup.Root> */}
-        </Flex>
-      </Flex>
-      <ScrollArea style={{ height: "50rem" }}>
-        <Flex direction="column" gap="4">
-          {excerciseBuilderPlannerList.map((exercise, index) => (
-            <Flex
-              direction="column"
-              gap="2"
-              mb="4"
-              key={exercise.e_id}
-              style={{ height: "400px", display: "block" }}
-            >
-              <Heading size="4">{exercise.excercise_name}</Heading>
-              <Flex direction="row" gap="6">
-                <Flex direction="column" style={{ flex: 2 }} gap="4">
-                  {/* Image column */}
-                  <Heading
-                    size="8"
-                    style={{ color: ThemeColorPallate.cardFontColorBlack }}
-                  >
-                    Image
-                  </Heading>
-                  {exercise.excercise_image_url && (
-                    <div style={{ width: "100%", height: "200px" }}>
-                      <img
-                        src={exercise.excercise_image_url}
-                        alt="Preview"
-                        style={{ width: "100%" }}
-                      />
-                    </div>
-                  )}
-                </Flex>
-                <Flex direction="column" style={{ flex: 5 }}>
-                  {/* Description part */}
-                  <Heading
-                    size="8"
-                    style={{ color: ThemeColorPallate.cardFontColorBlack }}
-                  >
-                    Details
-                  </Heading>
-                  <Flex direction="row" gap="4">
-                    <Flex
-                      direction="column"
-                      gap="2"
-                      style={{ flex: 1 }}
-                      align="start"
-                    >
-                      {/* Sets and reptitions */}
-                      <Text size="4">Sets</Text>
-                      <NumberComponent
-                        initialValue={exercise.excercise_sets}
-                        handleInputChange={handleInputChange}
-                        index={index}
-                        property_name="excercise_sets"
-                      ></NumberComponent>
-                      {/* <TextField.Root
-                      type="number"
-                      value={exercise.excercise_sets}
-                      onChange={(e) =>
-                        handleInputChange(e, index, "excercise_sets")
-                      }
-                      placeholder="Sets"
-                    ></TextField.Root> */}
-                      <Text size="4">Sets Description</Text>
-                      <TextField.Root
-                        value={exercise.excercise_sets_description}
-                        style={{ width: "100%" }}
-                        onChange={(e) =>
-                          handleInputChange(
-                            e,
-                            index,
-                            "excercise_sets_description"
-                          )
-                        }
-                        placeholder="Sets Description"
-                      ></TextField.Root>
-                      <Text size="4">Reps</Text>
-                      <NumberComponent
-                        initialValue={exercise.excercise_reps}
-                        handleInputChange={handleInputChange}
-                        index={index}
-                        property_name="excercise_reps"
-                      ></NumberComponent>
-                      <Text size="4">Reps Description</Text>
+          <WeekdaySelector>
+            {[
+              { label: 'Mon', state: Monday, setter: setMonday, value: '1' },
+              { label: 'Tue', state: Tuesday, setter: setTuesday, value: '2' },
+              { label: 'Wed', state: Wednesday, setter: setWednesday, value: '3' },
+              { label: 'Thu', state: Thursday, setter: setThursday, value: '4' },
+              { label: 'Fri', state: Friday, setter: setFriday, value: '5' },
+              { label: 'Sat', state: Saturday, setter: setSaturday, value: '6' },
+              { label: 'Sun', state: Sunday, setter: setSunday, value: '7' },
+            ].map((day) => (
+              <div key={day.value} style={{ position: 'relative' }}>
+                <HiddenCheckbox
+                  type="checkbox"
+                  checked={day.state}
+                  value={day.value}
+                  onChange={handleCheckboxChange}
+                  id={`day-${day.value}`}
+                />
+                <WeekdayLabel htmlFor={`day-${day.value}`}>
+                  {day.label}
+                </WeekdayLabel>
+              </div>
+            ))}
+          </WeekdaySelector>
+        </div>
+      </DatePickerContainer>
 
-                      <TextField.Root
-                        value={exercise.excercise_reps_description}
-                        style={{ width: "100%" }}
-                        onChange={(e) =>
-                          handleInputChange(
-                            e,
-                            index,
-                            "excercise_reps_description"
-                          )
-                        }
-                        placeholder="Reps Description"
-                      ></TextField.Root>
-                    </Flex>
-                    <Flex direction="column" gap="2" style={{ flex: 3 }}>
-                      {/* Description */}
-                      <Text size="4">Name</Text>
-                      <TextField.Root
-                        value={exercise.excercise_name}
-                        onChange={(e) =>
-                          handleInputChange(e, index, "excercise_name")
-                        }
-                        placeholder="Exercise Name"
-                      ></TextField.Root>
-                      <Text size="4">Description</Text>
-                      <TextArea
-                        value={exercise.excercise_description}
-                        style={{ height: "12rem" }}
-                        onChange={(e) =>
-                          handleInputChange(e, index, "excercise_description")
-                        }
-                        placeholder="Description"
-                      ></TextArea>
-                      {/* <TextField.Root
-                      value={exercise.excercise_video_url || ""}
-                      onChange={(e) =>
-                        handleInputChange(e, index, "excercise_video_url")
-                      }
-                      placeholder="Video URL"
-                    /> */}
-                      {/* <TextField.Root
-                      value={exercise.excercise_duration || ""}
-                      onChange={(e) =>
-                        handleInputChange(e, index, "excercise_duration")
-                      }
-                      placeholder="Duration"
-                    ></TextField.Root> */}
-                    </Flex>
-                  </Flex>
-                </Flex>
-              </Flex>
-              {/* Add TextField.Roots for other fields similarly */}
-            </Flex>
-          ))}
-        </Flex>
+      <ScrollArea style={{ flex: 1 }}>
+        {excerciseBuilderPlannerList.map((exercise, index) => (
+          <ExerciseCard key={exercise.e_id}>
+            <ImageContainer>
+              {exercise.excercise_image_url && (
+                <img src={exercise.excercise_image_url} alt={exercise.excercise_name} />
+              )}
+            </ImageContainer>
+
+            <FormSection direction="column" gap="4">
+              <Heading size="4" style={{ color: 'white' }}>{exercise.excercise_name}</Heading>
+              
+              <FormSection direction="row">
+                <InputGroup direction="column" style={{ flex: 1 }}>
+                  <Text size="3" style={{ color: 'white' }}>Sets</Text>
+                  <NumberComponent
+                    initialValue={exercise.excercise_sets}
+                    handleInputChange={handleInputChange}
+                    index={index}
+                    property_name="excercise_sets"
+                  />
+                  
+                  <Text size="3" style={{ color: 'white' }}>Sets Description</Text>
+                  <TextField.Root
+                    value={exercise.excercise_sets_description}
+                    onChange={(e) => handleInputChange(e, index, "excercise_sets_description")}
+                    placeholder="Sets Description"
+                  />
+                  
+                  <Text size="3" style={{ color: 'white' }}>Reps</Text>
+                  <NumberComponent
+                    initialValue={exercise.excercise_reps}
+                    handleInputChange={handleInputChange}
+                    index={index}
+                    property_name="excercise_reps"
+                  />
+                  
+                  <Text size="3" style={{ color: 'white' }}>Reps Description</Text>
+                  <TextField.Root
+                    value={exercise.excercise_reps_description}
+                    onChange={(e) => handleInputChange(e, index, "excercise_reps_description")}
+                    placeholder="Reps Description"
+                  />
+                </InputGroup>
+
+                <InputGroup direction="column" style={{ flex: 2 }}>
+                  <Text size="3" style={{ color: 'white' }}>Exercise Name</Text>
+                  <TextField.Root
+                    value={exercise.excercise_name}
+                    onChange={(e) => handleInputChange(e, index, "excercise_name")}
+                    placeholder="Exercise Name"
+                  />
+                  
+                  <Text size="3" style={{ color: 'white' }}>Description</Text>
+                  <TextArea
+                    value={exercise.excercise_description}
+                    style={{ height: '150px', resize: 'vertical' }}
+                    onChange={(e) => handleInputChange(e, index, "excercise_description")}
+                    placeholder="Description"
+                  />
+                  {/* <TextField.Root
+                  value={exercise.excercise_video_url || ""}
+                  onChange={(e) =>
+                    handleInputChange(e, index, "excercise_video_url")
+                  }
+                  placeholder="Video URL"
+                /> */}
+                  {/* <TextField.Root
+                  value={exercise.excercise_duration || ""}
+                  onChange={(e) =>
+                    handleInputChange(e, index, "excercise_duration")
+                  }
+                  placeholder="Duration"
+                ></TextField.Root> */}
+                </InputGroup>
+              </FormSection>
+            </FormSection>
+          </ExerciseCard>
+        ))}
       </ScrollArea>
+
       <Skeleton loading={isLoading}>
-        <Button onClick={() => onExcercisePlanSave()}>Create Plan</Button>
+        <SaveButton onClick={onExcercisePlanSave}>
+          Create Plan
+        </SaveButton>
       </Skeleton>
-    </Flex>
+    </PageContainer>
   );
 };
 
