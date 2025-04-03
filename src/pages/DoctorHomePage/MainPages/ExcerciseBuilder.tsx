@@ -26,7 +26,7 @@ const BuilderContainer = styled('div', {
   display: 'flex',
   flexDirection: 'row',
   width: '100%',
-  height: '100vh',
+  height: '92vh',
   position: 'relative',
   backgroundColor: ThemeColorPallate.background,
 });
@@ -34,13 +34,13 @@ const BuilderContainer = styled('div', {
 const MainContent = styled('div', {
   display: 'flex',
   flexDirection: 'column',
-  width: '100%',
+  width: '80%',
   height: '100%',
-  padding: '20px',
+  padding: '20px 20px 10px 20px',
   position: 'relative',
 
   '@media (max-width: 768px)': {
-    padding: '12px',
+    padding: '12px 12px 10px 12px',
   }
 });
 
@@ -65,20 +65,20 @@ const SearchContainer = styled('div', {
   bottom: 0,
   left: 0,
   width: '100%',
-  padding: '16px',
+  padding: '16px 16px 0px 16px',
   backgroundColor: ThemeColorPallate.background,
   boxShadow: '0px -4px 10px rgba(0, 0, 0, 0.1)',
   zIndex: 10,
 
   '@media (max-width: 768px)': {
-    padding: '12px',
+    padding: '12px 12px 0px 12px',
   }
 });
 
 const AddButton = styled(Button, {
-  position: 'fixed',
-  bottom: '80px',
-  right: '20px',
+  position: 'relative',
+  bottom: '10px',
+  left: '20px',
   borderRadius: '50%',
   width: '56px',
   height: '56px',
@@ -94,7 +94,7 @@ const AddButton = styled(Button, {
   },
 
   '@media (max-width: 768px)': {
-    bottom: '90px',
+    bottom: '10px',
     right: '16px',
     width: '48px',
     height: '48px',
@@ -104,7 +104,7 @@ const AddButton = styled(Button, {
 const CounterButton = styled('button', {
   position: 'fixed',
   bottom: '80px',
-  left: '20px',
+  left: '22rem',
   borderRadius: '50%',
   width: '56px',
   height: '56px',
@@ -127,7 +127,7 @@ const CounterButton = styled('button', {
   '@media (max-width: 992px)': {
     display: 'flex',
     bottom: '90px',
-    left: '16px',
+    right: '16px',
     width: '48px',
     height: '48px',
   }

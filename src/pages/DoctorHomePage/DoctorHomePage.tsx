@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../stores/userSessionStore";
 import { useNavigate } from "react-router-dom";
 // import { User } from "../../models/IUser";
-import DoctorNavBar from "./DoctorNavBar";
+// import DoctorNavBar from "./DoctorNavBar";
 // import { Flex, Text } from "@radix-ui/themes";
 import { Outlet } from "react-router-dom";
 import ThemeColorPallate from "../../assets/ThemeColorPallate";
@@ -164,7 +164,7 @@ export const DoctorHomePage = () => {
         }}
       >
         <div style={{ backgroundColor: ThemeColorPallate.background }}>
-          <DoctorNavBar />
+          {/* <DoctorNavBar /> */}
           <Outlet /> {/* Render nested routes here */}
           {/* <Flex direction="column" justify="center" align="center">
           <Text size="9"> Welcome {user.name}!</Text>

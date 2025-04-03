@@ -1,18 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Flex } from "@radix-ui/themes";
+import { useEffect, useState } from "react";
+import { Box, Button } from "@radix-ui/themes";
 import PatientList from "./PatientLIst";
 import { useCurrentMainScreenContext } from "../DoctorHomePage";
 import { ReloadIcon, HamburgerMenuIcon, Cross1Icon } from "@radix-ui/react-icons";
 import { styled } from "@stitches/react";
 import CustomBreadcrumb from "./DoctorMiniNavBarBreadCrumb";
-import { Outlet, useMatch } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Outlet, useMatch, Link, useNavigate } from "react-router-dom";
 import { themeColors, spacing, theme } from "../../../theme/theme";
+import DoctorNavBar from "../DoctorNavBar";
 
 const AppContainer = styled("div", {
-  minHeight: "100vh",
+  height: "100vh",
   backgroundColor: themeColors.background.dark,
   display: "flex",
+  overflow: "hidden", // Prevent scrolling on the main container
 });
 
 const Sidebar = styled("aside", {
@@ -22,6 +24,8 @@ const Sidebar = styled("aside", {
   transition: "transform 0.3s ease",
   position: "relative",
   zIndex: 20,
+  display: "flex",
+  flexDirection: "column",
 
   "@media (max-width: 768px)": {
     position: "fixed",
@@ -40,9 +44,10 @@ const MainContent = styled("main", {
   flex: 1,
   display: "flex",
   flexDirection: "column",
-  overflow: "hidden",
   position: "relative",
   backgroundColor: themeColors.background.dark,
+  height: "100vh",
+  overflow: "hidden",
 });
 
 const TopBar = styled("header", {
@@ -51,18 +56,35 @@ const TopBar = styled("header", {
   boxShadow: theme.shadows[1],
   display: "flex",
   alignItems: "center",
-  justifyContent: "space-between",
-  position: "sticky",
-  top: 0,
-  zIndex: 10,
   gap: spacing.md,
+  height: "64px",
+  minHeight: "64px",
 });
 
-const BreadcrumbContainer = styled(Flex, {
+const Logo = styled(Link, {
+  fontSize: "1.5rem",
+  fontWeight: "600",
+  color: themeColors.text.primary,
+  textDecoration: "none",
+  marginRight: spacing.lg,
+
+  "@media (max-width: 768px)": {
+    fontSize: "1.25rem",
+  }
+});
+
+const BreadcrumbContainer = styled(Box, {
   flex: 1,
-  minWidth: 0,
-  alignItems: 'center',
+  display: "flex",
+  alignItems: "center",
   gap: spacing.sm,
+  minWidth: 0,
+});
+
+const ActionContainer = styled(Box, {
+  display: "flex",
+  alignItems: "center",
+  gap: spacing.md,
 });
 
 const MenuButton = styled("button", {
@@ -105,18 +127,14 @@ const Overlay = styled("div", {
 
 const ContentArea = styled("div", {
   flex: 1,
-  padding: "0px",
-  // padding: spacing.lg,
   overflow: "auto",
   backgroundColor: themeColors.background.dark,
-
-  "@media (max-width: 768px)": {
-    padding: spacing.md,
-  }
+  position: "relative",
 });
 
 const DoctorHomeLandingPage = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
   const { 
     breadCrumbItems, 
     isExcerciseBuilderRefresh, 
@@ -126,7 +144,9 @@ const DoctorHomeLandingPage = () => {
     isExcercisePlanTrackingRefresh,
     setIsExcercisePlanTrackingRefresh,
     isExcercisePlanTrackingSessionRefresh,
-    setIsExcercisePlanTrackingSessionRefresh 
+    setIsExcercisePlanTrackingSessionRefresh,
+    setCurrentMainScreen,
+    setBreadCrumbItems
   } = useCurrentMainScreenContext();
 
   const isExcerciseBuilder = useMatch("/doctorhome/main/patientDetails/:pid/buildPlan");
@@ -161,6 +181,12 @@ const DoctorHomeLandingPage = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const onClickNewPatient = () => {
+    setBreadCrumbItems([{ label: "", onClick: () => {} }]);
+    navigate('/doctorhome/main/newPatient');
+    setCurrentMainScreen(1); // NEW_PATIENT_ENTRY
+  };
+
   return (
     <AppContainer>
       <Sidebar className={isMobileMenuOpen ? "open" : ""}>
@@ -174,27 +200,37 @@ const DoctorHomeLandingPage = () => {
 
       <MainContent>
         <TopBar>
+          <MenuButton onClick={toggleMobileMenu}>
+            {isMobileMenuOpen ? (
+              <Cross1Icon style={{ color: themeColors.text.primary }} />
+            ) : (
+              <HamburgerMenuIcon style={{ color: themeColors.text.primary }} />
+            )}
+          </MenuButton>
+
+          <Logo to="/doctorhome">PhysioCare</Logo>
+
           <BreadcrumbContainer>
-            <MenuButton onClick={toggleMobileMenu}>
-              {isMobileMenuOpen ? (
-                <Cross1Icon style={{ color: themeColors.text.primary }} />
-              ) : (
-                <HamburgerMenuIcon style={{ color: themeColors.text.primary }} />
-              )}
-            </MenuButton>
             <CustomBreadcrumb items={breadCrumbItems} />
           </BreadcrumbContainer>
 
-          <ReloadIcon
-            onClick={onMiniNavBarReloadClick}
-            width="24"
-            height="24"
-            style={{ 
-              cursor: "pointer",
-              color: themeColors.text.secondary,
-              flexShrink: 0,
-            }}
-          />
+          <ActionContainer>
+            <Button onClick={onClickNewPatient} variant="soft">
+              Create New Patient
+            </Button>
+
+            <ReloadIcon
+              onClick={onMiniNavBarReloadClick}
+              width="24"
+              height="24"
+              style={{ 
+                cursor: "pointer",
+                color: themeColors.text.secondary,
+              }}
+            />
+
+            <DoctorNavBar />
+          </ActionContainer>
         </TopBar>
 
         <ContentArea>

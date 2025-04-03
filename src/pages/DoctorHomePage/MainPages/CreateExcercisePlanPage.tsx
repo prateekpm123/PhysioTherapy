@@ -29,10 +29,10 @@ import { styled } from "@stitches/react";
 // }
 
 const PageContainer = styled(Flex, {
-  padding: '24px',
+  padding: '24px 24px 24px 24px',
   gap: '24px',
   backgroundColor: ThemeColorPallate.background,
-  minHeight: '100vh',
+  minHeight: '92vh',
 
   '@media (max-width: 768px)': {
     padding: '16px',
@@ -168,7 +168,7 @@ const InputGroup = styled(Flex, {
 });
 
 const SaveButton = styled(Button, {
-  marginTop: '24px',
+  marginTop: '0px',
   width: 'auto',
   alignSelf: 'flex-end',
   backgroundColor: ThemeColorPallate.primary,
@@ -328,13 +328,13 @@ const CreateExcercisePlanPage = () => {
     <PageContainer direction="column">
       <DatePickerContainer>
         <div>
-          <Text size="4" weight="bold" style={{ marginBottom: '8px', color: 'white' }}>
+          <Text size="4" weight="bold" style={{ marginBottom: '8px', marginRight: '10px', color: 'white' }}>
             Start Date
           </Text>
           <DateInput ref={startRef} type="date" />
         </div>
         <div>
-          <Text size="4" weight="bold" style={{ marginBottom: '8px', color: 'white' }}>
+          <Text size="4" weight="bold" style={{ marginBottom: '8px', marginRight: '10px', color: 'white' }}>
             End Date
           </Text>
           <DateInput ref={endRef} type="date" />
@@ -370,7 +370,7 @@ const CreateExcercisePlanPage = () => {
         </div>
       </DatePickerContainer>
 
-      <ScrollArea style={{ flex: 1 }}>
+      <ScrollArea style={{ height: '43.5rem' }}>
         {excerciseBuilderPlannerList.map((exercise, index) => (
           <ExerciseCard key={exercise.e_id}>
             <ImageContainer>
