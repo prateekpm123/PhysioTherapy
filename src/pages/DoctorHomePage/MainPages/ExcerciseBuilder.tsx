@@ -26,7 +26,7 @@ const BuilderContainer = styled('div', {
   display: 'flex',
   flexDirection: 'row',
   width: '100%',
-  height: '92vh',
+  height: '93vh',
   position: 'relative',
   backgroundColor: ThemeColorPallate.background,
 });
@@ -65,7 +65,7 @@ const SearchContainer = styled('div', {
   bottom: 0,
   left: 0,
   width: '100%',
-  padding: '16px 16px 0px 16px',
+  padding: '16px 16px 8px 16px',
   backgroundColor: ThemeColorPallate.background,
   boxShadow: '0px -4px 10px rgba(0, 0, 0, 0.1)',
   zIndex: 10,
