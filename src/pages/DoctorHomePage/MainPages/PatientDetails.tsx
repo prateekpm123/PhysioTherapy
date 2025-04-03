@@ -26,6 +26,25 @@ import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { DefaultToastTiming, useToast } from "../../../stores/ToastContext";
 import { ToastColors } from "../../../components/Toast";
 
+const PageContainer = styled("div", {
+  display: "flex",
+  flexDirection: "column",
+  height: "100%",
+  backgroundColor: themeColors.background.dark,
+});
+
+const FixedHeader = styled("div", {
+  padding: spacing.lg,
+  backgroundColor: themeColors.background.dark,
+  borderBottom: `1px solid ${themeColors.background.elevation2}`,
+});
+
+const ScrollableContent = styled(ScrollArea, {
+  flex: 1,
+  padding: spacing.lg,
+  paddingTop: 0,
+});
+
 const ExercisePlanCard = styled(Card, {
   width: "100%",
   backgroundColor: themeColors.background.elevation1,
@@ -33,7 +52,7 @@ const ExercisePlanCard = styled(Card, {
 
   "@media (max-width: 768px)": {
     padding: spacing.sm,
-  }
+  },
 });
 
 const ExerciseTitle = styled(Text, {
@@ -44,27 +63,34 @@ const ExerciseTitle = styled(Text, {
 
   "@media (max-width: 768px)": {
     fontSize: "0.9rem",
-  }
+  },
 });
 
 const StyledButton = styled(Button, {
   "@media (max-width: 768px)": {
     width: "100%",
     marginTop: spacing.sm,
-  }
+  },
 });
 
 const ExercisePlanHeader = styled(Flex, {
+  padding: "0px 24px",
   justifyContent: "space-between",
   alignItems: "center",
   width: "100%",
   marginBottom: spacing.md,
+  paddingTop: spacing.lg,
 
   "@media (max-width: 768px)": {
     flexDirection: "column",
     alignItems: "stretch",
     gap: spacing.sm,
-  }
+  },
+});
+
+const PatientInfoCard = styled(Card, {
+  backgroundColor: themeColors.background.elevation1,
+  marginBottom: spacing.lg,
 });
 
 const PatientDetails = () => {
@@ -173,7 +199,7 @@ const PatientDetails = () => {
     refreshPatientDetails();
   }, [isPatientDetailsScreenRefresh]);
 
-  const onExcercisePlanOpenClick = (epid: string)=>{
+  const onExcercisePlanOpenClick = (epid: string) => {
     // Set breadcrumbs for Exercise Plan page
     setBreadCrumbItems([
       {
@@ -186,99 +212,115 @@ const PatientDetails = () => {
         label: "Exercise Plan",
       },
     ]);
-    
-    navigate("/doctorhome/main/patientDetails/"+pid+"/excercisePlans/"+epid);
-  }
+
+    navigate(
+      "/doctorhome/main/patientDetails/" + pid + "/excercisePlans/" + epid
+    );
+  };
 
   return (
-    <ScrollArea style={{ height: "80vh" }}>
-      <Outlet></Outlet>
-      <Flex direction="column" gap="4" p="4" width="100%">
+    <PageContainer>
+      <Outlet />
+
+      <FixedHeader>
         {/* Patient Header */}
-        <Flex direction="row" justify="between">
-          <Skeleton loading={patientDetailsLoading}>
-            <Heading size="7">{currentPatientDetails?.name}</Heading>
-          </Skeleton>
-          <Flex direction="column" align="stretch" gap="2">
+        <Flex direction="column" gap="4">
+          <Flex direction="row" justify="between" mb="4">
             <Skeleton loading={patientDetailsLoading}>
-              <Flex direction="row" align="stretch" gap="2">
-                <Text>Age: </Text>
-                <Text>{currentPatientDetails?.age}</Text>
-              </Flex>
+              <Heading size="7">{currentPatientDetails?.name}</Heading>
             </Skeleton>
-            <Skeleton loading={patientDetailsLoading}>
-              <Flex direction="row" align="stretch" gap="2">
-                <Text>Number: </Text>
-                <Text>{currentPatientDetails?.phone_number}</Text>
-              </Flex>
-            </Skeleton>
-            <Skeleton loading={patientDetailsLoading}>
-              <Flex direction="row" align="stretch" gap="2">
-                <Text>Email: </Text>
-                <Text>{currentPatientDetails?.email}</Text>
-              </Flex>
-            </Skeleton>
+            <Flex direction="column" align="stretch" gap="2">
+              <Skeleton loading={patientDetailsLoading}>
+                <Flex direction="row" align="stretch" gap="2">
+                  <Text>Age: </Text>
+                  <Text>{currentPatientDetails?.age}</Text>
+                </Flex>
+              </Skeleton>
+              <Skeleton loading={patientDetailsLoading}>
+                <Flex direction="row" align="stretch" gap="2">
+                  <Text>Number: </Text>
+                  <Text>{currentPatientDetails?.phone_number}</Text>
+                </Flex>
+              </Skeleton>
+              <Skeleton loading={patientDetailsLoading}>
+                <Flex direction="row" align="stretch" gap="2">
+                  <Text>Email: </Text>
+                  <Text>{currentPatientDetails?.email}</Text>
+                </Flex>
+              </Skeleton>
+            </Flex>
+            <Flex direction="column" align="stretch" gap="2">
+              <Skeleton loading={patientDetailsLoading}>
+                <Flex direction="row" align="stretch" gap="2" maxWidth="500px">
+                  <Text>Address: </Text>
+                  <Text>{currentPatientDetails?.address}</Text>
+                </Flex>
+              </Skeleton>
+            </Flex>
           </Flex>
-          <Flex direction="column" align="stretch" gap="2">
+
+          {/* Chief Complaint */}
+          <PatientInfoCard>
+            <Text style={{ color: "gray" }}>Chief Complaint</Text>
             <Skeleton loading={patientDetailsLoading}>
-              <Flex direction="row" align="stretch" gap="2" maxWidth="500px">
-                <Text>Address: </Text>
-                <Text>{currentPatientDetails?.address}</Text>
-              </Flex>
+              <Heading size="7">
+                {currentPatientDetails?.chiefComplaint}
+              </Heading>
             </Skeleton>
-          </Flex>
+            <Skeleton loading={patientDetailsLoading}>
+              <Text style={{ listStyleType: "disc" }}>
+                {currentPatientDetails?.description}
+              </Text>
+            </Skeleton>
+          </PatientInfoCard>
         </Flex>
-
-        {/* Chief Complaint */}
-        <Card>
-          <Text style={{ color: "gray" }}>Chief Complaint</Text>
-
-          <Skeleton loading={patientDetailsLoading}>
-            <Heading size="7">{currentPatientDetails?.chiefComplaint}</Heading>
-          </Skeleton>
-          <Skeleton loading={patientDetailsLoading}>
-            <Text style={{ listStyleType: "disc" }}>
-              {currentPatientDetails?.description}
-            </Text>
-          </Skeleton>
-        </Card>
-
+      </FixedHeader>
+      <ExercisePlanHeader>
+        <Heading size="6">Exercise Plans</Heading>
+        <StyledButton onClick={onCreateNewPlan}>Create a new plan</StyledButton>
+      </ExercisePlanHeader>
+      <ScrollableContent>
         {/* Exercise Plans */}
         <Flex direction="column" gap="4">
-          <ExercisePlanHeader>
-            <Heading size="6">Exercise Plans</Heading>
-            <StyledButton onClick={onCreateNewPlan}>Create a new plan</StyledButton>
-          </ExercisePlanHeader>
-
           {currentPatientDetails?.excercisePlans?.map((plan) => (
             <ExercisePlanCard key={plan.ep_id}>
               <Flex direction="column" gap="2">
                 <ExerciseTitle>
-                  Exercise Plan: Date {plan.date_created.toString().slice(0, 10)}
+                  Exercise Plan: Date{" "}
+                  {plan.date_created.toString().slice(0, 10)}
                 </ExerciseTitle>
                 {plan.excercise.map((exercise) => (
                   <Skeleton key={exercise.e_id} loading={patientDetailsLoading}>
                     <Card mt="2">
                       <Text size="2">{exercise.excercise_name}</Text>
                       <Flex>
-                        <Text><b>Description:</b> {exercise.excercise_description}</Text>
+                        <Text>
+                          <b>Description:</b> {exercise.excercise_description}
+                        </Text>
                       </Flex>
                       <Flex gap="2">
-                        <Text><b>Sets:</b> {exercise.excercise_sets}</Text>
-                        <Text><b>Reps:</b> {exercise.excercise_reps}</Text>
+                        <Text>
+                          <b>Sets:</b> {exercise.excercise_sets}
+                        </Text>
+                        <Text>
+                          <b>Reps:</b> {exercise.excercise_reps}
+                        </Text>
                       </Flex>
                     </Card>
                   </Skeleton>
                 ))}
-                <StyledButton variant="outline" onClick={() => onExcercisePlanOpenClick(plan.ep_id)}>
+                <StyledButton
+                  variant="outline"
+                  onClick={() => onExcercisePlanOpenClick(plan.ep_id)}
+                >
                   Open plan
                 </StyledButton>
               </Flex>
             </ExercisePlanCard>
           ))}
         </Flex>
-      </Flex>
-    </ScrollArea>
+      </ScrollableContent>
+    </PageContainer>
   );
 };
 
