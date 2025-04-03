@@ -554,7 +554,7 @@ function WeeklyCarousel({
       {
         state: {
           excercisePlan: excercisePlan,
-          sessionDate: date
+          sessionDate: date,
         },
       }
     );
@@ -596,36 +596,42 @@ function WeeklyCarousel({
           ))}
         </Flex>
         {weeks[currentWeekIndex].map((date) => (
-          <div
-            key={date.toISOString()}
-            style={{
-              margin: "0 10px",
-              backgroundColor: isSelectedDay(date)
-                ? ThemeColorPallate.foreground
-                : isCurrentDay(date)
-                ? ThemeColorPallate.primary
-                : "transparent",  
-            }}
-          >
-            {date.toLocaleDateString()}
-            <Flex direction="column">
-              {excercises.map((exercise) => (
-                <Skeleton loading={isExcercisePlanTrackingLoading}>
-                  <div key={exercise.e_id} style={{ margin: "0 10px" }}>
-                    <input
-                      type="checkbox"
-                      name={exercise.e_id}
-                      value={date.toISOString()}
-                      checked={isChecked(exercise.e_id, date)}
-                      onChange={(e) =>
-                        handleCheckboxChange(e, exercise.e_id, date)
-                      }
-                    />
-                  </div>
-                </Skeleton>
-              ))}
-            </Flex>
-            <Button onClick={() => onTrackSession(date)}>Track session</Button>
+          <div key={date.toISOString()} style={{
+            margin: "0 10px"
+          }}>
+            <div
+              style={{
+                width: "100%",
+                backgroundColor: isCurrentDay(date)
+                  ? ThemeColorPallate.primary
+                  : isSelectedDay(date)
+                  ? ThemeColorPallate.foreground
+                  : "transparent",
+              }}
+            >
+              {date.toLocaleDateString()}
+              <Flex direction="column">
+                {excercises.map((exercise) => (
+                  <Skeleton loading={isExcercisePlanTrackingLoading}>
+                    <div key={exercise.e_id} style={{ margin: "0 10px" }}>
+                      <input
+                        type="checkbox"
+                        name={exercise.e_id}
+                        value={date.toISOString()}
+                        checked={isChecked(exercise.e_id, date)}
+                        onChange={(e) =>
+                          handleCheckboxChange(e, exercise.e_id, date)
+                        }
+                      />
+                    </div>
+                  </Skeleton>
+                ))}
+              </Flex>
+            </div>
+
+            <Button variant="outline" onClick={() => onTrackSession(date)}>
+              Track session
+            </Button>
           </div>
         ))}
       </Flex>

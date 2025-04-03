@@ -30,7 +30,7 @@ import {
   iExcerciseDataDto,
   iExcercisePlanNote,
 } from "../../../models/ExcerciseInterface";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import {
   getExcerciseTrackingSessionData,
   saveExcerciseCompletionData,
@@ -46,7 +46,7 @@ const ExcercisePlanTrackSession: React.FC = () => {
   const [exerciseCompletions, setExerciseCompletions] = useState<
     iExcerciseCompletionDto[]
   >([]);
-  const { isExcercisePlanTrackingSessionRefresh } =
+  const { isExcercisePlanTrackingSessionRefresh, setBreadCrumbItems } =
     useCurrentMainScreenContext();
   //   const { onExcercisePlanTodaysTrackingSubmit } = useExcercisePlanDetails();
   const [noteText, setNoteText] = useState("");
@@ -54,9 +54,32 @@ const ExcercisePlanTrackSession: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const { sessionDate, excercisePlan } = location.state;
-  const { epid } = useParams();
+  const { epid, pid } = useParams();
+  const navigate = useNavigate();
   const today = useMemo(() => new Date(sessionDate), []);
   const { showToast } = useToast();
+  
+  // Set breadcrumbs when component is loaded
+  useEffect(() => {
+    setBreadCrumbItems([
+      {
+        label: "Patient Details",
+        onClick: () => {
+          navigate("/doctorhome/main/patientDetails/" + pid);
+        },
+      },
+      {
+        label: "Exercise Plan",
+        onClick: () => {
+          navigate("/doctorhome/main/patientDetails/" + pid + "/excercisePlans/" + epid);
+        },
+      },
+      {
+        label: "Track Session",
+      },
+    ]);
+  }, [pid, epid, navigate, setBreadCrumbItems]);
+  
   const isTodayInSession = useMemo(() => {
     if (!excercisePlan) return false;
 

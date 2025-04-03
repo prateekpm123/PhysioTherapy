@@ -133,6 +133,19 @@ const PatientDetails = () => {
   }, [isPatientDetailsScreenRefresh]);
 
   const onExcercisePlanOpenClick = (epid: string)=>{
+    // Set breadcrumbs for Exercise Plan page
+    setBreadCrumbItems([
+      {
+        label: "Patient Details",
+        onClick: () => {
+          navigate("/doctorhome/main/patientDetails/" + pid);
+        },
+      },
+      {
+        label: "Exercise Plan",
+      },
+    ]);
+    
     navigate("/doctorhome/main/patientDetails/"+pid+"/excercisePlans/"+epid);
   }
 

@@ -49,7 +49,7 @@ export const useExcercisePlanDetails = () => {
 
 const ExcercisePlanDetailsPage = () => {
   const { epid, pid } = useParams();
-  const { isExcercisePlanTrackingRefresh, isExcercisePlanTrackingLoading, setIsExcercisePlanTrackingLoading } = useCurrentMainScreenContext();
+  const { isExcercisePlanTrackingRefresh, isExcercisePlanTrackingLoading, setIsExcercisePlanTrackingLoading, setBreadCrumbItems } = useCurrentMainScreenContext();
   const [excercisePlan, setExcercisePlan] = useState<iExcercisePlanDto>();
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
@@ -73,6 +73,19 @@ const ExcercisePlanDetailsPage = () => {
         setStartDate(new Date(res.excercisePlans.startDate));
         setEndDate(new Date(res.excercisePlans.endDate));
         console.log(res);
+        
+        // Set breadcrumbs for Exercise Plan page
+        setBreadCrumbItems([
+          {
+            label: "Patient Details",
+            onClick: () => {
+              navigate("/doctorhome/main/patientDetails/" + pid);
+            },
+          },
+          {
+            label: "Exercise Plan",
+          },
+        ]);
       },
       afterAPIFail(res) {
         setIsExcercisePlanTrackingLoading(false);
@@ -82,12 +95,27 @@ const ExcercisePlanDetailsPage = () => {
   }, [epid, isExcercisePlanTrackingRefresh]);
 
   const onTrackTodaySession = () => {
+    // Set breadcrumbs for Track Session page
+    setBreadCrumbItems([
+      {
+        label: "Patient Details",
+        onClick: () => {
+          navigate("/doctorhome/main/patientDetails/" + pid);
+        },
+      },
+      {
+        label: "Exercise Plan",
+        onClick: () => {
+          navigate("/doctorhome/main/patientDetails/" + pid + "/excercisePlans/" + epid);
+        },
+      },
+      {
+        label: "Track Session",
+      },
+    ]);
+    
     navigate(
-      "/doctorhome/main/patientDetails/" +
-        pid +
-        "/excercisePlans/" +
-        epid +
-        "/trackSession",
+      "/doctorhome/main/patientDetails/" + pid + "/excercisePlans/" + epid + "/trackSession",
       {
         state: {
           excercisePlan: excercisePlan,
@@ -172,12 +200,12 @@ const ExcercisePlanDetailsPage = () => {
 
           <Skeleton loading={isExcercisePlanTrackingLoading}>
             {excercisePlan?.excercise_plan_notes && (
-              <Grid columns={"2"}>
+              <Grid columns={"2"} gap="4">
                 {excercisePlan.excercise_plan_notes.map((note: iExcercisePlanNote) => (
                   <Card key={note.epn_id}>
-                    <Heading size="3">Note:</Heading>
+                    <Heading size="3">Note:     <Text size="2">  {"   " + new Date(note.date).toLocaleDateString()} </Text></Heading>
                     <Text>{note.notes}</Text>
-                    <Text size={'2'}>Date: {new Date(note.date).toLocaleDateString()}</Text>
+                    {/* <Text size={'2'}>Date: {new Date(note.date).toLocaleDateString()}</Text> */}
                   </Card>
                 ))}
               </Grid>
