@@ -366,6 +366,7 @@ import {
 import ThemeColorPallate from "../assets/ThemeColorPallate";
 import { useExcercisePlanDetails } from "../pages/DoctorHomePage/MainPages/ExcercisePlanDetailsPage";
 import { useCurrentMainScreenContext } from "../pages/DoctorHomePage/DoctorHomePage";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface iWeeklyCarouselProps {
   startDate: Date;
@@ -387,7 +388,8 @@ function WeeklyCarousel({
   const { excercisePlan, excerciseCompletionData, setExcerciseCompletionData } =
     useExcercisePlanDetails();
   const { isExcercisePlanTrackingLoading } = useCurrentMainScreenContext();
-
+  const navigate = useNavigate();
+  const { pid, epid } = useParams();
   const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
   // const [excerciseCompletionData, setExcerciseCompletionData] = useState<
   //   iExcerciseCompletionDto[]
@@ -542,6 +544,22 @@ function WeeklyCarousel({
     );
   };
 
+  const onTrackSession = (date: Date) => {
+    navigate(
+      "/doctorhome/main/patientDetails/" +
+        pid +
+        "/excercisePlans/" +
+        epid +
+        "/trackSession",
+      {
+        state: {
+          excercisePlan: excercisePlan,
+          sessionDate: date
+        },
+      }
+    );
+  };
+
   if (!weeks.length) {
     return <p>Please select start and end dates.</p>;
   }
@@ -607,6 +625,7 @@ function WeeklyCarousel({
                 </Skeleton>
               ))}
             </Flex>
+            <Button onClick={() => onTrackSession(date)}>Track session</Button>
           </div>
         ))}
       </Flex>

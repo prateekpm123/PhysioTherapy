@@ -28,6 +28,7 @@ import {
 import {
   iExcerciseCompletionDto,
   iExcerciseDataDto,
+  iExcercisePlanNote,
 } from "../../../models/ExcerciseInterface";
 import { useLocation, useParams } from "react-router-dom";
 import {
@@ -36,6 +37,8 @@ import {
   saveExcercisePlanNotes,
 } from "../../../controllers/ExcerciseController";
 import { useCurrentMainScreenContext } from "../DoctorHomePage";
+import { DefaultToastTiming, useToast } from "../../../stores/ToastContext";
+import { ToastColors } from "../../../components/Toast";
 // import { useExcercisePlanDetails } from "./ExcercisePlanDetailsPage";
 // import { iExcerciseTrackingOnSubmitProps } from './ExcercisePlanDetailsPage';
 
@@ -46,13 +49,14 @@ const ExcercisePlanTrackSession: React.FC = () => {
   const { isExcercisePlanTrackingSessionRefresh } =
     useCurrentMainScreenContext();
   //   const { onExcercisePlanTodaysTrackingSubmit } = useExcercisePlanDetails();
-  const [notes, setNotes] = useState("");
+  const [noteText, setNoteText] = useState("");
+  const [note, setNote] = useState<iExcercisePlanNote>();
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const { sessionDate, excercisePlan } = location.state;
   const { epid } = useParams();
-  const today = useMemo(() => new Date(), []);
-
+  const today = useMemo(() => new Date(sessionDate), []);
+  const { showToast } = useToast();
   const isTodayInSession = useMemo(() => {
     if (!excercisePlan) return false;
 
@@ -98,13 +102,15 @@ const ExcercisePlanTrackSession: React.FC = () => {
     setIsLoading(true);
     getExcerciseTrackingSessionData({
       data: {
+        epn_id: note?.epn_id,
         ep_id: epid,
         date: sessionDate,
       },
       afterAPISuccess: (res) => {
         setIsLoading(false);
         setExerciseCompletions(res.excercisePlans.excercisePlanCompleted);
-        setNotes(res.excercisePlans.excercisePlanNotes[0]?.notes || "");
+        setNote(res.excercisePlans.excercisePlanNotes[0]);
+        setNoteText(res.excercisePlans.excercisePlanNotes[0]?.notes || "");
       },
       afterAPIFail: (res) => {
         setIsLoading(false);
@@ -119,19 +125,23 @@ const ExcercisePlanTrackSession: React.FC = () => {
     saveExcerciseCompletionData({
       data: exerciseCompletions,
       afterAPISuccess: (res) => {
-        console.log(notes, res);
+        showToast("Tracking data saved", DefaultToastTiming, ToastColors.GREEN)
+        console.log(noteText, res);
       },
       afterAPIFail: (res) => {
+        showToast("Failed to save tracking data", DefaultToastTiming, ToastColors.RED)
         console.log(res);
       },
     });
     saveExcercisePlanNotes({
       data: {
-        notes: notes,
+        epn_id: note?.epn_id,
+        notes: noteText,
         ep_id: epid,
+        date: sessionDate,
       },
       afterAPISuccess: (res) => {
-        console.log(notes, res);
+        console.log(noteText, res);
       },
       afterAPIFail: (res) => {
         console.log(res);
@@ -178,8 +188,8 @@ const ExcercisePlanTrackSession: React.FC = () => {
 
       <Skeleton loading={isLoading}>
         <TextArea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
+          value={noteText}
+          onChange={(e) => setNoteText(e.target.value)}
           placeholder="Notes"
           style={{ height: "30rem", width: "100%" }}
         />
