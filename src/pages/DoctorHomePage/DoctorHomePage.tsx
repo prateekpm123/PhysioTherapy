@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../stores/userSessionStore";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // import { User } from "../../models/IUser";
 import DoctorNavBar from "./DoctorNavBar";
 // import { Flex, Text } from "@radix-ui/themes";
@@ -17,7 +17,7 @@ export enum DoctorHomeMainScreen {
   NEW_PATIENT_ENTRY = 1,
   PATIENT_DETAILS = 2,
   EXCERCISE_BUILDER = 3,
-  CREATE_EXCERCISE_PLAN = 4
+  CREATE_EXCERCISE_PLAN = 4,
 }
 
 interface DoctorContext {
@@ -26,28 +26,54 @@ interface DoctorContext {
     React.SetStateAction<DoctorHomeMainScreen>
   >;
 
-  breadCrumbItems: BreadcrumbItem[]
+  breadCrumbItems: BreadcrumbItem[];
   setBreadCrumbItems: React.Dispatch<React.SetStateAction<BreadcrumbItem[]>>;
 
   currentPatientDetails?: iPatientFullData;
-  setCurrentPatientDetails?: React.Dispatch<React.SetStateAction<iPatientFullData>>;
+  setCurrentPatientDetails?: React.Dispatch<
+    React.SetStateAction<iPatientFullData>
+  >;
   isPatientDetailsScreenRefresh: boolean;
-  setIsPatientDetailScreenRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsPatientDetailScreenRefresh: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
   isPatientListScreenRefresh: boolean;
   setIsPatientListScreenRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   patientDetailsLoading: boolean;
   setPatientDetailsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 
-  isExcerciseBuilderLoading:boolean;
+  isExcerciseBuilderLoading: boolean;
   setIsExcerciseBuilderLoading: React.Dispatch<React.SetStateAction<boolean>>;
+
   isExcerciseBuilderRefresh: boolean;
-  setIsExcerciseBuilderRefresh:React.Dispatch<React.SetStateAction<boolean>>;
-  excerciseBuilderPlannerList: iExcerciseDataDto[]
-  setExcerciseBuilderPlannerList:React.Dispatch<React.SetStateAction<iExcerciseDataDto[]>>;
+  setIsExcerciseBuilderRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+
+  isExcercisePlanTrackingRefresh: boolean;
+  setIsExcercisePlanTrackingRefresh: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
+
+
+  isExcercisePlanTrackingSessionRefresh: boolean;
+  setIsExcercisePlanTrackingSessionRefresh: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
+
+  isExcercisePlanTrackingLoading: boolean;
+  setIsExcercisePlanTrackingLoading: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
+
+  excerciseBuilderPlannerList: iExcerciseDataDto[];
+  setExcerciseBuilderPlannerList: React.Dispatch<
+    React.SetStateAction<iExcerciseDataDto[]>
+  >;
 }
 
 // Create a context for the state variable
-const CurrentMainScreenContext = createContext<DoctorContext | undefined>(undefined);
+const CurrentMainScreenContext = createContext<DoctorContext | undefined>(
+  undefined
+);
 
 export const useCurrentMainScreenContext = () => {
   const context = useContext(CurrentMainScreenContext);
@@ -69,43 +95,55 @@ export const DoctorHomePage = () => {
   );
 
   // const newPatientBreadcrumbItems: BreadcrumbItem[] = useNewPatientBreadcrumbItems();
-  const [breadCrumbItems, setBreadCrumbItems] = useState({} as BreadcrumbItem[]);
+  const [breadCrumbItems, setBreadCrumbItems] = useState(
+    {} as BreadcrumbItem[]
+  );
 
   const [patientDetailsLoading, setPatientDetailsLoading] = useState(false);
-  const [isExcerciseBuilderLoading, setIsExcerciseBuilderLoading] = useState(false);
-
+  const [isExcerciseBuilderLoading, setIsExcerciseBuilderLoading] =
+    useState(false);
 
   const [currentPatientDetails, setCurrentPatientDetails] = useState(
     {} as iPatientDto
   );
 
-  const [isPatientDetailsScreenRefresh, setIsPatientDetailScreenRefresh] = useState(false);
-  const [isPatientListScreenRefresh, setIsPatientListScreenRefresh] = useState(false);
-  const [isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh] = useState(false);
-  const [excerciseBuilderPlannerList, setExcerciseBuilderPlannerList] = useState([] as iExcerciseDataDto[]);
+  const [isPatientDetailsScreenRefresh, setIsPatientDetailScreenRefresh] =
+    useState(false);
+  const [isPatientListScreenRefresh, setIsPatientListScreenRefresh] =
+    useState(false);
+  const [isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh] =
+    useState(false);
+  const [isExcercisePlanTrackingRefresh, setIsExcercisePlanTrackingRefresh] =
+    useState(false);
+    const [isExcercisePlanTrackingSessionRefresh, setIsExcercisePlanTrackingSessionRefresh] =
+    useState(false);
+  const [isExcercisePlanTrackingLoading, setIsExcercisePlanTrackingLoading] =
+    useState(false);
+  const [excerciseBuilderPlannerList, setExcerciseBuilderPlannerList] =
+    useState([] as iExcerciseDataDto[]);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (!isSignedIn) {
       navigate("/signup");
       return;
     }
-  })
+  });
 
   // const user: User = useSelector(
   // (state: UserSessionStateType) => state.userSession.user
   // );
- 
+
   return (
     <>
       <CurrentMainScreenContext.Provider
         value={{
-          breadCrumbItems, 
+          breadCrumbItems,
           setBreadCrumbItems,
           currentMainScreen,
           setCurrentMainScreen,
           currentPatientDetails,
           setCurrentPatientDetails,
-          isPatientDetailsScreenRefresh, 
+          isPatientDetailsScreenRefresh,
           setIsPatientDetailScreenRefresh,
           isPatientListScreenRefresh,
           setIsPatientListScreenRefresh,
@@ -116,7 +154,13 @@ export const DoctorHomePage = () => {
           isExcerciseBuilderLoading,
           setIsExcerciseBuilderLoading,
           excerciseBuilderPlannerList,
-          setExcerciseBuilderPlannerList
+          setExcerciseBuilderPlannerList,
+          isExcercisePlanTrackingRefresh,
+          setIsExcercisePlanTrackingRefresh,
+          isExcercisePlanTrackingLoading,
+          setIsExcercisePlanTrackingLoading,
+          isExcercisePlanTrackingSessionRefresh,
+          setIsExcercisePlanTrackingSessionRefresh
         }}
       >
         <div style={{ backgroundColor: ThemeColorPallate.background }}>

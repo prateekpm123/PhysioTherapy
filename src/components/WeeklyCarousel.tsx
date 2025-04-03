@@ -356,7 +356,7 @@
 
 // export default WeeklyCarousel;
 
-import { Button, Flex } from "@radix-ui/themes";
+import { Button, Flex, Skeleton } from "@radix-ui/themes";
 import React, { useState, useMemo, useEffect } from "react";
 import {
   iExcerciseDataDto,
@@ -365,6 +365,7 @@ import {
 } from "../models/ExcerciseInterface";
 import ThemeColorPallate from "../assets/ThemeColorPallate";
 import { useExcercisePlanDetails } from "../pages/DoctorHomePage/MainPages/ExcercisePlanDetailsPage";
+import { useCurrentMainScreenContext } from "../pages/DoctorHomePage/DoctorHomePage";
 
 interface iWeeklyCarouselProps {
   startDate: Date;
@@ -385,6 +386,7 @@ function WeeklyCarousel({
 }: iWeeklyCarouselProps) {
   const { excercisePlan, excerciseCompletionData, setExcerciseCompletionData } =
     useExcercisePlanDetails();
+  const { isExcercisePlanTrackingLoading } = useCurrentMainScreenContext();
 
   const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
   // const [excerciseCompletionData, setExcerciseCompletionData] = useState<
@@ -466,7 +468,7 @@ function WeeklyCarousel({
         );
       }
     );
-    if (found) {
+    if (found?.completed) {
       return true;
     } else {
       return false;
@@ -501,10 +503,10 @@ function WeeklyCarousel({
           {
             // ec_id: `${e_id}-${dateString}`,
             excercisePlanId: excercisePlan.ep_id, // Use excercisePlan.ep_id
-            excercisePlan: excercisePlan, // Add excercisePlan
+            // excercisePlan: excercisePlan, // Add excercisePlan
             excerciseId: e_id,
-            excercises: excercises.filter((ex) => ex.e_id === e_id), // Add excercises
-            excercise_completion: [], // Add an empty array for excercise_completion
+            // excercises: excercises.filter((ex) => ex.e_id === e_id), // Add excercises
+            // excercise_completion: [], // Add an empty array for excercise_completion
             date: dateString,
             completed: isChecked,
           },
@@ -568,9 +570,11 @@ function WeeklyCarousel({
       <Flex direction="row" justify="center" align="center">
         <Flex direction="column" mt="4">
           {excercises.map((exercise) => (
-            <div key={exercise.e_id} style={{ margin: "0 10px" }}>
-              <h3>{exercise.excercise_name}</h3>
-            </div>
+            <Skeleton loading={isExcercisePlanTrackingLoading}>
+              <div key={exercise.e_id} style={{ margin: "0 10px" }}>
+                <h3>{exercise.excercise_name}</h3>
+              </div>
+            </Skeleton>
           ))}
         </Flex>
         {weeks[currentWeekIndex].map((date) => (
@@ -582,23 +586,25 @@ function WeeklyCarousel({
                 ? ThemeColorPallate.foreground
                 : isCurrentDay(date)
                 ? ThemeColorPallate.primary
-                : "transparent",
+                : "transparent",  
             }}
           >
             {date.toLocaleDateString()}
             <Flex direction="column">
               {excercises.map((exercise) => (
-                <div key={exercise.e_id} style={{ margin: "0 10px" }}>
-                  <input
-                    type="checkbox"
-                    name={exercise.e_id}
-                    value={date.toISOString()}
-                    checked={isChecked(exercise.e_id, date)}
-                    onChange={(e) =>
-                      handleCheckboxChange(e, exercise.e_id, date)
-                    }
-                  />
-                </div>
+                <Skeleton loading={isExcercisePlanTrackingLoading}>
+                  <div key={exercise.e_id} style={{ margin: "0 10px" }}>
+                    <input
+                      type="checkbox"
+                      name={exercise.e_id}
+                      value={date.toISOString()}
+                      checked={isChecked(exercise.e_id, date)}
+                      onChange={(e) =>
+                        handleCheckboxChange(e, exercise.e_id, date)
+                      }
+                    />
+                  </div>
+                </Skeleton>
               ))}
             </Flex>
           </div>

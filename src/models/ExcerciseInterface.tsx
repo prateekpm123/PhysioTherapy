@@ -52,7 +52,7 @@ export interface iExcercisePlanDto {
   excercise: iExcerciseDataDto[];
   excercise_completion: iExcerciseCompletionDto[];
   excercise_plan_created_on: string;
-  excercise_plan_notes: string[];
+  excercise_plan_notes: iExcercisePlanNote[];
 }
 
 export interface iExcerciseTile {
@@ -77,6 +77,13 @@ export interface iExcerciseCompletionData {
 //   excercise_completion: iExcerciseCompletionDto[];
   date: string;
   completed: boolean;
+}
+
+export interface iExcercisePlanNote {
+    epn_id: string;
+    excercisePlanId: string;
+    notes: string;
+    date: Date;
 }
 
 export interface iExcerciseCompletionDto extends iExcerciseCompletionData {

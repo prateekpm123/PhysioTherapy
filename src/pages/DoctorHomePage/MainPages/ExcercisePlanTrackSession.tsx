@@ -15,18 +15,27 @@
 
 // export default ExcercisePlanTrackSession;
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 // import { iExcercisePlanDto, iExcerciseDataDto } from './your-interfaces'; // Adjust the import path
-import { Button, Flex, ScrollArea, Text, TextArea } from "@radix-ui/themes"; // Assuming you're using radix-ui/themes
+import {
+  Button,
+  Flex,
+  ScrollArea,
+  Skeleton,
+  Text,
+  TextArea,
+} from "@radix-ui/themes"; // Assuming you're using radix-ui/themes
 import {
   iExcerciseCompletionDto,
   iExcerciseDataDto,
 } from "../../../models/ExcerciseInterface";
 import { useLocation, useParams } from "react-router-dom";
 import {
+  getExcerciseTrackingSessionData,
   saveExcerciseCompletionData,
   saveExcercisePlanNotes,
 } from "../../../controllers/ExcerciseController";
+import { useCurrentMainScreenContext } from "../DoctorHomePage";
 // import { useExcercisePlanDetails } from "./ExcercisePlanDetailsPage";
 // import { iExcerciseTrackingOnSubmitProps } from './ExcercisePlanDetailsPage';
 
@@ -34,11 +43,14 @@ const ExcercisePlanTrackSession: React.FC = () => {
   const [exerciseCompletions, setExerciseCompletions] = useState<
     iExcerciseCompletionDto[]
   >([]);
+  const { isExcercisePlanTrackingSessionRefresh } =
+    useCurrentMainScreenContext();
   //   const { onExcercisePlanTodaysTrackingSubmit } = useExcercisePlanDetails();
   const [notes, setNotes] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
+  const { sessionDate, excercisePlan } = location.state;
   const { epid } = useParams();
-  const { excercisePlan } = location.state || {};
   const today = useMemo(() => new Date(), []);
 
   const isTodayInSession = useMemo(() => {
@@ -82,6 +94,25 @@ const ExcercisePlanTrackSession: React.FC = () => {
     });
   };
 
+  useEffect(() => {
+    setIsLoading(true);
+    getExcerciseTrackingSessionData({
+      data: {
+        ep_id: epid,
+        date: sessionDate,
+      },
+      afterAPISuccess: (res) => {
+        setIsLoading(false);
+        setExerciseCompletions(res.excercisePlans.excercisePlanCompleted);
+        setNotes(res.excercisePlans.excercisePlanNotes[0]?.notes || "");
+      },
+      afterAPIFail: (res) => {
+        setIsLoading(false);
+        console.log(res);
+      },
+    });
+  }, [isExcercisePlanTrackingSessionRefresh]);
+
   const handleSubmit = () => {
     // if (onExcercisePlanTodaysTrackingSubmit)
     //   onExcercisePlanTodaysTrackingSubmit({
@@ -123,32 +154,36 @@ const ExcercisePlanTrackSession: React.FC = () => {
       <ScrollArea style={{ height: "20vh" }}>
         {excercisePlan.excercise.map((exercise: iExcerciseDataDto) => (
           <Flex direction="row" key={exercise.e_id} align="center" gap="2">
-            <Flex direction="column" gap="4" style={{ width: "30%" }}>
-              <label>{exercise.excercise_name}</label>
-            </Flex>
-            <Flex direction="column" gap="4">
-              <input
-                type="checkbox"
-                checked={
-                  exerciseCompletions.find(
-                    (item) => item.excerciseId === exercise.e_id
-                  )?.completed || false
-                }
-                onChange={(e) =>
-                  handleCheckboxChange(exercise.e_id, e.target.checked)
-                }
-              />
-            </Flex>
+            <Skeleton loading={isLoading}>
+              <Flex direction="column" gap="4" style={{ width: "30%" }}>
+                <label>{exercise.excercise_name}</label>
+              </Flex>
+              <Flex direction="column" gap="4">
+                <input
+                  type="checkbox"
+                  checked={
+                    exerciseCompletions.find(
+                      (item) => item.excerciseId === exercise.e_id
+                    )?.completed || false
+                  }
+                  onChange={(e) =>
+                    handleCheckboxChange(exercise.e_id, e.target.checked)
+                  }
+                />
+              </Flex>
+            </Skeleton>
           </Flex>
         ))}
       </ScrollArea>
 
-      <TextArea
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        placeholder="Notes"
-        style={{ height: "30rem", width: "100%" }}
-      />
+      <Skeleton loading={isLoading}>
+        <TextArea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Notes"
+          style={{ height: "30rem", width: "100%" }}
+        />
+      </Skeleton>
 
       <Button onClick={handleSubmit}>Submit</Button>
     </div>

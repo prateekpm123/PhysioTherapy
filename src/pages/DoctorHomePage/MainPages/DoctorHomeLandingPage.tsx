@@ -26,11 +26,13 @@ const Nav = styled("nav", {
 });
 
 const DoctorHomeLandingPage = () => {
-  const { breadCrumbItems, currentMainScreen, isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh, setIsPatientDetailScreenRefresh, isPatientDetailsScreenRefresh } = useCurrentMainScreenContext();
+  const { breadCrumbItems, currentMainScreen, isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh, setIsPatientDetailScreenRefresh, isPatientDetailsScreenRefresh, isExcercisePlanTrackingRefresh, setIsExcercisePlanTrackingRefresh, isExcercisePlanTrackingSessionRefresh, setIsExcercisePlanTrackingSessionRefresh } = useCurrentMainScreenContext();
   const location = useLocation();
   
   const isExcerciseBuilder = useMatch("/doctorhome/main/patientDetails/:pid/buildPlan")
   const isPatientDetails = useMatch("/doctorhome/main/patientDetails/:pid")
+  const isExcercisePlanTracking = useMatch("/doctorhome/main/patientDetails/:pid/excercisePlans/:epid")
+  const isExcercisePlanTrackingSession = useMatch("/doctorhome/main/patientDetails/:pid/excercisePlans/:epid/trackSession")
 
 
   const onMiniNavBarReloadClick = () =>{
@@ -38,6 +40,10 @@ const DoctorHomeLandingPage = () => {
       setIsPatientDetailScreenRefresh(!isPatientDetailsScreenRefresh);
     } else if(isExcerciseBuilder){
       setIsExcerciseBuilderRefresh(!isExcerciseBuilderRefresh);
+    } else if(isExcercisePlanTracking) {
+      setIsExcercisePlanTrackingRefresh(!isExcercisePlanTrackingRefresh);
+    } else if(isExcercisePlanTrackingSession) {
+      setIsExcercisePlanTrackingSessionRefresh(!isExcercisePlanTrackingSessionRefresh);
     }
   }
 

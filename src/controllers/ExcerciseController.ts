@@ -228,3 +228,27 @@ export const saveExcercisePlanNotes = async (inputs: iApiCallInterface) => {
     console.error("Error creating patient:", error);
   }
 };
+
+export const getExcerciseTrackingSessionData = async (inputs: iApiCallInterface) => {
+  try {
+    const idToken = getCookie("JwtToken");
+    const response = await fetch(baseURL + "/getTrackingSession", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${idToken}`,
+      },
+      body: JSON.stringify(inputs.data),
+    });
+    const responseJson = await response.json();
+    if (responseJson.ok) {
+      const data = responseJson as unknown;
+      inputs.afterAPISuccess(data);
+      console.log("Backend response:", data);
+    } else {
+      inputs.afterAPIFail(responseJson as FailedResponseDto);
+    }
+  } catch (error) {
+    console.error("Error creating patient:", error);
+  }
+};
