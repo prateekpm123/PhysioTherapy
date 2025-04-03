@@ -11,7 +11,15 @@ import {
   iExcercisePlanNote,
 } from "../../../models/ExcerciseInterface";
 import WeeklyCarousel from "../../../components/WeeklyCarousel";
-import { Button, Card, Flex, Grid, Heading, Skeleton, Text } from "@radix-ui/themes";
+import {
+  Button,
+  Card,
+  Flex,
+  Grid,
+  Heading,
+  Skeleton,
+  Text,
+} from "@radix-ui/themes";
 // import { iExcercisePlanDto } from "../../../models/ExcerciseInterface";
 // import { useCurrentMainScreenContext } from "../DoctorHomePage";
 
@@ -49,7 +57,13 @@ export const useExcercisePlanDetails = () => {
 
 const ExcercisePlanDetailsPage = () => {
   const { epid, pid } = useParams();
-  const { isExcercisePlanTrackingRefresh, isExcercisePlanTrackingLoading, setIsExcercisePlanTrackingLoading, setBreadCrumbItems } = useCurrentMainScreenContext();
+  const {
+    isExcercisePlanTrackingRefresh,
+    isExcercisePlanTrackingLoading,
+    setIsExcercisePlanTrackingLoading,
+    setBreadCrumbItems,
+    breadCrumbItems,
+  } = useCurrentMainScreenContext();
   const [excercisePlan, setExcercisePlan] = useState<iExcercisePlanDto>();
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
@@ -73,13 +87,15 @@ const ExcercisePlanDetailsPage = () => {
         setStartDate(new Date(res.excercisePlans.startDate));
         setEndDate(new Date(res.excercisePlans.endDate));
         console.log(res);
-        
+
         // Set breadcrumbs for Exercise Plan page
         setBreadCrumbItems([
           {
             label: "Patient Details",
             onClick: () => {
               navigate("/doctorhome/main/patientDetails/" + pid);
+              breadCrumbItems.pop();
+              setBreadCrumbItems(breadCrumbItems);
             },
           },
           {
@@ -106,20 +122,26 @@ const ExcercisePlanDetailsPage = () => {
       {
         label: "Exercise Plan",
         onClick: () => {
-          navigate("/doctorhome/main/patientDetails/" + pid + "/excercisePlans/" + epid);
+          navigate(
+            "/doctorhome/main/patientDetails/" + pid + "/excercisePlans/" + epid
+          );
         },
       },
       {
         label: "Track Session",
       },
     ]);
-    
+
     navigate(
-      "/doctorhome/main/patientDetails/" + pid + "/excercisePlans/" + epid + "/trackSession",
+      "/doctorhome/main/patientDetails/" +
+        pid +
+        "/excercisePlans/" +
+        epid +
+        "/trackSession",
       {
         state: {
           excercisePlan: excercisePlan,
-          sessionDate: new Date()
+          sessionDate: new Date(),
         },
       }
     );
@@ -180,7 +202,7 @@ const ExcercisePlanDetailsPage = () => {
               onChange={onFullTrackSubmission}
             />
           </Skeleton>
-          
+
           <Skeleton loading={isExcercisePlanTrackingLoading}>
             <Button
               style={{ width: "200px" }}
@@ -201,13 +223,22 @@ const ExcercisePlanDetailsPage = () => {
           <Skeleton loading={isExcercisePlanTrackingLoading}>
             {excercisePlan?.excercise_plan_notes && (
               <Grid columns={"2"} gap="4">
-                {excercisePlan.excercise_plan_notes.map((note: iExcercisePlanNote) => (
-                  <Card key={note.epn_id}>
-                    <Heading size="3">Note:     <Text size="2">  {"   " + new Date(note.date).toLocaleDateString()} </Text></Heading>
-                    <Text>{note.notes}</Text>
-                    {/* <Text size={'2'}>Date: {new Date(note.date).toLocaleDateString()}</Text> */}
-                  </Card>
-                ))}
+                {excercisePlan.excercise_plan_notes.map(
+                  (note: iExcercisePlanNote) => (
+                    <Card key={note.epn_id}>
+                      <Heading size="3">
+                        Note:{" "}
+                        <Text size="2">
+                          {" "}
+                          {"   " +
+                            new Date(note.date).toLocaleDateString()}{" "}
+                        </Text>
+                      </Heading>
+                      <Text>{note.notes}</Text>
+                      {/* <Text size={'2'}>Date: {new Date(note.date).toLocaleDateString()}</Text> */}
+                    </Card>
+                  )
+                )}
               </Grid>
             )}
           </Skeleton>

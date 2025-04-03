@@ -46,7 +46,7 @@ const ExcercisePlanTrackSession: React.FC = () => {
   const [exerciseCompletions, setExerciseCompletions] = useState<
     iExcerciseCompletionDto[]
   >([]);
-  const { isExcercisePlanTrackingSessionRefresh, setBreadCrumbItems } =
+  const { isExcercisePlanTrackingSessionRefresh, setBreadCrumbItems, breadCrumbItems } =
     useCurrentMainScreenContext();
   //   const { onExcercisePlanTodaysTrackingSubmit } = useExcercisePlanDetails();
   const [noteText, setNoteText] = useState("");
@@ -66,11 +66,14 @@ const ExcercisePlanTrackSession: React.FC = () => {
         label: "Patient Details",
         onClick: () => {
           navigate("/doctorhome/main/patientDetails/" + pid);
+          breadCrumbItems.pop();
+          setBreadCrumbItems(breadCrumbItems);
         },
       },
       {
         label: "Exercise Plan",
         onClick: () => {
+          setBreadCrumbItems(breadCrumbItems);
           navigate("/doctorhome/main/patientDetails/" + pid + "/excercisePlans/" + epid);
         },
       },
