@@ -16,10 +16,141 @@ import { useCurrentMainScreenContext } from "../DoctorHomePage";
 import { useNavigate } from "react-router-dom";
 import { iPatientDto } from "../../../dtos/PatientDto";
 // import { PatientListProps } from "./PatientLIst";
+import { styled } from "@stitches/react";
+import { themeColors, spacing, theme } from "../../../theme/theme";
+import { ScrollArea } from "@radix-ui/themes"; // Import ScrollArea
 
 // interface iNewPatientEntry {
 //   onSave: () => void;
 // }
+
+// --- Styled Components --- //
+
+const FormContainer = styled('div', {
+  padding: spacing.lg,
+  backgroundColor: themeColors.background.dark,
+  borderRadius: theme.radius[3],
+  margin: 'auto',
+  maxWidth: '800px', // Max width for larger screens
+  width: '100%',
+
+  "@media (max-width: 768px)": {
+    padding: spacing.md,
+    maxWidth: '100%', // Full width on mobile
+    margin: 0,
+    borderRadius: 0,
+  }
+});
+
+const FormTitle = styled('h1', {
+  color: themeColors.text.primary,
+  fontSize: '1.75rem', // Slightly larger title
+  fontWeight: '600',
+  marginBottom: spacing.lg,
+  textAlign: 'center', // Center title
+
+  "@media (max-width: 768px)": {
+    fontSize: '1.5rem',
+    marginBottom: spacing.md,
+  }
+});
+
+const StyledFormField = styled(Form.Field, {
+  marginBottom: spacing.md,
+});
+
+const FieldLabel = styled(Form.Label, {
+  display: 'block',
+  color: themeColors.text.secondary,
+  marginBottom: spacing.xs,
+  fontSize: '0.9rem',
+  fontWeight: '500',
+});
+
+const BaseInputStyles = {
+  width: '100%',
+  padding: spacing.sm,
+  backgroundColor: themeColors.background.elevation1,
+  border: `1px solid ${themeColors.background.elevation3}`,
+  borderRadius: theme.radius[2],
+  color: themeColors.text.primary,
+  fontSize: '1rem',
+  '&::placeholder': {
+    color: themeColors.text.disabled,
+  },
+  '&:focus': {
+    outline: 'none',
+    borderColor: themeColors.primary[500],
+    boxShadow: `0 0 0 1px ${themeColors.primary[500]}`,
+  },
+  "@media (max-width: 768px)": {
+    padding: spacing.xs,
+    fontSize: '0.9rem',
+  }
+};
+
+const Input = styled('input', BaseInputStyles);
+const TextArea = styled('textarea', {
+  ...BaseInputStyles,
+  resize: 'vertical',
+  minHeight: '80px',
+});
+const Select = styled('select', BaseInputStyles);
+
+const PhoneInputContainer = styled('div', {
+  display: 'flex',
+  gap: spacing.xs,
+});
+
+const CountryCodeSelect = styled(Select, {
+  flexShrink: 0,
+  width: 'auto', // Adjust width as needed
+  borderTopRightRadius: 0,
+  borderBottomRightRadius: 0,
+});
+
+const PhoneNumberInput = styled(Input, {
+  flexGrow: 1,
+  borderTopLeftRadius: 0,
+  borderBottomLeftRadius: 0,
+});
+
+const FileInput = styled(Input, {
+  padding: spacing.xs, // Adjust padding for file input
+});
+
+const SubmitButton = styled('button', {
+  width: '100%',
+  padding: spacing.md,
+  backgroundColor: themeColors.primary[500],
+  color: 'white',
+  border: 'none',
+  borderRadius: theme.radius[2],
+  fontSize: '1.1rem',
+  fontWeight: '600',
+  cursor: 'pointer',
+  transition: 'background-color 0.2s ease',
+  marginTop: spacing.lg,
+
+  '&:hover': {
+    backgroundColor: themeColors.primary[600],
+  },
+  '&:disabled': {
+    backgroundColor: themeColors.background.elevation3,
+    cursor: 'not-allowed',
+  },
+
+  "@media (max-width: 768px)": {
+    fontSize: '1rem',
+    padding: spacing.sm,
+    marginTop: spacing.md,
+    // Optional: Make sticky at the bottom on mobile
+    // position: 'sticky',
+    // bottom: spacing.md,
+  }
+});
+
+// --- Component Logic --- //
 
 const NewPatientEntry = () => {
   // const userData = useSelector(
@@ -49,6 +180,9 @@ const NewPatientEntry = () => {
   });
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const [countryCode, setCountryCode] = useState("+91"); // State for country code
+  const [isSubmitting, setIsSubmitting] = useState(false); // Submission state
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -66,211 +200,184 @@ const NewPatientEntry = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    formData.doctorId = doctorData.d_id || "";
+    if (isSubmitting) return; // Prevent multiple submissions
+
+    setIsSubmitting(true);
+    // Combine country code and phone number
+    const fullPhoneNumber = countryCode + formData.phoneNumber;
+
     createPatient({
-      data: formData,
+      data: { ...formData, phoneNumber: fullPhoneNumber, doctorId: doctorData.d_id || "" },
       afterAPISuccess: onCreateSuccess,
       afterAPIFail: onCreateFail,
     });
-    console.log("Collected Form Data:", formData);
+    console.log("Collected Form Data:", { ...formData, phoneNumber: fullPhoneNumber });
   };
 
   const onCreateSuccess = async (data: iPatientDto) => {
+    setIsSubmitting(false);
     showToast(
       "Form submitted successfully",
       DefaultToastTiming,
       ToastColors.GREEN
     );
-    // await navigate(-1);
     navigate("/doctorhome/main/patientDetails/" + data.p_id);
     if (setCurrentPatientDetails) setCurrentPatientDetails(data);
     setIsPatientListScreenRefresh(!isPatientListScreenRefresh);
     console.log("Patient was created succesfully");
   };
   const onCreateFail = (response: FailedResponseDto) => {
+    setIsSubmitting(false);
     showToast(response.message, DefaultToastTiming, ToastColors.RED);
-    // ErrorHandler(response);
   };
 
   return (
-    <div
-      className="pt-6 mx-auto"
-      style={{ width: "100%", overflow: "auto", maxHeight: "85dvh" }}
-    >
-      <h1 className="text-2xl font-bold mb-4">New Patient Entry</h1>
-      <Form.Root className="space-y-4" onSubmit={handleSubmit}>
-        {/* Patient Name */}
-        <Form.Field name="patientName">
-          <div className="flex flex-col">
-            <Form.Label className="mb-1 font-medium">Patient Name</Form.Label>
+    // Use ScrollArea for better scrolling control
+    <ScrollArea style={{ height: 'calc(100vh - 60px)' }}>
+      <FormContainer>
+        <FormTitle>New Patient Entry</FormTitle>
+        <Form.Root onSubmit={handleSubmit}>
+          {/* Patient Name */}
+          <StyledFormField name="patientName">
+            <FieldLabel>Patient Name</FieldLabel>
             <Form.Control asChild>
-              <input
+              <Input
                 type="text"
                 name="patientName"
                 value={formData.patientName}
                 onChange={handleChange}
-                className="border rounded px-3 py-2 w-full"
                 placeholder="Enter patient name"
                 required
               />
             </Form.Control>
-          </div>
-        </Form.Field>
+          </StyledFormField>
 
-        {/* Patient Age */}
-        <Form.Field name="patientAge">
-          <div className="flex flex-col">
-            <Form.Label className="mb-1 font-medium">Patient Age</Form.Label>
+          {/* Patient Age */}
+          <StyledFormField name="patientAge">
+            <FieldLabel>Patient Age</FieldLabel>
             <Form.Control asChild>
-              <input
+              <Input
                 type="number"
                 name="patientAge"
-                value={formData.patientAge}
+                value={formData.patientAge === 0 ? '' : formData.patientAge} // Handle initial 0 value
                 onChange={handleChange}
-                className="border rounded px-3 py-2 w-full"
                 placeholder="Enter patient age"
                 required
               />
             </Form.Control>
-          </div>
-        </Form.Field>
+          </StyledFormField>
 
-        {/* Chief Complaint */}
-        <Form.Field name="chiefComplaint">
-          <div className="flex flex-col">
-            <Form.Label className="mb-1 font-medium">
-              Chief Complaint
-            </Form.Label>
+          {/* Chief Complaint */}
+          <StyledFormField name="chiefComplaint">
+            <FieldLabel>Chief Complaint</FieldLabel>
             <Form.Control asChild>
-              <textarea
+              <TextArea
                 name="chiefComplaint"
                 value={formData.chiefComplaint}
                 onChange={handleChange}
-                className="border rounded px-3 py-2 w-full"
                 placeholder="Enter chief complaint"
                 rows={4}
                 required
               />
             </Form.Control>
-          </div>
-        </Form.Field>
+          </StyledFormField>
 
-        {/* Additional Description */}
-        <Form.Field name="additionalDescription">
-          <div className="flex flex-col">
-            <Form.Label className="mb-1 font-medium">
-              Additional Description
-            </Form.Label>
+          {/* Additional Description */}
+          <StyledFormField name="additionalDescription">
+            <FieldLabel>Additional Description</FieldLabel>
             <Form.Control asChild>
-              <textarea
+              <TextArea
                 name="additionalDescription"
                 value={formData.additionalDescription}
                 onChange={handleChange}
-                className="border rounded px-3 py-2 w-full"
                 placeholder="Enter additional description"
                 rows={3}
               />
             </Form.Control>
-          </div>
-        </Form.Field>
+          </StyledFormField>
 
-        {/* Phone Number */}
-        <Form.Field name="phoneNumber">
-          <div className="flex flex-col">
-            <Form.Label className="mb-1 font-medium">Phone Number</Form.Label>
-            <div className="flex">
-              <select
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                className="border rounded-l px-3 py-2"
-                defaultValue="+91"
+          {/* Phone Number */}
+          <StyledFormField name="phoneNumber">
+            <FieldLabel>Phone Number</FieldLabel>
+            <PhoneInputContainer>
+              <CountryCodeSelect
+                name="countryCode"
+                value={countryCode}
+                onChange={(e) => setCountryCode(e.target.value)}
               >
                 <option value="+91">+91 (India)</option>
                 <option value="+1">+1 (USA)</option>
                 <option value="+44">+44 (UK)</option>
                 {/* Add more country codes as needed */}
-              </select>
+              </CountryCodeSelect>
               <Form.Control asChild>
-                <input
+                <PhoneNumberInput
                   type="tel"
                   name="phoneNumber"
-                  minLength={10}
-                  maxLength={10}
+                  pattern="[0-9]{10}" // Basic 10-digit pattern
+                  title="Please enter a 10-digit phone number"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  className="border rounded-r px-3 py-2 w-full"
-                  placeholder="Enter phone number"
+                  placeholder="Enter 10-digit number"
                   required
                 />
               </Form.Control>
-            </div>
-          </div>
-        </Form.Field>
+            </PhoneInputContainer>
+          </StyledFormField>
 
-        {/* Email */}
-        <Form.Field name="email">
-          <div className="flex flex-col">
-            <Form.Label className="mb-1 font-medium">Email</Form.Label>
+          {/* Email */}
+          <StyledFormField name="email">
+            <FieldLabel>Email</FieldLabel>
             <Form.Control asChild>
-              <input
+              <Input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="border rounded px-3 py-2 w-full"
                 placeholder="Enter email address"
                 required
               />
             </Form.Control>
-          </div>
-        </Form.Field>
+          </StyledFormField>
 
-        {/* Address */}
-        <Form.Field name="address">
-          <div className="flex flex-col">
-            <Form.Label className="mb-1 font-medium">Address</Form.Label>
+          {/* Address */}
+          <StyledFormField name="address">
+            <FieldLabel>Address</FieldLabel>
             <Form.Control asChild>
-              <textarea
+              <TextArea
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
-                className="border rounded px-3 py-2 w-full"
                 placeholder="Enter address"
                 rows={3}
                 required
               />
             </Form.Control>
-          </div>
-        </Form.Field>
+          </StyledFormField>
 
-        {/* Upload PDF/Images */}
-        <Form.Field name="fileUpload">
-          <div className="flex flex-col">
-            <Form.Label className="mb-1 font-medium">
-              Upload PDF/Images
-            </Form.Label>
+          {/* Upload PDF/Images */}
+          <StyledFormField name="fileUpload">
+            <FieldLabel>Upload Documents (PDF/Images)</FieldLabel>
             <Form.Control asChild>
-              <input
+              <FileInput
                 type="file"
                 name="fileUpload"
                 onChange={handleFileChange}
-                className="border rounded px-3 py-2 w-full"
                 accept=".pdf, image/*"
                 multiple
               />
             </Form.Control>
-          </div>
-        </Form.Field>
+          </StyledFormField>
 
-        {/* Submit Button */}
-        <Form.Submit asChild>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-            Submit
-          </button>
-        </Form.Submit>
-      </Form.Root>
-    </div>
+          {/* Submit Button */}
+          <Form.Submit asChild>
+            <SubmitButton disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Submit Patient Data'}
+            </SubmitButton>
+          </Form.Submit>
+        </Form.Root>
+      </FormContainer>
+    </ScrollArea>
   );
 };
 
