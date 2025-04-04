@@ -2,8 +2,9 @@ import { FailedResponseDto } from "../dtos/FailedResponseDto";
 import { iApiCallInterface } from "../models/iApiCallInterface";
 import { DoctorDetails } from "../models/iDoctorDetails";
 import { getCookie } from "../utils/cookies";
+import { backendUrl } from "../configDetails";
 
-const baseURL = "http://localhost:3000/api/doctor";
+const baseURL = `${backendUrl}/api/doctor`;
 
 export const createDoctor = async ({
   data,

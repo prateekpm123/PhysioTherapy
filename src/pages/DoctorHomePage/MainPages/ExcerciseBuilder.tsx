@@ -26,7 +26,7 @@ const BuilderContainer = styled('div', {
   display: 'flex',
   flexDirection: 'row',
   width: '100%',
-  height: '93vh',
+  height: '94vh',
   position: 'relative',
   backgroundColor: ThemeColorPallate.background,
 });

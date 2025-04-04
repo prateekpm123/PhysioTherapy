@@ -1,9 +1,10 @@
 import { FailedResponseDto } from "../dtos/FailedResponseDto";
 import { iApiCallInterface } from "../models/iApiCallInterface";
 import { getCookie } from "../utils/cookies";
+import { backendUrl } from "../configDetails";
 
 
-const baseURL = "http://localhost:3000/api/excercise";
+const baseURL = `${backendUrl}/api/excercise`;
 
 export const getAllExcercises = async (inputs: iApiCallInterface) => {
   try {
@@ -15,6 +16,8 @@ export const getAllExcercises = async (inputs: iApiCallInterface) => {
         "Content-Type": "application/json",
         Authorization: `${idToken}`,
       },
+      credentials: 'include',
+      mode: 'cors'
     });
     const responseJson = await response.json();
     if (responseJson.ok) {

@@ -3,8 +3,9 @@ import { iPatientDto } from "../dtos/PatientDto";
 import { iApiCallInterface } from "../models/iApiCallInterface";
 import iPatients from "../models/iPatients";
 import { getCookie } from "../utils/cookies";
+import { backendUrl } from "../configDetails";
 
-const baseURL = "http://localhost:3000/api/patient";
+const baseURL = `${backendUrl}/api/patient`;
 
 export const createPatient = async (inputs: iApiCallInterface) => {
   try {

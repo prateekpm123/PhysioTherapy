@@ -2,8 +2,7 @@ import { FailedResponseDto } from "../dtos/FailedResponseDto";
 import { LoginDto, SignInDto } from "../dtos/SignInDto";
 import { Accounts } from "../models/Accounts";
 // import { getCookie } from "../utils/cookies";
-
-
+import { backendUrl } from "../configDetails";
 
 export const sendIdTokenToBackendSignUp = async (
   idToken: string,
@@ -12,7 +11,7 @@ export const sendIdTokenToBackendSignUp = async (
   afterSignInFail: (response: FailedResponseDto) => void
 ) => {
   try {
-    let url = "http://localhost:3000/api/signup/auth";
+    let url = `${backendUrl}/api/signup/auth`;
     if (accountType === Accounts.FACEBOOK) {
       url = url + "/facebook";
     } else if (accountType === Accounts.GOOGLE) {
@@ -46,7 +45,7 @@ export const sendIdTokenToBackendLogin = async (
   afterSignInFail: (response: FailedResponseDto) => void
 ) => {
   try {
-    let url = "http://localhost:3000/api/login/auth";
+    let url = `${backendUrl}/api/login/auth`;
     if (accountType === Accounts.FACEBOOK) {
       url = url + "/facebook";
     } else if (accountType === Accounts.GOOGLE) {
@@ -76,7 +75,7 @@ export const sendIdTokenToBackendLogin = async (
 
 export const saveJwtToken = async (idToken: string) => {
   try {
-    const url = "http://localhost:3000/api/cookie/setJwtCookie";
+    const url = `${backendUrl}/api/cookie/setJwtCookie`;
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -98,7 +97,7 @@ export const saveJwtToken = async (idToken: string) => {
 
 export const getJwtToken = async () => {
   try {
-    const url = "http://localhost:3000/api/cookie/getJwtCookie";
+    const url = `${backendUrl}/api/cookie/getJwtCookie`;
     const response = await fetch(url, {
       method: "GET",
     });
