@@ -18,7 +18,7 @@ export const createDoctor = async ({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${idToken}`,
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify(data as DoctorDetails),
     });

@@ -15,7 +15,7 @@ export const createPatient = async (inputs: iApiCallInterface) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${idToken}`,
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify(inputs.data as iPatients),
     });
@@ -40,7 +40,7 @@ export const getAllPatients = async (inputs: iApiCallInterface) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${idToken}`,
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify(inputs.data as iPatients),
     });
@@ -64,7 +64,7 @@ export const findPatient = async (inputs: iApiCallInterface) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${idToken}`,
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify(inputs.data as iPatientDto),
     });

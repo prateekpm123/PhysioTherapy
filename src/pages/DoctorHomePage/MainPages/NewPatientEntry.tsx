@@ -26,33 +26,33 @@ import { ScrollArea } from "@radix-ui/themes"; // Import ScrollArea
 
 // --- Styled Components --- //
 
-const FormContainer = styled('div', {
+const FormContainer = styled("div", {
   padding: spacing.lg,
   backgroundColor: themeColors.background.dark,
   borderRadius: theme.radius[3],
-  margin: 'auto',
-  maxWidth: '800px', // Max width for larger screens
-  width: '100%',
+  margin: "auto",
+  maxWidth: "800px", // Max width for larger screens
+  width: "100%",
 
   "@media (max-width: 768px)": {
     padding: spacing.md,
-    maxWidth: '100%', // Full width on mobile
+    maxWidth: "100%", // Full width on mobile
     margin: 0,
     borderRadius: 0,
-  }
+  },
 });
 
-const FormTitle = styled('h1', {
+const FormTitle = styled("h1", {
   color: themeColors.text.primary,
-  fontSize: '1.75rem', // Slightly larger title
-  fontWeight: '600',
+  fontSize: "1.75rem", // Slightly larger title
+  fontWeight: "600",
   marginBottom: spacing.lg,
-  textAlign: 'center', // Center title
+  textAlign: "center", // Center title
 
   "@media (max-width: 768px)": {
-    fontSize: '1.5rem',
+    fontSize: "1.5rem",
     marginBottom: spacing.md,
-  }
+  },
 });
 
 const StyledFormField = styled(Form.Field, {
@@ -60,51 +60,51 @@ const StyledFormField = styled(Form.Field, {
 });
 
 const FieldLabel = styled(Form.Label, {
-  display: 'block',
+  display: "block",
   color: themeColors.text.secondary,
   marginBottom: spacing.xs,
-  fontSize: '0.9rem',
-  fontWeight: '500',
+  fontSize: "0.9rem",
+  fontWeight: "500",
 });
 
 const BaseInputStyles = {
-  width: '100%',
+  width: "100%",
   padding: spacing.sm,
   backgroundColor: themeColors.background.elevation1,
   border: `1px solid ${themeColors.background.elevation3}`,
   borderRadius: theme.radius[2],
   color: themeColors.text.primary,
-  fontSize: '1rem',
-  '&::placeholder': {
+  fontSize: "1rem",
+  "&::placeholder": {
     color: themeColors.text.disabled,
   },
-  '&:focus': {
-    outline: 'none',
+  "&:focus": {
+    outline: "none",
     borderColor: themeColors.primary[500],
     boxShadow: `0 0 0 1px ${themeColors.primary[500]}`,
   },
   "@media (max-width: 768px)": {
     padding: spacing.xs,
-    fontSize: '0.9rem',
-  }
+    fontSize: "0.9rem",
+  },
 };
 
-const Input = styled('input', BaseInputStyles);
-const TextArea = styled('textarea', {
+const Input = styled("input", BaseInputStyles);
+const TextArea = styled("textarea", {
   ...BaseInputStyles,
-  resize: 'vertical',
-  minHeight: '80px',
+  resize: "vertical",
+  minHeight: "80px",
 });
-const Select = styled('select', BaseInputStyles);
+const Select = styled("select", BaseInputStyles);
 
-const PhoneInputContainer = styled('div', {
-  display: 'flex',
+const PhoneInputContainer = styled("div", {
+  display: "flex",
   gap: spacing.xs,
 });
 
 const CountryCodeSelect = styled(Select, {
   flexShrink: 0,
-  width: 'auto', // Adjust width as needed
+  width: "auto", // Adjust width as needed
   borderTopRightRadius: 0,
   borderBottomRightRadius: 0,
 });
@@ -119,35 +119,35 @@ const FileInput = styled(Input, {
   padding: spacing.xs, // Adjust padding for file input
 });
 
-const SubmitButton = styled('button', {
-  width: '100%',
+const SubmitButton = styled("button", {
+  width: "100%",
   padding: spacing.md,
   backgroundColor: themeColors.primary[500],
-  color: 'white',
-  border: 'none',
+  color: "white",
+  border: "none",
   borderRadius: theme.radius[2],
-  fontSize: '1.1rem',
-  fontWeight: '600',
-  cursor: 'pointer',
-  transition: 'background-color 0.2s ease',
+  fontSize: "1.1rem",
+  fontWeight: "600",
+  cursor: "pointer",
+  transition: "background-color 0.2s ease",
   marginTop: spacing.lg,
 
-  '&:hover': {
+  "&:hover": {
     backgroundColor: themeColors.primary[600],
   },
-  '&:disabled': {
+  "&:disabled": {
     backgroundColor: themeColors.background.elevation3,
-    cursor: 'not-allowed',
+    cursor: "not-allowed",
   },
 
   "@media (max-width: 768px)": {
-    fontSize: '1rem',
+    fontSize: "1rem",
     padding: spacing.sm,
     marginTop: spacing.md,
     // Optional: Make sticky at the bottom on mobile
     // position: 'sticky',
     // bottom: spacing.md,
-  }
+  },
 });
 
 // --- Component Logic --- //
@@ -199,19 +199,31 @@ const NewPatientEntry = () => {
   };
 
   const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (isSubmitting) return; // Prevent multiple submissions
+    try {
+      event.preventDefault();
+      if (isSubmitting) return; // Prevent multiple submissions
 
-    setIsSubmitting(true);
-    // Combine country code and phone number
-    const fullPhoneNumber = countryCode + formData.phoneNumber;
+      setIsSubmitting(true);
+      // Combine country code and phone number
+      const fullPhoneNumber = countryCode + formData.phoneNumber;
 
-    createPatient({
-      data: { ...formData, phoneNumber: fullPhoneNumber, doctorId: doctorData.d_id || "" },
-      afterAPISuccess: onCreateSuccess,
-      afterAPIFail: onCreateFail,
-    });
-    console.log("Collected Form Data:", { ...formData, phoneNumber: fullPhoneNumber });
+      createPatient({
+        data: {
+          ...formData,
+          phoneNumber: fullPhoneNumber,
+          doctorId: doctorData.d_id || "",
+        },
+        afterAPISuccess: onCreateSuccess,
+        afterAPIFail: onCreateFail,
+      });
+      console.log("Collected Form Data:", {
+        ...formData,
+        phoneNumber: fullPhoneNumber,
+      });
+    } catch (error) {
+      setIsSubmitting(false);
+      console.error("Error creating patient:", error);
+    }
   };
 
   const onCreateSuccess = async (data: iPatientDto) => {
@@ -233,7 +245,7 @@ const NewPatientEntry = () => {
 
   return (
     // Use ScrollArea for better scrolling control
-    <ScrollArea style={{ height: 'calc(100vh - 60px)' }}>
+    <ScrollArea style={{ height: "calc(100vh - 60px)" }}>
       <FormContainer>
         <FormTitle>New Patient Entry</FormTitle>
         <Form.Root onSubmit={handleSubmit}>
@@ -259,7 +271,7 @@ const NewPatientEntry = () => {
               <Input
                 type="number"
                 name="patientAge"
-                value={formData.patientAge === 0 ? '' : formData.patientAge} // Handle initial 0 value
+                value={formData.patientAge === 0 ? "" : formData.patientAge} // Handle initial 0 value
                 onChange={handleChange}
                 placeholder="Enter patient age"
                 required
@@ -372,7 +384,7 @@ const NewPatientEntry = () => {
           {/* Submit Button */}
           <Form.Submit asChild>
             <SubmitButton disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : 'Submit Patient Data'}
+              {isSubmitting ? "Submitting..." : "Submit Patient Data"}
             </SubmitButton>
           </Form.Submit>
         </Form.Root>

@@ -14,7 +14,7 @@ export const getAllExcercises = async (inputs: iApiCallInterface) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${idToken}`,
+        Authorization: `Bearer ${idToken}`,
       },
       credentials: 'include',
       mode: 'cors'
@@ -41,8 +41,10 @@ export const updateExcercise = async (inputs: iApiCallInterface) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${idToken}`,
+        Authorization: `Bearer ${idToken}`,
       },
+      credentials: 'include',
+      mode: 'cors',
       body: JSON.stringify(inputs.data)
     });
     const responseJson = await response.json();
@@ -66,8 +68,10 @@ export const createExcercise = async (inputs: iApiCallInterface) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${idToken}`,
+        Authorization: `Bearer ${idToken}`,
       },
+      credentials: 'include',
+      mode: 'cors',
       body: JSON.stringify(inputs.data)
     });
     const responseJson = await response.json();
@@ -91,9 +95,10 @@ export const deleteOriginalExcercise = async (inputs: iApiCallInterface) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${idToken}`,
+        Authorization: `Bearer ${idToken}`,
       },
-      // body: inputs.data as string
+      credentials: 'include',
+      mode: 'cors',
       body: JSON.stringify(inputs.data)
     });
     const responseJson = await response.json();
@@ -118,7 +123,7 @@ export const saveExcercisePlan = async (inputs: iApiCallInterface) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${idToken}`,
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify(inputs.data)
     });
@@ -142,7 +147,7 @@ export const getExcercisePlans = async (inputs: iApiCallInterface) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${idToken}`,
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify(inputs.data),
     });
@@ -166,7 +171,7 @@ export const getExcercisePlan = async (inputs: iApiCallInterface) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${idToken}`,
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify(inputs.data),
     });
@@ -191,7 +196,7 @@ export const saveExcerciseCompletionData = async (inputs: iApiCallInterface) => 
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${idToken}`,
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify(inputs.data),
     });
@@ -215,7 +220,7 @@ export const saveExcercisePlanNotes = async (inputs: iApiCallInterface) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${idToken}`,
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify(inputs.data),
     });
@@ -239,7 +244,7 @@ export const getExcerciseTrackingSessionData = async (inputs: iApiCallInterface)
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${idToken}`,
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify(inputs.data),
     });
