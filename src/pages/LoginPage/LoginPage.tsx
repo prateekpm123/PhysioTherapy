@@ -47,7 +47,7 @@ export const LoginPage = () => {
         const user = result.user;
         user.getIdToken(true).then((idToken) => {
           // const saveJWT = await saveJwtToken(idToken);
-          setCookie("JwtToken", idToken, 1);
+          setCookie("JwtToken", idToken, 2);
           // console.log(saveJWT);
           sendIdTokenToBackendLogin(
             idToken,
