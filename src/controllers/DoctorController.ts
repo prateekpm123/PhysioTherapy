@@ -1,8 +1,9 @@
 import { FailedResponseDto } from "../dtos/FailedResponseDto";
 import { iApiCallInterface } from "../models/iApiCallInterface";
 import { DoctorDetails } from "../models/iDoctorDetails";
-import { getCookie } from "../utils/cookies";
+import { getValidAuthToken } from "../utils/cookies";
 import { backendUrl } from "../configDetails";
+import { StatusAndErrorType } from "../models/StatusAndErrorType.enum";
 
 const baseURL = `${backendUrl}/api/doctor`;
 
@@ -12,14 +13,16 @@ export const createDoctor = async ({
   afterAPIFail,
 }: iApiCallInterface) => {
   try {
-    const idToken = getCookie("JwtToken");
-    console.log("Inputs:", data);
+    const validToken = await getValidAuthToken();
+    
     const response = await fetch(baseURL + "/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${idToken}`,
+        Authorization: `Bearer ${validToken}`,
       },
+      credentials: 'include',
+      mode: 'cors',
       body: JSON.stringify(data as DoctorDetails),
     });
     if (response.ok) {
@@ -31,5 +34,11 @@ export const createDoctor = async ({
     }
   } catch (error) {
     console.error("Error creating doctor:", error);
+    afterAPIFail({
+      message: "Failed to create doctor",
+      statusCode: 500,
+      errorCode: StatusAndErrorType.InternalError,
+      errors: error
+    });
   }
 };
