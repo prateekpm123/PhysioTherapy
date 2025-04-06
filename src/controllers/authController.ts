@@ -1,8 +1,10 @@
 import { FailedResponseDto } from "../dtos/FailedResponseDto";
 import { LoginDto, SignInDto } from "../dtos/SignInDto";
 import { Accounts } from "../models/Accounts";
-// import { getCookie } from "../utils/cookies";
 import { backendUrl } from "../configDetails";
+import { StatusAndErrorType } from "../models/StatusAndErrorType.enum";
+import { getValidAuthToken, setAuthToken } from "../utils/cookies";
+import { getAuth } from "firebase/auth";
 
 export const sendIdTokenToBackendSignUp = async (
   idToken: string,
@@ -19,11 +21,21 @@ export const sendIdTokenToBackendSignUp = async (
     } else if (accountType === Accounts.EMAIL) {
       url = url + "/email";
     }
+
+    // Store the initial token
+    const tokenResult = await getAuth().currentUser?.getIdTokenResult();
+    if (tokenResult) {
+      const expiresIn = new Date(tokenResult.expirationTime).getTime() - Date.now();
+      await setAuthToken(idToken, expiresIn / 1000);
+    }
+
+    const validToken = await getValidAuthToken();
+
     const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${idToken}`,
+        Authorization: `Bearer ${validToken}`,
       },
     });
     const responseJson = await response.json();
@@ -36,8 +48,15 @@ export const sendIdTokenToBackendSignUp = async (
     }
   } catch (error) {
     console.error("Error sending token to backend:", error);
+    afterSignInFail({
+      message: "Failed to authenticate with backend",
+      statusCode: 500,
+      errorCode: StatusAndErrorType.InternalError,
+      errors: error
+    });
   }
 };
+
 export const sendIdTokenToBackendLogin = async (
   idToken: string,
   accountType: Accounts,
