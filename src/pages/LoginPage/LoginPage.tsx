@@ -31,7 +31,7 @@ import { FailedResponseDto } from "../../dtos/FailedResponseDto";
 import { StatusAndErrorType } from "../../models/StatusAndErrorType.enum";
 import { useToast } from "../../stores/ToastContext";
 import { ToastColors } from "../../components/Toast";
-import { setCookie } from "../../utils/cookies";
+import { setAuthToken } from "../../utils/cookies";
 
 export const LoginPage = () => {
   const loading = false;
@@ -45,10 +45,14 @@ export const LoginPage = () => {
     try {
       signInWithPopup(firebaseAuth, provider).then((result) => {
         const user = result.user;
-        user.getIdToken(true).then((idToken) => {
-          // const saveJWT = await saveJwtToken(idToken);
-          setCookie("JwtToken", idToken, 2);
-          // console.log(saveJWT);
+        user.getIdToken(true).then(async (idToken) => {
+          // Get the token's expiration time
+          const tokenResult = await user.getIdTokenResult();
+          const expiresIn = new Date(tokenResult.expirationTime).getTime() - Date.now();
+          
+          // Set both token and expiry
+          await setAuthToken(idToken, expiresIn / 1000);
+          
           sendIdTokenToBackendLogin(
             idToken,
             Accounts.GOOGLE,
@@ -68,6 +72,14 @@ export const LoginPage = () => {
       const result = await signInWithPopup(firebaseAuth, provider);
       const user = result.user;
       const idToken = await user.getIdToken(true);
+      
+      // Get the token's expiration time
+      const tokenResult = await user.getIdTokenResult();
+      const expiresIn = new Date(tokenResult.expirationTime).getTime() - Date.now();
+      
+      // Set both token and expiry
+      await setAuthToken(idToken, expiresIn / 1000);
+      
       sendIdTokenToBackendLogin(
         idToken,
         Accounts.FACEBOOK,

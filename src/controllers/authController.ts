@@ -72,11 +72,21 @@ export const sendIdTokenToBackendLogin = async (
     } else if (accountType === Accounts.EMAIL) {
       url = url + "/email";
     }
+
+    // Store the initial token with expiry
+    const tokenResult = await getAuth().currentUser?.getIdTokenResult();
+    if (tokenResult) {
+      const expiresIn = new Date(tokenResult.expirationTime).getTime() - Date.now();
+      await setAuthToken(idToken, expiresIn / 1000);
+    }
+
+    const validToken = await getValidAuthToken();
+
     const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${idToken}`,
+        Authorization: `Bearer ${validToken}`,
       },
     });
     const responseJson = await response.json();
@@ -89,6 +99,12 @@ export const sendIdTokenToBackendLogin = async (
     }
   } catch (error) {
     console.error("Error sending token to backend:", error);
+    afterSignInFail({
+      message: "Failed to authenticate with backend",
+      statusCode: 500,
+      errorCode: StatusAndErrorType.InternalError,
+      errors: error
+    });
   }
 };
 
