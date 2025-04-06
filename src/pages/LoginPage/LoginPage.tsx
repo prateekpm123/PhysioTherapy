@@ -82,15 +82,23 @@ export const LoginPage = () => {
   const afterLoginSuccess = (data: SignInDto) => {
     console.log("Sign-in success:", data);
     dispatch(setUser(data));
-    dispatch(setDoctorDetails(data.userGoogleAuthData.doctorDetails));
-    dispatch(setIsSignedIn(true));
     navigate("/doctorhome/main/newPatient");
+    dispatch(setIsSignedIn(true));
+    if (!data.userGoogleAuthData.doctorDetails) {
+      navigate("/signup/details");
+    } else {
+      dispatch(setDoctorDetails(data.userGoogleAuthData.doctorDetails));
+    }
   };
 
   const afterLoginFail = (response: FailedResponseDto) => {
     // @todo if user tries to directly login without signing up then show : Please sign up first
     if (response.errorCode === StatusAndErrorType.UserNotCreated) {
-      showToast("User doesn't exists, try signing in", undefined, ToastColors.RED);
+      showToast(
+        "User doesn't exists, try signing in",
+        undefined,
+        ToastColors.RED
+      );
       console.log("User was not created");
     } else {
       showToast("Failed to login", undefined, ToastColors.RED);
