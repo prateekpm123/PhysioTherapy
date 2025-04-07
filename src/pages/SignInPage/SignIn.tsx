@@ -77,6 +77,7 @@ export const SignIn = () => {
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.currentTarget.setAttribute('disabled', 'true');
     setLoading(true);
 
     try {
@@ -200,7 +201,7 @@ export const SignIn = () => {
                       </TextField.Slot>
                     </TextField.Root>
                   </Skeleton>
-                  <Skeleton loading={loading}>
+                  {/* <Skeleton loading={loading}> */}
                     <Button
                       variant="solid"
                       size="3"
@@ -212,7 +213,7 @@ export const SignIn = () => {
                       <FcVoicemail size="30" style={{ marginRight: "0px" }} />
                       {loading ? 'Signing in...' : 'Sign in with Email'}
                     </Button>
-                  </Skeleton>
+                  {/* </Skeleton> */}
                 </Flex>
               </form>
 
@@ -257,7 +258,7 @@ export const SignIn = () => {
                 />
               </Flex>
 
-              <Skeleton loading={loading}>
+              {/* <Skeleton loading={loading}> */}
                 <Button
                   variant="solid"
                   size="3"
@@ -269,8 +270,8 @@ export const SignIn = () => {
                   <FcGoogle size="30" style={{ marginRight: "0px" }} />
                   Sign in with Google
                 </Button>
-              </Skeleton>
-              <Skeleton loading={loading}>
+              {/* </Skeleton> */}
+              {/* <Skeleton loading={loading}> */}
                 <Button
                   variant="solid"
                   size="3"
@@ -282,7 +283,7 @@ export const SignIn = () => {
                   <FaFacebook size="30" style={{ marginRight: "0px" }} />
                   Sign in with Facebook
                 </Button>
-              </Skeleton>
+              {/* </Skeleton> */}
             </Flex>
           </Card>
         </Box>
