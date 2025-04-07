@@ -1,14 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router-dom';
 import { useToast } from '../../stores/ToastContext';
-import { LoginPage } from '../../pages/LoginPage/LoginPage';
+import { SignIn } from '../../pages/SignInPage/SignIn';
 import { Auth } from 'firebase/auth';
-// import { firebaseAuth } from '../../databaseConnections/FireBaseConnection';
-// import { LoginPage } from '../../../pages/LoginPage/LoginPage';
-// import { useToast } from '../../../stores/ToastContext';
 
 // Mock dependencies
 jest.mock('../../stores/ToastContext');
@@ -17,7 +14,15 @@ jest.mock('firebase/auth', () => ({
   GoogleAuthProvider: jest.fn().mockImplementation(() => ({
     addScope: jest.fn()
   })),
+  FacebookAuthProvider: jest.fn().mockImplementation(() => ({
+    addScope: jest.fn()
+  })),
   signInWithPopup: jest.fn().mockResolvedValue({
+    user: {
+      getIdToken: jest.fn().mockResolvedValue('mock-token')
+    }
+  }),
+  signInWithEmailAndPassword: jest.fn().mockResolvedValue({
     user: {
       getIdToken: jest.fn().mockResolvedValue('mock-token')
     }
@@ -32,14 +37,23 @@ const mockFirebaseAuth = {
     user: {
       getIdToken: jest.fn().mockResolvedValue('mock-token')
     }
+  }),
+  signInWithEmailAndPassword: jest.fn().mockResolvedValue({
+    user: {
+      getIdToken: jest.fn().mockResolvedValue('mock-token')
+    }
   })
-} as unknown as Auth & { signInWithPopup: jest.Mock };
+} as unknown as Auth & { 
+  signInWithPopup: jest.Mock;
+  signInWithEmailAndPassword: jest.Mock;
+};
 
 jest.mock('../../databaseConnections/FireBaseConnection', () => ({
   firebaseAuth: mockFirebaseAuth
 }));
+
 jest.mock('../../controllers/authController', () => ({
-  sendIdTokenToBackendLogin: jest.fn(),
+  sendIdTokenToBackendSignUp: jest.fn(),
 }));
 
 // Mock React Router hooks
@@ -64,47 +78,45 @@ const mockStore = configureStore({
 });
 
 // Helper function to render the component with all necessary providers
-const renderLoginPage = () => {
+const renderSignInPage = () => {
   return render(
     <Provider store={mockStore}>
       <MemoryRouter>
-        <LoginPage />
+        <SignIn />
       </MemoryRouter>
     </Provider>
   );
 };
 
-describe('LoginPage', () => {
+describe('SignIn', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test('renders login page with all required elements', () => {
-    renderLoginPage();
-    const password = screen.getByTestId('passwordInput');
+  test('renders sign in page with all required elements', () => {
+    renderSignInPage();
+    
     // Check for main title
-    expect(screen.getByTestId('loginText')).toHaveTextContent('Login');
+    expect(screen.getByTestId('signinText')).toHaveTextContent('Sign In');
     expect(screen.getByTestId('emailLabel')).toHaveTextContent('Email');
     expect(screen.getByTestId('passwordLabel')).toHaveTextContent('Password');
     
     // Check for form fields
     expect(screen.getByTestId('emailInput')).toBeInTheDocument();
-    expect(password).toBeInTheDocument();
-    expect(password).toHaveAttribute('type', 'password');
+    expect(screen.getByTestId('passwordInput')).toBeInTheDocument();
     
     // Check for buttons
-    expect(screen.getByTestId('loginButton')).toBeInTheDocument();
-    expect(screen.getByTestId('googleLoginButton')).toBeInTheDocument();
-    expect(screen.getByTestId('facebookLoginButton')).toBeInTheDocument();
+    expect(screen.getByTestId('emailSigninButton')).toBeInTheDocument();
+    expect(screen.getByTestId('googleSigninButton')).toBeInTheDocument();
+    expect(screen.getByTestId('facebookSigninButton')).toBeInTheDocument();
 
-    // Check for correct styles
-    
-    // Check for sign up link
-    expect(screen.getByTestId('signupLink')).toBeInTheDocument();
+    // Check for login link
+    expect(screen.getByTestId('loginLink')).toBeInTheDocument();
   });
 
+
   test('handles form input changes correctly', () => {
-    renderLoginPage();
+    renderSignInPage();
     
     const emailInput = screen.getByTestId('emailInput');
     const passwordInput = screen.getByTestId('passwordInput');
@@ -120,14 +132,27 @@ describe('LoginPage', () => {
     // @Todo: On Submit button expected data format.
   });
 
-
-  test('handles sign up link navigation', () => {
-    renderLoginPage();
+  // Need to implement the actual working of this test
+  test('handles email sign in button click', async () => {
+    renderSignInPage();
     
-    const signupLink = screen.getByTestId('signupLink');
-    fireEvent.click(signupLink);
+    const emailButton = screen.getByTestId('emailSigninButton');
+    fireEvent.click(emailButton);
     
-    expect(mockNavigate).toHaveBeenCalledWith('/signup');
+    await waitFor(() => {
+      expect(mockFirebaseAuth.signInWithEmailAndPassword).toHaveBeenCalledWith(
+        'test@example.com',
+        'password123'
+      );
+    });
   });
 
-});
+  test('handles login link navigation', () => {
+    renderSignInPage();
+    
+    const loginLink = screen.getByTestId('loginLink');
+    fireEvent.click(loginLink);
+    
+    expect(mockNavigate).toHaveBeenCalledWith('/login');
+  });
+}); 

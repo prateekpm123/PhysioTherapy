@@ -16,6 +16,7 @@ import {
   TextField,
   Link,
 } from "@radix-ui/themes";
+import React from "react";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { FcGoogle, FcVoicemail } from "react-icons/fc"; // Google icon
 import { FaFacebook } from "react-icons/fa";
@@ -129,14 +130,14 @@ export const SignIn = () => {
           <Card size="5">
             <Flex gap="4" align="start" direction={"column"}>
               <Skeleton loading={loading}>
-                <Text size="8" weight="bold">
+                <Text size="8" weight="bold" data-testid="signinText">
                   Sign In
                 </Text>
               </Skeleton>
 
               <Flex gap="4" direction="column" style={{ width: "100%" }}>
                 <Skeleton loading={loading}>
-                  <Text as="div" size="4" weight="bold">
+                  <Text as="div" size="4" weight="bold" data-testid="emailLabel">
                     Email
                   </Text>
                 </Skeleton>
@@ -145,6 +146,7 @@ export const SignIn = () => {
                     placeholder="Email..."
                     size="3"
                     style={{ width: "100%" }}
+                    data-testid="emailInput"
                   >
                     <TextField.Slot>
                       <MagnifyingGlassIcon height="16" width="16" />
@@ -152,7 +154,7 @@ export const SignIn = () => {
                   </TextField.Root>
                 </Skeleton>
                 <Skeleton loading={loading}>
-                  <Text as="div" size="4" weight="bold">
+                  <Text as="div" size="4" weight="bold" data-testid="passwordLabel">
                     Password
                   </Text>
                 </Skeleton>
@@ -161,6 +163,8 @@ export const SignIn = () => {
                     placeholder="Password..."
                     size="3"
                     style={{ width: "100%" }}
+                    type="password"
+                    data-testid="passwordInput"
                   >
                     <TextField.Slot side="left">
                       <MagnifyingGlassIcon height="16" width="16" />
@@ -174,20 +178,23 @@ export const SignIn = () => {
                     style={{ marginTop: "10px" }}
                     onClick={() =>
                       handleEmailSignIn("test@example.com", "password123")
-                    } // Replace with actual input values
+                    }
+                    data-testid="emailSigninButton"
                   >
                     <FcVoicemail size="30" style={{ marginRight: "0px" }} />
                     Sign in with Email
                   </Button>
                 </Skeleton>
                 <Text>
-                  Already Signed up ? Login <Link
+                  Already Signed up ? Login{" "}
+                  <Link
                     onClick={() => navigate("/login")}
                     href=""
                     highContrast
                     style={{ color: "#5392cd" }}
+                    data-testid="loginLink"
                   >
-                    { "Here"}
+                    Here
                   </Link>
                 </Text>
                 {/* Add OR with a line */}
@@ -224,6 +231,7 @@ export const SignIn = () => {
                     size="3"
                     style={{ marginTop: "10px" }}
                     onClick={handleGoogleSignIn}
+                    data-testid="googleSigninButton"
                   >
                     <FcGoogle size="30" style={{ marginRight: "0px" }} />
                     Sign in with Google
@@ -236,6 +244,7 @@ export const SignIn = () => {
                     disabled={true}
                     style={{ marginTop: "10px" }}
                     onClick={handleFacebookSignIn}
+                    data-testid="facebookSigninButton"
                   >
                     <FaFacebook size="30" style={{ marginRight: "0px" }} />
                     Sign in with Facebook

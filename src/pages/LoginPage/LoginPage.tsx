@@ -9,6 +9,7 @@ import {
   Link,
 } from "@radix-ui/themes";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import React from 'react';
 import {
   FacebookAuthProvider,
   GoogleAuthProvider,
@@ -137,7 +138,7 @@ export const LoginPage = () => {
 
               <Flex gap="4" direction="column" style={{ width: "100%" }}>
                 <Skeleton loading={loading}>
-                  <Text as="div" size="4" weight="bold">
+                  <Text as="div" size="4" weight="bold" data-testid="emailLabel">
                     Email
                   </Text>
                 </Skeleton>
@@ -146,6 +147,7 @@ export const LoginPage = () => {
                     placeholder="Email..."
                     size="3"
                     style={{ width: "100%", display: "flex" }}
+                    data-testid="emailInput"
                   >
                     <TextField.Slot>
                       <MagnifyingGlassIcon height="16" width="16" />
@@ -153,7 +155,7 @@ export const LoginPage = () => {
                   </TextField.Root>
                 </Skeleton>
                 <Skeleton loading={loading}>
-                  <Text as="div" size="4" weight="bold">
+                  <Text as="div" size="4" weight="bold" data-testid="passwordLabel">
                     Password
                   </Text>
                 </Skeleton>
@@ -162,6 +164,8 @@ export const LoginPage = () => {
                     placeholder="Password..."
                     size="3"
                     style={{ width: "100%" }}
+                    data-testid="passwordInput"
+                    type="password"
                   >
                     <TextField.Slot side="left">
                       <MagnifyingGlassIcon height="16" width="16" />
@@ -173,6 +177,7 @@ export const LoginPage = () => {
                     variant="solid"
                     size="3"
                     style={{ marginTop: "10px" }}
+                    data-testid="loginButton"
                   >
                     Login
                   </Button>
@@ -183,6 +188,7 @@ export const LoginPage = () => {
                       highContrast
                       onClick={() => navigate("/signup")}
                       style={{ color: "#5392cd" }}
+                      data-testid="signupLink"
                     >
                       Here
                     </Link>
@@ -222,6 +228,7 @@ export const LoginPage = () => {
                     size="3"
                     style={{ marginTop: "10px" }}
                     onClick={handleGoogleLogin}
+                    data-testid="googleLoginButton"
                   >
                     <FcGoogle size="30" style={{ marginRight: "0px" }} />
                     Sign in with Google
@@ -234,6 +241,7 @@ export const LoginPage = () => {
                     disabled={true}
                     style={{ marginTop: "10px" }}
                     onClick={handleFacebookLogin}
+                    data-testid="facebookLoginButton"
                   >
                     <FaFacebook size="30" style={{ marginRight: "0px" }} />
                     Sign in with Facebook
