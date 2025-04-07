@@ -130,7 +130,7 @@ export const LoginPage = () => {
           <Card size="5">
             <Flex gap="4" align="start" direction={"column"}>
               <Skeleton loading={loading}>
-                <Text size="8" weight="bold">
+                <Text size="8" weight="bold" data-testid="loginText">
                   Login
                 </Text>
               </Skeleton>
