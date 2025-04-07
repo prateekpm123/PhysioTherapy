@@ -57,7 +57,8 @@ const userSessionSlice = createSlice({
       state.user = {
         uid: userData.userGoogleAuthData.uid, // Preserve `uid` if needed
         type: UserType.DOCTOR, // Preserve `type` if needed
-        name: userData.userGoogleAuthData.name,
+        name:
+          userData.userGoogleAuthData.name || userData.userGoogleAuthData.email,
         pictureUrl: userData.userGoogleAuthData.picture,
         email: userData.userGoogleAuthData.email,
         googleIss: userData.userGoogleAuthData.iss,
@@ -79,7 +80,7 @@ const userSessionSlice = createSlice({
     setDoctorDetails: (state, action) => {
       const doctorData = action.payload as DoctorDetails;
       state.doctorDetails = {
-        name: doctorData.name,
+        name: doctorData.name || doctorData.email,
         age: doctorData.age,
         country_code: doctorData.country_code,
         phone_number: doctorData.phone_number,
@@ -97,7 +98,7 @@ const userSessionSlice = createSlice({
         doctor_experience: doctorData.doctor_experience,
         doctor_awards: doctorData.doctor_awards,
         doctor_certification: doctorData.doctor_certification,
-        d_id: doctorData.d_id
+        d_id: doctorData.d_id,
       };
     },
     setIsSignedIn: (state, action) => {

@@ -132,7 +132,7 @@ describe('SignIn', () => {
     // @Todo: On Submit button expected data format.
   });
 
-  // Need to implement the actual working of this test
+  // @Todo Need to implement the actual working of this test
   test('handles email sign in button click', async () => {
     renderSignInPage();
     

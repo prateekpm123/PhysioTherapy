@@ -5,17 +5,18 @@ import { Avatar as Avatar2 } from "radix-ui";
 import { useSelector } from "react-redux";
 import { UserSessionStateType } from "../../stores/userSessionStore";
 import { useNavigate } from "react-router-dom";
+import { clearAuthToken } from "../../utils/cookies";
 
-const DropdownTrigger = styled('button', {
-  background: 'none',
-  border: 'none',
+const DropdownTrigger = styled("button", {
+  background: "none",
+  border: "none",
   padding: 0,
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  '&:hover': {
-    opacity: 0.8
-  }
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  "&:hover": {
+    opacity: 0.8,
+  },
 });
 
 const DoctorNavBar = () => {
@@ -24,23 +25,16 @@ const DoctorNavBar = () => {
   );
   const navigate = useNavigate();
 
-  const onProfileClick = async (e: { preventDefault: () => void }) => {
+  const onSignOutClick = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    await fetch("http://localhost:3000/api/me", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: user.uid,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data));
+    clearAuthToken();
+    navigate("/login");
   };
 
   const onSettingsClick = (e: { preventDefault: () => void }) => {
-    e.preventDefault(); 
-    navigate('/doctorhome/settings');
-  }
+    e.preventDefault();
+    navigate("/doctorhome/settings");
+  };
 
   return (
     <DropdownMenu.Root>
@@ -52,9 +46,9 @@ const DoctorNavBar = () => {
               alt={user.name}
               width={32}
               height={32}
-              style={{ borderRadius: '50%' }}
+              style={{ borderRadius: "50%" }}
             />
-            <Avatar2.Fallback delayMs={600}>
+            <Avatar2.Fallback delayMs={600} style={{ width: 62, height: 62 }}>
               {user.name?.charAt(0)}
             </Avatar2.Fallback>
           </Avatar2.Root>
@@ -79,13 +73,11 @@ const DoctorNavBar = () => {
             </Box>
           </Flex>
         </DropdownMenu.Item>
-        <DropdownMenu.Item onClick={onSettingsClick} shortcut="⌘ ,">Settings</DropdownMenu.Item>
+        <DropdownMenu.Item onClick={onSettingsClick} shortcut="⌘ ,">
+          Settings
+        </DropdownMenu.Item>
         <DropdownMenu.Separator />
-        <DropdownMenu.Item
-          shortcut="⌘ ⌫"
-          color="red"
-          onClick={onProfileClick}
-        >
+        <DropdownMenu.Item shortcut="⌘ ⌫" color="red" onClick={onSignOutClick}>
           Sign Out
         </DropdownMenu.Item>
       </DropdownMenu.Content>

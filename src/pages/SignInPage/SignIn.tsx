@@ -2,7 +2,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   FacebookAuthProvider,
-  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { firebaseAuth } from "../../databaseConnections/FireBaseConnection"; // Your firebase.js file
 import { Accounts } from "../../models/Accounts";
@@ -16,7 +16,7 @@ import {
   TextField,
   Link,
 } from "@radix-ui/themes";
-import React from "react";
+import React, { useState } from "react";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { FcGoogle, FcVoicemail } from "react-icons/fc"; // Google icon
 import { FaFacebook } from "react-icons/fa";
@@ -33,7 +33,9 @@ import { ToastColors } from "../../components/Toast";
 // import { ToastColors } from "../../components/Toast";
 
 export const SignIn = () => {
-  const loading = false;
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { showToast } = useToast();
@@ -73,23 +75,41 @@ export const SignIn = () => {
     }
   };
 
-  const handleEmailSignIn = async (email: string, password: string) => {
+  const handleEmailSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
     try {
-      const result = await signInWithEmailAndPassword(
-        firebaseAuth,
-        email,
-        password
-      );
+      // Create user with Firebase Auth
+      const result = await createUserWithEmailAndPassword(firebaseAuth, email, password);
       const user = result.user;
-      const idToken = await user.getIdToken();
-      sendIdTokenToBackendSignUp(
+      
+      // Get the ID token
+      const idToken = await user.getIdToken(true);
+      
+      // Send token to backend
+      await sendIdTokenToBackendSignUp(
         idToken,
         Accounts.EMAIL,
         afterSignInSuccess,
         afterSignInFail
       );
-    } catch (error) {
-      console.error("Email sign-in error:", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setLoading(false);
+      // Handle Firebase Auth errors
+      if (error.code === 'auth/invalid-email') {
+        showToast('Invalid email address', undefined, ToastColors.RED);
+      } else if (error.code === 'auth/email-already-in-use') {
+        showToast('This email is already registered. Please sign in instead.', undefined, ToastColors.RED);
+      } else if (error.code === 'auth/weak-password') {
+        showToast('Password should be at least 6 characters', undefined, ToastColors.RED);
+      } else if (error.code === 'auth/operation-not-allowed') {
+        showToast('Email/password accounts are not enabled', undefined, ToastColors.RED);
+      } else {
+        console.error('Sign up error:', error);
+        showToast('An error occurred during sign up. Please try again.', undefined, ToastColors.RED);
+      }
     }
   };
 
@@ -135,122 +155,134 @@ export const SignIn = () => {
                 </Text>
               </Skeleton>
 
-              <Flex gap="4" direction="column" style={{ width: "100%" }}>
-                <Skeleton loading={loading}>
-                  <Text as="div" size="4" weight="bold" data-testid="emailLabel">
-                    Email
-                  </Text>
-                </Skeleton>
-                <Skeleton loading={loading}>
-                  <TextField.Root
-                    placeholder="Email..."
-                    size="3"
-                    style={{ width: "100%" }}
-                    data-testid="emailInput"
-                  >
-                    <TextField.Slot>
-                      <MagnifyingGlassIcon height="16" width="16" />
-                    </TextField.Slot>
-                  </TextField.Root>
-                </Skeleton>
-                <Skeleton loading={loading}>
-                  <Text as="div" size="4" weight="bold" data-testid="passwordLabel">
-                    Password
-                  </Text>
-                </Skeleton>
-                <Skeleton loading={loading}>
-                  <TextField.Root
-                    placeholder="Password..."
-                    size="3"
-                    style={{ width: "100%" }}
-                    type="password"
-                    data-testid="passwordInput"
-                  >
-                    <TextField.Slot side="left">
-                      <MagnifyingGlassIcon height="16" width="16" />
-                    </TextField.Slot>
-                  </TextField.Root>
-                </Skeleton>
-                <Skeleton loading={loading}>
-                  <Button
-                    variant="solid"
-                    size="3"
-                    style={{ marginTop: "10px" }}
-                    onClick={() =>
-                      handleEmailSignIn("test@example.com", "password123")
-                    }
-                    data-testid="emailSigninButton"
-                  >
-                    <FcVoicemail size="30" style={{ marginRight: "0px" }} />
-                    Sign in with Email
-                  </Button>
-                </Skeleton>
-                <Text>
-                  Already Signed up ? Login{" "}
-                  <Link
-                    onClick={() => navigate("/login")}
-                    href=""
-                    highContrast
-                    style={{ color: "#5392cd" }}
-                    data-testid="loginLink"
-                  >
-                    Here
-                  </Link>
-                </Text>
-                {/* Add OR with a line */}
-                <Flex
-                  align="center"
-                  style={{ margin: "20px 0", width: "100%" }}
-                >
-                  <Box
-                    style={{
-                      flex: 1,
-                      height: "1px",
-                      backgroundColor: "#c0c0c0",
-                    }}
-                  />
-                  <Text
-                    size="4"
-                    weight="bold"
-                    style={{ margin: "0 10px", color: "#c0c0c0" }}
-                  >
-                    OR
-                  </Text>
-                  <Box
-                    style={{
-                      flex: 1,
-                      height: "1px",
-                      backgroundColor: "#c0c0c0",
-                    }}
-                  />
+              <form onSubmit={handleEmailSignIn} style={{ width: '100%' }}>
+                <Flex gap="4" direction="column" style={{ width: "100%" }}>
+                  <Skeleton loading={loading}>
+                    <Text as="div" size="4" weight="bold" data-testid="emailLabel">
+                      Email
+                    </Text>
+                  </Skeleton>
+                  <Skeleton loading={loading}>
+                    <TextField.Root
+                      placeholder="Email..."
+                      size="3"
+                      style={{ width: "100%" }}
+                      data-testid="emailInput"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      type="email"
+                    >
+                      <TextField.Slot>
+                        <MagnifyingGlassIcon height="16" width="16" />
+                      </TextField.Slot>
+                    </TextField.Root>
+                  </Skeleton>
+                  <Skeleton loading={loading}>
+                    <Text as="div" size="4" weight="bold" data-testid="passwordLabel">
+                      Password
+                    </Text>
+                  </Skeleton>
+                  <Skeleton loading={loading}>
+                    <TextField.Root
+                      placeholder="Password..."
+                      size="3"
+                      style={{ width: "100%" }}
+                      data-testid="passwordInput"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      type="password"
+                      minLength={6}
+                    >
+                      <TextField.Slot side="left">
+                        <MagnifyingGlassIcon height="16" width="16" />
+                      </TextField.Slot>
+                    </TextField.Root>
+                  </Skeleton>
+                  <Skeleton loading={loading}>
+                    <Button
+                      variant="solid"
+                      size="3"
+                      style={{ marginTop: "10px" }}
+                      type="submit"
+                      data-testid="emailSigninButton"
+                      disabled={loading}
+                    >
+                      <FcVoicemail size="30" style={{ marginRight: "0px" }} />
+                      {loading ? 'Signing in...' : 'Sign in with Email'}
+                    </Button>
+                  </Skeleton>
                 </Flex>
+              </form>
 
-                <Skeleton loading={loading}>
-                  <Button
-                    variant="solid"
-                    size="3"
-                    style={{ marginTop: "10px" }}
-                    onClick={handleGoogleSignIn}
-                    data-testid="googleSigninButton"
-                  >
-                    <FcGoogle size="30" style={{ marginRight: "0px" }} />
-                    Sign in with Google
-                  </Button>
-                </Skeleton>
-                <Skeleton loading={loading}>
-                  <Button
-                    variant="solid"
-                    size="3"
-                    disabled={true}
-                    style={{ marginTop: "10px" }}
-                    onClick={handleFacebookSignIn}
-                    data-testid="facebookSigninButton"
-                  >
-                    <FaFacebook size="30" style={{ marginRight: "0px" }} />
-                    Sign in with Facebook
-                  </Button>
-                </Skeleton>
+              <Text>
+                Already Signed up ? Login{" "}
+                <Link
+                  onClick={() => navigate("/login")}
+                  href=""
+                  highContrast
+                  style={{ color: "#5392cd" }}
+                  data-testid="loginLink"
+                >
+                  Here
+                </Link>
+              </Text>
+
+              {/* Add OR with a line */}
+              <Flex
+                align="center"
+                style={{ margin: "20px 0", width: "100%" }}
+              >
+                <Box
+                  style={{
+                    flex: 1,
+                    height: "1px",
+                    backgroundColor: "#c0c0c0",
+                  }}
+                />
+                <Text
+                  size="4"
+                  weight="bold"
+                  style={{ margin: "0 10px", color: "#c0c0c0" }}
+                >
+                  OR
+                </Text>
+                <Box
+                  style={{
+                    flex: 1,
+                    height: "1px",
+                    backgroundColor: "#c0c0c0",
+                  }}
+                />
               </Flex>
+
+              <Skeleton loading={loading}>
+                <Button
+                  variant="solid"
+                  size="3"
+                  style={{ marginTop: "10px", width: "100%" }}
+                  onClick={handleGoogleSignIn}
+                  data-testid="googleSigninButton"
+                  disabled={loading}
+                >
+                  <FcGoogle size="30" style={{ marginRight: "0px" }} />
+                  Sign in with Google
+                </Button>
+              </Skeleton>
+              <Skeleton loading={loading}>
+                <Button
+                  variant="solid"
+                  size="3"
+                  disabled={true}
+                  style={{ marginTop: "10px", width: "100%" }}
+                  onClick={handleFacebookSignIn}
+                  data-testid="facebookSigninButton"
+                >
+                  <FaFacebook size="30" style={{ marginRight: "0px" }} />
+                  Sign in with Facebook
+                </Button>
+              </Skeleton>
             </Flex>
           </Card>
         </Box>
