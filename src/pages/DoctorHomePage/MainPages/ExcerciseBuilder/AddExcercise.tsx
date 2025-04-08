@@ -31,6 +31,20 @@ export const AddExcercise = () => {
     excercise_sets: 0,
     excercise_sets_description: "",
     excercise_image_url: "",
+    excercise_video_url: '',
+    excercise_duration: '',
+    excercise_category: '',
+    excercise_type: '',
+    excercise_tags: '',
+    excercise_level: '',
+    excercise_equipment: '',
+    excercise_target: '',
+    excercise_benefits: '',
+    excercise_precautions: '',
+    excercise_variations: '',
+    excercise_mistakes: '',
+    excercise_tips: '',
+    excercise_created_by: ''
   });
 
   const doctorData = useSelector(
