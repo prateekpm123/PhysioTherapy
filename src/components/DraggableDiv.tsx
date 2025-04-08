@@ -1,119 +1,92 @@
-import { IDraggableDiv } from '../models/IDraggableDiv';
-
+import { styled } from "@stitches/react";
+import { themeColors } from "../theme/theme";
 import React, { useState, useRef, MouseEvent, useEffect } from 'react';
 
-const DraggableDiv: React.FC<IDraggableDiv> = (props) => {
+interface DraggableDivProps {
+  children: React.ReactNode;
+  parentRef: React.RefObject<HTMLDivElement>;
+  onDragEnd?: () => void;
+}
+
+const DraggableContainer = styled('div', {
+  cursor: 'grab',
+  userSelect: 'none',
+  backgroundColor: themeColors.background.elevation1,
+  borderRadius: '8px',
+  transition: 'transform 0.2s ease',
+  
+  '&:active': {
+    cursor: 'grabbing',
+  },
+});
+
+const DraggableDiv: React.FC<DraggableDivProps> = ({ children, parentRef, onDragEnd }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const divRef = useRef<HTMLDivElement>(null);
-  const parentRef = props.parentRef;
-  const [parentDimensions, setParentDimensions] = useState({ width: 0, height: 0 });
-  const [divDimensions, setDivDimensions] = useState({ width: 0, height: 0 });
+  const elementRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (parentRef.current) {
-      setParentDimensions({
-        width: parentRef.current.clientWidth,
-        height: parentRef.current.clientHeight,
-      });
-    }
-
-    if (divRef.current){
-      setDivDimensions({
-        width: divRef.current.clientWidth,
-        height: divRef.current.clientHeight,
-      });
-    }
-
-    const handleResize = () => {
-      if (parentRef.current) {
-        setParentDimensions({
-          width: parentRef.current.clientWidth,
-          height: parentRef.current.clientHeight,
-        });
-      }
-      if (divRef.current) {
-        setDivDimensions({
-          width: divRef.current.clientWidth,
-          height: divRef.current.clientHeight,
-        });
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-
-  }, [parentRef]);
-
-  const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
-    if (divRef.current) {
+  const handleMouseDown = (e: MouseEvent) => {
+    if (elementRef.current) {
       setIsDragging(true);
-      setOffset({
-        x: e.clientX - divRef.current.offsetLeft,
-        y: e.clientY - divRef.current.offsetTop,
+      const rect = elementRef.current.getBoundingClientRect();
+      setDragOffset({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
       });
     }
   };
 
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (isDragging) {
-      let newX = e.clientX - offset.x;
-      let newY = e.clientY - offset.y;
+  const handleMouseMove = (e: globalThis.MouseEvent) => {
+    if (isDragging && elementRef.current && parentRef.current) {
+      const parentRect = parentRef.current.getBoundingClientRect();
+      const elementRect = elementRef.current.getBoundingClientRect();
+
+      let newX = e.clientX - parentRect.left - dragOffset.x;
+      let newY = e.clientY - parentRect.top - dragOffset.y;
 
       // Boundary checks
-      if (newX < 0) {
-        newX = 0;
-      } else if (newX > parentDimensions.width - divDimensions.width) {
-        newX = parentDimensions.width - divDimensions.width;
-      }
-
-      if (newY < 0) {
-        newY = 0;
-      } else if (newY > parentDimensions.height - divDimensions.height) {
-        newY = parentDimensions.height - divDimensions.height;
-      }
+      newX = Math.max(0, Math.min(newX, parentRect.width - elementRect.width));
+      newY = Math.max(0, Math.min(newY, parentRect.height - elementRect.height));
 
       setPosition({ x: newX, y: newY });
     }
   };
 
   const handleMouseUp = () => {
-    setIsDragging(false);
+    if (isDragging) {
+      setIsDragging(false);
+      if (onDragEnd) {
+        onDragEnd();
+      }
+    }
   };
 
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging]);
+
   return (
-    <div
-      ref={parentRef}
+    <DraggableContainer
+      ref={elementRef}
+      onMouseDown={handleMouseDown}
       style={{
-        position: 'relative', // Parent needs a positioning context
-        width: '500px',
-        height: '300px',
-        border: '1px solid black',
+        position: 'absolute',
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        transform: isDragging ? 'scale(1.02)' : 'scale(1)',
       }}
     >
-      <div
-        ref={divRef}
-        style={{
-          position: 'absolute',
-          left: position.x,
-          top: position.y,
-          width: '100px',
-          height: '50px',
-          backgroundColor: 'lightblue',
-          cursor: isDragging ? 'grabbing' : 'grab',
-        }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-      >
-        Drag Me!
-      </div>
-    </div>
+      {children}
+    </DraggableContainer>
   );
 };
 
