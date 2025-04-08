@@ -129,7 +129,7 @@ export const PlannerList = (inputs: PlannerListProps) => {
       <PlannerContent>
         <Suspense fallback={<div>Loading...</div>}>
           {excerciseBuilderPlannerList.length === 0 ? (
-            <Box style={{ textAlign: 'center', color: 'rgb(156, 163, 175)', padding: '24px' }}>
+            <Box data-testid="empty-state" style={{ textAlign: 'center', color: 'rgb(156, 163, 175)', padding: '24px' }}>
               No exercises added yet
             </Box>
           ) : (
@@ -145,7 +145,12 @@ export const PlannerList = (inputs: PlannerListProps) => {
         </Suspense>
       </PlannerContent>
 
-      <CreatePlanButton variant="surface" size="3" onClick={handleCreateExcercisePlan}>
+      <CreatePlanButton 
+        data-testid="create-plan-button"
+        variant="surface" 
+        size="3" 
+        onClick={handleCreateExcercisePlan}
+      >
         Create Plan
       </CreatePlanButton>
     </PlannerContainer>

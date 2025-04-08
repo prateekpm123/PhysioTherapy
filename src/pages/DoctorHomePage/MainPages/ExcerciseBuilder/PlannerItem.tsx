@@ -3,6 +3,7 @@ import { IPlannerItem } from "../../../../models/IPlannerItems";
 import { useState } from "react";
 import { Flex, Text } from "@radix-ui/themes";
 import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
+import React from "react";
 
 // import DraggableDiv from "./DraggableDiv";
 
@@ -35,7 +36,7 @@ export const PlannerItem = (plannerData: IPlannerItem) => {
           gridTemplateColumns: "4fr 1fr",
         }}
       >
-        <Text color="gray" style={{ color: ThemeColorPallate.cardFontColorBlack }}>
+        <Text data-testid="excercise-name" color="gray" style={{ color: ThemeColorPallate.cardFontColorBlack }}>
           {plannerData.excercise.excercise_name}
         </Text>
         <Flex justify="end" align="center">
@@ -47,6 +48,7 @@ export const PlannerItem = (plannerData: IPlannerItem) => {
             style={{ backgroundColor: deleteBtnBgColor }}
           >
             <RiDeleteBinLine
+              data-testid="delete-button"
               color={ThemeColorPallate.cardFontColorBlack}
               size={20}
               onPointerEnter={onPointerEnterInDelete}
