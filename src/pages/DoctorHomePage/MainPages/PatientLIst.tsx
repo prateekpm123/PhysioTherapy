@@ -214,6 +214,7 @@ const PatientList: React.FC<PatientListProps> = ({ onCloseMobileMenu }) => {
         <HeaderContainer>
           <StyledHeading>Patient List</StyledHeading>
           <ReloadIcon
+            data-testid="refresh-icon"
             onClick={onPatientLisRefresh}
             width="20"
             height="20"
@@ -240,7 +241,11 @@ const PatientList: React.FC<PatientListProps> = ({ onCloseMobileMenu }) => {
                 />
               ))
           : filteredData.map((item: iPatientDto) => (
-              <PatientCard key={item.p_id} onClick={() => onPatientCardClick(item)}>
+              <PatientCard 
+                key={item.p_id} 
+                onClick={() => onPatientCardClick(item)}
+                data-testid="patient-card"
+              >
                 <Text
                   size="5"
                   weight="bold"
