@@ -23,11 +23,7 @@ import { useNavigate, useParams } from "react-router-dom";
 export const AddExcercise = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  // const [excercise, setExcercise] = useState<iExcerciseData>(
-  //   {} as iExcerciseData
-  // );
-
-  const excercise = {
+  const [excercise, setExcercise] = useState<iExcerciseData>({
     excercise_name: "",
     excercise_description: "",
     excercise_reps: 0,
@@ -35,7 +31,7 @@ export const AddExcercise = () => {
     excercise_sets: 0,
     excercise_sets_description: "",
     excercise_image_url: "",
-  } as iExcerciseData;
+  });
 
   const doctorData = useSelector(
     (state: UserSessionStateType) => state.userSession.user
@@ -67,20 +63,26 @@ export const AddExcercise = () => {
   ) => {
     e.stopPropagation();
     if (field === "excercise_reps" || field === "excercise_sets") {
-      excercise[field] = parseInt(e.target.value, 10);
-      // setExcercise({ ...excercise, [field]: parseInt(e.target.value, 10) });
+      setExcercise(prev => ({
+        ...prev,
+        [field]: parseInt(e.target.value, 10) || 0
+      }));
     } else {
-      excercise[field] = e.target.value as any;
-      // setExcercise({ ...excercise, [field]: e.target.value as any });
+      setExcercise(prev => ({
+        ...prev,
+        [field]: e.target.value
+      }));
     }
   };
 
   const onCreateBtnClick = () => {
     // setCreateExcerciseBtnText("Creating...");
     if (imageUrl) {
-      excercise.excercise_image_url = imageUrl;
-      // setExcercise({ ...excercise, ["excercise_image_url"]: imageUrl });
-      handleCreateExcercise(excercise);
+      const updatedExcercise = {
+        ...excercise,
+        excercise_image_url: imageUrl
+      };
+      handleCreateExcercise(updatedExcercise);
     }
   };
 
