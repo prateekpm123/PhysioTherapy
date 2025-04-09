@@ -1,18 +1,13 @@
-import { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState, useRef, useCallback } from "react";
 import { ExcerciseTile } from "./ExcerciseBuilder/ExcerciseTile";
 import {
   ExcerciseType,
   iExcerciseDataDto,
 } from "../../../models/ExcerciseInterface";
 import { PlannerList } from "./ExcerciseBuilder/PlannerList";
-import { ExcerciseDetail } from "./ExcerciseBuilder/ExcerciseDetail";
 import Modal from "../../../components/Modal";
 import { PDFPreview } from "../../../components/PDFPreview";
-// import { IoMdAdd } from "react-icons/io";
-import { AddExcercise } from "./ExcerciseBuilder/AddExcercise";
-import { EditExcercise } from "./ExcerciseBuilder/EditExcercise";
-import React from "react";
-import { Box, Button, TextField } from "@radix-ui/themes";
+import { Box, Button, TextField, Spinner, Text, Flex } from "@radix-ui/themes";
 import { getAllExcercises } from "../../../controllers/ExcerciseController";
 import ThemeColorPallate from "../../../assets/ThemeColorPallate";
 import { useCurrentMainScreenContext } from "../DoctorHomePage";
@@ -21,6 +16,9 @@ import { DefaultToastTiming, useToast } from "../../../stores/ToastContext";
 import { ToastColors } from "../../../components/Toast";
 import { IoMdAdd } from "react-icons/io";
 import { styled } from "@stitches/react";
+import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
+import { useDebounce } from "../../../hooks/useDebounce";
+// import { useDebounce } from '../../../hooks/useDebounce';
 
 const BuilderContainer = styled('div', {
   display: 'flex',
@@ -49,7 +47,7 @@ const ExerciseGrid = styled(Box, {
   gap: '16px',
   width: '100%',
   height: '100%',
-  maxHeight: 'calc(100vh - 140px)', // Account for search bar and padding
+  maxHeight: 'calc(100vh - 150px)',
   overflow: 'auto',
   gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
   padding: '8px',
@@ -57,6 +55,7 @@ const ExerciseGrid = styled(Box, {
   '@media (max-width: 768px)': {
     gridTemplateColumns: '1fr',
     gap: '12px',
+    maxHeight: 'calc(100vh - 130px)',
   }
 });
 
@@ -144,12 +143,13 @@ const PlannerSidebar = styled(Box, {
   }
 });
 
+const LIMIT = 50;
+
 export const ExcerciseBuilder = () => {
-  const [data2, setData2] = useState<iExcerciseDataDto[] | null>();
-  const [excercises, setExcercises] = useState<iExcerciseDataDto[]>();
-  // const [plannerItems, setPlannerItems] = useState<iExcerciseDataDto[]>([]);
+  const [displayedExercises, setDisplayedExercises] = useState<iExcerciseDataDto[]>([]);
   const {
     isExcerciseBuilderRefresh,
+    isExcerciseBuilderLoading,
     setIsExcerciseBuilderLoading,
     excerciseBuilderPlannerList,
     setExcerciseBuilderPlannerList,
@@ -157,138 +157,270 @@ export const ExcerciseBuilder = () => {
   const { showToast } = useToast();
   const [isPlannerListModalOpen, setIsPlannerListModalOpen] =
     useState<boolean>(false);
-  const [isExcerciseDetailModalOpen, setIsExcerciseDetailModalOpen] =
-    useState<boolean>(false);
   const [isPDFPreviewModalOpen, setIsPDFPreviewModalOpen] =
     useState<boolean>(false);
-  const [isAddExcerciseModalOpen, setIsAddExcerciseModalOpen] =
-    useState<boolean>(false);
-  const [isEditExcerciseModalOpen, setIsEditExcerciseModalOpen] =
-    useState<boolean>(false);
-  const [currentClickedExcerciseTile, setCurrentClickedExcerciseTile] =
-    useState<iExcerciseDataDto>();
-  const [currentExcerciseTile, setCurrentExcerciseTile] = useState<iExcerciseDataDto | null>(null);
 
     const navigate = useNavigate();
     const {pid} = useParams();
 
-  const search = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchValue = e.target.value;
-    if (searchValue === "" && data2) {
-      setExcercises(data2);
-      return;
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const debouncedValue = useDebounce(searchTerm, 300);
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const fetchExerciseData = useCallback(async (currentOffset: number, limit: number, term: string, isInitialLoad = false) => {
+    if (isInitialLoad) {
+        setIsExcerciseBuilderLoading(true);
+    } else {
+        setIsLoadingMore(true);
     }
-    const filteredExcercises = data2?.filter((excercise) => {
-      return excercise.excercise_name
-        .toLowerCase()
-        .includes(searchValue.toLowerCase());
-    });
-    setExcercises(filteredExcercises);
-  };
+    console.log(`FETCHING EXERCISES: offset=${currentOffset}, limit=${limit}, term='${term}', isInitialLoad=${isInitialLoad}`);
 
-  const onAdd = (clickedExcercise: iExcerciseDataDto) => {
-    // Check if the excercise is already added
-    if (
-      excerciseBuilderPlannerList.find(
-        (item) => item.e_id === clickedExcercise.e_id
-      )
-    ) {
-      showToast(
-        "Excercise already added",
-        DefaultToastTiming,
-        ToastColors.YELLOW
-      );
-      console.log(currentExcerciseTile);
-      return;
-    }
-    setExcerciseBuilderPlannerList((excerciseBuilderPlannerList) => [
-      ...excerciseBuilderPlannerList,
-      clickedExcercise,
-    ]);
-  };
-
-  const onExcerciseTileForDetailClicked = (
-    excercise: iExcerciseDataDto,
-    excerciseKey: string
-  ) => {
-    excercise.e_id = excerciseKey;
-    setCurrentClickedExcerciseTile(excercise);
-    setIsExcerciseDetailModalOpen(true);
-  };
-
-  const fetchExcerciseData = () => {
-    setIsExcerciseBuilderLoading(true);
     getAllExcercises({
-      data: {},
+      data: { 
+          limit: limit,
+          offset: currentOffset,
+          searchTerm: term,
+       },
       afterAPISuccess: (response) => {
-        setData2(response.excercises);
-        setExcercises(response.excercises);
-        setIsExcerciseBuilderLoading(false);
-        // setPatients(response.patients);
-        // setIsLoading(false);
-        console.log(response);
+        console.log('API Success Response:', response);
+        const newExercises = response.data?.excercises || [];
+        const pagination = response.data?.pagination;
+        const receivedCount = newExercises.length;
+        console.log(`Received ${receivedCount} exercises. Limit was ${limit}. Backend reports total: ${pagination?.total}`);
+        
+        setDisplayedExercises(prev => isInitialLoad ? newExercises : [...prev, ...newExercises]);
+        const newOffset = currentOffset + receivedCount;
+        setOffset(newOffset);
+        
+        let moreAvailable = false;
+        if (pagination && typeof pagination.total === 'number') {
+            moreAvailable = newOffset < pagination.total;
+        } else {
+            moreAvailable = receivedCount === (pagination?.limit || receivedCount);
+            console.warn("Pagination total count missing or invalid, falling back to comparing received count with backend limit.");
+        }
+
+        setHasMore(moreAvailable);
+        console.log(`Setting hasMore to: ${moreAvailable}`);
+        
+        if (isInitialLoad) {
+           setInitialLoadComplete(true);
+           setIsExcerciseBuilderLoading(false);
+        } else {
+           setIsLoadingMore(false);
+        }
       },
       afterAPIFail: (response) => {
-        // ErrorHandler(response);
-        // setIsLoading(false);
-        console.log(response);
+        console.error("API Failure Response:", response);
+        showToast("Failed to load exercises", DefaultToastTiming, ToastColors.RED);
+        setHasMore(false); 
+        console.log('Setting hasMore to: false (API failed)');
+         if (isInitialLoad) {
+             setInitialLoadComplete(true);
         setIsExcerciseBuilderLoading(false);
+         } else {
+             setIsLoadingMore(false);
+         }
       },
     });
-  };
-
-  // const onAddExcerciseClick = () => {
-  //   setIsAddExcerciseModalOpen(true);
-  // };
-
-  // const onPlannerListCounterBtnClick = () => {
-  //   setIsPlannerListModalOpen(true);
-  // };
-
-  const onEditExcerciseClick = (
-    excercise: iExcerciseDataDto,
-    excerciseKey: string
-  ) => {
-    excercise.e_id = excerciseKey;
-    setCurrentExcerciseTile(excercise);
-    setIsEditExcerciseModalOpen(true);
-  };
+  }, [setIsExcerciseBuilderLoading, showToast]);
 
   useEffect(() => {
-    fetchExcerciseData();
-  }, [isExcerciseBuilderRefresh]);
+      setDisplayedExercises([]);
+      setOffset(0);
+      setHasMore(true);
+      setInitialLoadComplete(false);
+      const initialOffset = 0; 
+      fetchExerciseData(initialOffset, LIMIT, debouncedValue, true);
+      if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop = 0;
+      }
+  }, [debouncedValue, fetchExerciseData]);
+
+  useEffect(() => {
+     if (isExcerciseBuilderRefresh) {
+         console.log("Manual refresh triggered");
+         setDisplayedExercises([]);
+         setOffset(0);
+         setHasMore(true);
+         setInitialLoadComplete(false);
+         const initialOffset = 0; 
+         fetchExerciseData(initialOffset, LIMIT, debouncedValue, true);
+         if (scrollContainerRef.current) {
+             scrollContainerRef.current.scrollTop = 0;
+         }
+     }
+  }, [isExcerciseBuilderRefresh, debouncedValue, fetchExerciseData]);
+
+  const handleScroll = useCallback(() => {
+    console.log("Scroll event detected.");
+    const container = scrollContainerRef.current;
+    
+    console.log(`Scroll Check States: isLoadingMore=${isLoadingMore}, hasMore=${hasMore}, initialLoadComplete=${initialLoadComplete}`);
+    
+    if (!container) {
+        console.log("Scroll container ref not found.");
+        return;
+    }
+    if (isLoadingMore || !hasMore || !initialLoadComplete) {
+        if (isLoadingMore) console.log("Returning early: isLoadingMore=true");
+        if (!hasMore) console.log("Returning early: hasMore=false");
+        if (!initialLoadComplete) console.log("Returning early: initialLoadComplete=false");
+        return;
+    }
+
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    const scrollThreshold = 200;
+    const isNearBottom = scrollTop + clientHeight >= scrollHeight - scrollThreshold;
+
+    console.log(`Scroll Values: scrollTop=${scrollTop.toFixed(1)}, clientHeight=${clientHeight.toFixed(1)}, scrollHeight=${scrollHeight.toFixed(1)}, isNearBottom=${isNearBottom}`);
+
+    if (isNearBottom) {
+      console.log(`Condition met: Near bottom! Current State: isLoadingMore=${isLoadingMore}, hasMore=${hasMore}`); 
+      
+      if (!isLoadingMore && hasMore) { 
+          console.log("Attempting to fetch more..."); 
+          fetchExerciseData(offset, LIMIT, debouncedValue, false); 
+      } else {
+          console.log("Condition met, but not fetching (isLoadingMore or !hasMore is true).")
+      }
+    }
+  }, [isLoadingMore, hasMore, initialLoadComplete, offset, debouncedValue, fetchExerciseData]);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      const currentHandler = handleScroll;
+      container.addEventListener('scroll', currentHandler);
+      return () => {
+         if (container) {
+             container.removeEventListener('scroll', currentHandler);
+         }
+      };
+    }
+    return undefined;
+  }, [handleScroll]);
+
+  const onAdd = (clickedExcercise: iExcerciseDataDto) => {
+    if (excerciseBuilderPlannerList.find((item) => item.e_id === clickedExcercise.e_id)) {
+      showToast("Exercise already added", DefaultToastTiming, ToastColors.YELLOW);
+      return;
+    }
+    setExcerciseBuilderPlannerList((prev) => [...prev, clickedExcercise]);
+  };
+
+  const onEditExcerciseClick = (excercise: iExcerciseDataDto) => {
+      navigate(`editExcercise`, { state: { excercise } });
+  };
+
+  const onExcerciseTileForDetailClicked = (excercise: iExcerciseDataDto) => {
+      navigate(`excerciseDetail`, { state: { excercise } }); 
+  };
+  
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+       setSearchTerm(e.target.value);
+   };
+
+  const manualRefresh = () => {
+       console.log("Manual refresh button clicked");
+       setDisplayedExercises([]);
+       setOffset(0);
+       setHasMore(true);
+       setInitialLoadComplete(false);
+       const initialOffset = 0; 
+       fetchExerciseData(initialOffset, LIMIT, debouncedValue, true);
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTop = 0;
+        }
+  }
+
+  // --- Initial Load & Search Term Change --- //
+  useEffect(() => {
+      console.log(`Search Term Changed / Initial Load: '${debouncedValue}'`);
+      // Reset and fetch when search term changes (debounced)
+      setDisplayedExercises([]);
+      setOffset(0);
+      setHasMore(true); // *** Reset hasMore to true for the new search ***
+      setInitialLoadComplete(false); 
+      setIsLoadingMore(false); // Ensure loadingMore is false initially
+      // Use a temporary variable for offset to avoid race condition with state update
+      const initialOffset = 0; 
+      fetchExerciseData(initialOffset, LIMIT, debouncedValue, true);
+      // Reset scroll position
+      if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop = 0;
+      }
+      // **Important:** The dependency array was updated in the previous step, keep it as [debouncedValue, fetchExerciseData]
+  }, [debouncedValue, fetchExerciseData]); 
 
   return (
     <>
       <Outlet />
       <BuilderContainer>
         <MainContent>
-          <ExerciseGrid>
-            <Suspense fallback={<div>Loading...</div>}>
-              {excercises &&
-                Object.entries(excercises).map(([key, excercise]) => (
+          <ExerciseGrid ref={scrollContainerRef}>
+            {isExcerciseBuilderLoading && !initialLoadComplete && (
+                <Flex justify="center" align="center" py="4" style={{ gridColumn: '1 / -1', minHeight: '200px' }}>
+                    <Spinner size="3" />
+                    <Text ml="2" color="gray">Loading Exercises...</Text>
+                </Flex>
+            )}
+
+            {!isExcerciseBuilderLoading && (
+                 <Suspense fallback={<div>Loading Tiles...</div>}> 
+                     {displayedExercises.map((excercise) => (
                   <ExcerciseTile
-                    key={key}
-                    excerciseKey={key}
+                           key={excercise.e_id} 
+                           excerciseKey={excercise.e_id} 
                     excercise={excercise}
                     onAdd={onAdd}
-                    onEdit={() => onEditExcerciseClick(excercise, key)}
-                    onExcerciseTileClick={onEditExcerciseClick}
-                    onClick={() =>
-                      onExcerciseTileForDetailClicked(excercise, key)
-                    }
-                    refreshExcercise={fetchExcerciseData}
+                           onEdit={() => onEditExcerciseClick(excercise)} 
+                           onClick={() => onExcerciseTileForDetailClicked(excercise)} 
+                           refreshExcercise={manualRefresh} 
                     viewType={ExcerciseType.FULL_VIEW}
                   />
                 ))}
             </Suspense>
+             )}
+            
+            {isLoadingMore && (
+                <Flex justify="center" align="center" py="4" style={{ gridColumn: '1 / -1' }}>
+                     <Spinner size="3" />
+                     <Text ml="2" color="gray">Loading more...</Text>
+                 </Flex>
+             )}
+             
+            {initialLoadComplete && !isLoadingMore && displayedExercises.length === 0 && (
+                 debouncedValue === '' ? (
+                     <Flex justify="center" align="center" py="4" style={{ gridColumn: '1 / -1' }}>
+                         <Text color="gray">No exercises available yet. Add one!</Text>
+                     </Flex>
+                 ) : (
+                     <Flex justify="center" align="center" py="4" style={{ gridColumn: '1 / -1' }}>
+                         <Text color="gray">No exercises found matching your search.</Text>
+                     </Flex>
+                 )
+             )}
+             
+            {initialLoadComplete && !isLoadingMore && !hasMore && displayedExercises.length > 0 && (
+                 <Flex justify="center" align="center" py="4" style={{ gridColumn: '1 / -1' }}>
+                     <Text color="gray">No more exercises found.</Text>
+                 </Flex>
+             )}
+
           </ExerciseGrid>
           
           <AddButton 
             variant="solid" 
             onClick={() => navigate(`/doctorhome/main/patientDetails/${pid}/buildPlan/addExcercise`)}
           >
-            <IoMdAdd size={24} style={{ color: ThemeColorPallate.cardFontColorBlack }} />
+            <IoMdAdd size={24} style={{ color: 'white' }} />
           </AddButton>
 
           <CounterButton onClick={() => setIsPlannerListModalOpen(true)}>
@@ -305,8 +437,13 @@ export const ExcerciseBuilder = () => {
                 backgroundColor: ThemeColorPallate.background,
                 color: 'white',
               }}
-              onChange={(e) => search(e as React.ChangeEvent<HTMLInputElement>)}
-            />
+              value={searchTerm}
+              onChange={handleSearchChange}
+            >
+              <TextField.Slot>
+                 <MagnifyingGlassIcon height="16" width="16" />
+              </TextField.Slot>
+            </TextField.Root>
           </SearchContainer>
         </MainContent>
 
@@ -318,7 +455,6 @@ export const ExcerciseBuilder = () => {
           />
         </PlannerSidebar>
 
-        {/* Mobile Planner List Modal */}
         {isPlannerListModalOpen && (
           <Modal
             testId={"PlannerListModal"}
@@ -334,52 +470,14 @@ export const ExcerciseBuilder = () => {
           </Modal>
         )}
 
-        {/* Other Modals */}
-        {isExcerciseDetailModalOpen && (
-          <Modal
-            testId={"ExcerciseDetailModal"}
-            title={"Exercise Detail"}
-            pIsOpen={isExcerciseDetailModalOpen}
-            setIsModelOpen={setIsExcerciseDetailModalOpen}
-          >
-            {currentClickedExcerciseTile && <ExcerciseDetail />}
-          </Modal>
-        )}
         {isPDFPreviewModalOpen && (
           <Modal
-            testId={"ExcerciseDetailModal"}
+            testId={"PDFPreviewModal"}
             title={"PDF Preview"}
             pIsOpen={isPDFPreviewModalOpen}
             setIsModelOpen={setIsPDFPreviewModalOpen}
           >
             <PDFPreview plannerList={excerciseBuilderPlannerList} />
-          </Modal>
-        )}
-        {isAddExcerciseModalOpen && (
-          <Modal
-            testId={"AddExcerciseModal"}
-            title={"Add Excercise"}
-            pIsOpen={isAddExcerciseModalOpen}
-            setIsModelOpen={setIsAddExcerciseModalOpen}
-          >
-            <AddExcercise />
-          </Modal>
-        )}
-        {isEditExcerciseModalOpen && (
-          <Modal
-            testId={"EditExcerciseModal"}
-            title={"Edit Excercise"}
-            pIsOpen={isEditExcerciseModalOpen}
-            setIsModelOpen={setIsEditExcerciseModalOpen}
-          >
-            <EditExcercise
-            // excercise={currentExcerciseTileEditClick}
-            // e_id={
-            //   currentExcerciseTileEditClick
-            //     ? currentExcerciseTileEditClick.e_id
-            //     : ""
-            // }
-            />
           </Modal>
         )}
       </BuilderContainer>
