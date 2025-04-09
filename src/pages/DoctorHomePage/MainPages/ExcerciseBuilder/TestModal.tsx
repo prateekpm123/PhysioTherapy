@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
 
@@ -37,6 +36,7 @@ const Modal = ({children, title, onActionButtonClick, actionButtonText}: iModalP
         style={{
           backgroundColor: ThemeColorPallate.background, // Darker modal background
           padding: '20px',
+          paddingBottom: '80px', // **** Add sufficient bottom padding ****
           borderRadius: '8px',
           height: "80%",
           width: '80%', // Adjust as needed

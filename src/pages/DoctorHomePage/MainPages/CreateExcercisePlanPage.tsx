@@ -32,7 +32,7 @@ const PageContainer = styled(Flex, {
   padding: '24px 24px 24px 24px',
   gap: '24px',
   backgroundColor: ThemeColorPallate.background,
-  minHeight: '92vh',
+  maxHeight: '93vh',
 
   '@media (max-width: 768px)': {
     padding: '16px',
@@ -370,7 +370,7 @@ const CreateExcercisePlanPage = () => {
         </div>
       </DatePickerContainer>
 
-      <ScrollArea style={{ height: '43.5rem' }}>
+      <ScrollArea style={{ height: '50.5rem' }}>
         {excerciseBuilderPlannerList.map((exercise, index) => (
           <ExerciseCard key={exercise.e_id}>
             <ImageContainer>

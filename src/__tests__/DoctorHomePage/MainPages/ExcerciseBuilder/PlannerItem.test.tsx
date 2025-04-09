@@ -15,6 +15,8 @@ const mockExercise: iExcerciseData = {
   excercise_sets: 3,
   excercise_sets_description: '',
   excercise_category: '',
+  excercise_muscles_involved: "",
+  excercise_related_conditions: "",
   excercise_type: '',
   excercise_tags: '',
   excercise_level: '',

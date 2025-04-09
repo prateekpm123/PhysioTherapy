@@ -22,6 +22,8 @@ export interface iExcerciseData {
   excercise_sets_description: string;
   excercise_category: string;
   excercise_type: string;
+  excercise_muscles_involved: string;
+  excercise_related_conditions: string;
   excercise_tags: string;
   excercise_level: string;
   excercise_equipment: string;
