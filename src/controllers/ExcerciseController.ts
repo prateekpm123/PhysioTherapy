@@ -9,8 +9,16 @@ const baseURL = `${backendUrl}/api/excercise`;
 export const getAllExcercises = async (inputs: iApiCallInterface) => {
   try {
     const validToken = await getValidAuthToken();
+    const { limit, offset, searchTerm } = inputs.data as { limit: number, offset: number, searchTerm: string };
     
-    const response = await fetch(baseURL + "/getall", {
+    // Construct query parameters
+    const queryParams = new URLSearchParams({
+      limit: limit.toString(),
+      offset: offset.toString(),
+      ...(searchTerm && { searchTerm })
+    });
+    
+    const response = await fetch(`${baseURL}/getall?${queryParams}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

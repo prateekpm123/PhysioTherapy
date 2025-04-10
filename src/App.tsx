@@ -15,7 +15,7 @@ import PatientDetails from "./pages/DoctorHomePage/MainPages/PatientDetails";
 import PatientList from "./pages/DoctorHomePage/MainPages/PatientLIst";
 import NewPatientEntry from "./pages/DoctorHomePage/MainPages/NewPatientEntry";
 import DoctorHomeLandingPage from "./pages/DoctorHomePage/MainPages/DoctorHomeLandingPage";
-import { ExcerciseBuilder } from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder";
+import ExcerciseBuilder from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder";
 import DoctorSettings from "./pages/DoctorHomePage/DoctorSettings";
 import NotFound from "./pages/NotFound";
 // import Modal from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder/TestModal";
@@ -45,7 +45,7 @@ const App: React.FC = () => {
             <Route path="patientDetails/:pid" element={<PatientDetails />}/>
             <Route path="patientDetails/:pid/excercisePlans/:epid" element={<ExcercisePlanDetailsPage  />} />
             <Route path="patientDetails/:pid/excercisePlans/:epid/trackSession" element={<ExcercisePlanTrackSession />} />
-            <Route path="patientDetails/:pid/buildPlan" element={<ExcerciseBuilder />} >
+            <Route path="patientDetails/:pid/buildPlan" element={<ExcerciseBuilder isExcerciseBuilderRefresh={false} debouncedValue="" />} >
               <Route path="editExcercise/:oeid" element={<EditExcercise />}/>
               <Route path="excerciseDetails/:oeid" element={<ExcerciseDetail />}/>
               <Route path="addExcercise" element={<AddExcercise />}/>

@@ -18,19 +18,19 @@ import ThemeColorPallate from "../../../../assets/ThemeColorPallate";
 import { BiExpand } from "react-icons/bi";
 // import { IoMdAdd } from "react-icons/io";
 
-export const ExcerciseTile = (data: iExcerciseTile) => {
+export const ExcerciseTile = ({ data }: { data: iExcerciseTile }) => {
   const [mouseShape, setMouseShape] = useState("pointer");
   // const { showToast } = useToast();
   // const { isExcerciseBuilderRefresh, setIsExcerciseBuilderRefresh } =
   //   useCurrentMainScreenContext();
   const navigate = useNavigate();
   const {pid} = useParams();
-  const onDeleteButtonClick = (data: iExcerciseDataDto)=>{
+  const onDeleteButtonClick = (exerciseData: iExcerciseDataDto)=>{
     // navigate("doctorhome/main/patientDetails/a4cc96da-1977-486c-91c4-cf0dd561e884/buildPlan", {
     navigate("/doctorhome/main/patientDetails/" + pid + "/buildPlan/deleteExcercise", {
       state: { 
         // onActionButtonClick: deleteExcercise,
-        actionButtonClickParams: data, 
+        actionButtonClickParams: exerciseData, 
         title: "Are you sure you want to delete ?", 
         message: "This excercise will be deleted permanently. Are you sure you want to go ahead?",
         actionButtonText: "Delete",
