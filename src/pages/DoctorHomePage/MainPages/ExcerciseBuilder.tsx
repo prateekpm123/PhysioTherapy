@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState, useRef, useCallback } from "react";
+import { Suspense, useEffect, useState, useRef, useCallback } from "react";
 import { ExcerciseTile } from "./ExcerciseBuilder/ExcerciseTile";
 import {
   ExcerciseType,
@@ -18,6 +18,7 @@ import { ToastColors } from "../../../components/Toast";
 import { IoMdAdd } from "react-icons/io";
 import { styled } from "@stitches/react";
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
+import * as React from 'react';
 
 const BuilderContainer = styled('div', {
   display: 'flex',
@@ -362,7 +363,7 @@ export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBui
             <Outlet />
             <BuilderContainer>
                 <MainContent>
-                    <ExerciseGrid ref={scrollContainerRef}>
+                    <ExerciseGrid ref={scrollContainerRef} data-testid="exercise-grid">
                         {isExcerciseBuilderLoading && !initialLoadComplete && (
                             <Flex justify="center" align="center" py="4" style={{ gridColumn: '1 / -1', minHeight: '200px' }}>
                                 <Spinner size="3" />
@@ -425,6 +426,7 @@ export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBui
                     <AddButton 
                         variant="solid" 
                         onClick={() => navigate(`/doctorhome/main/patientDetails/${pid}/buildPlan/addExcercise`)}
+                        data-testid="add-exercise-button"
                     >
                         <IoMdAdd size={24} style={{ color: 'white' }} />
                     </AddButton>
@@ -445,6 +447,7 @@ export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBui
                             }}
                             value={searchTerm}
                             onChange={handleSearchChange}
+                            data-testid="search-input"
                         >
                             <TextField.Slot>
                                 <MagnifyingGlassIcon height="16" width="16" />

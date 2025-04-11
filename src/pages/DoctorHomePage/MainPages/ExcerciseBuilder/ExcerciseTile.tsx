@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useState } from "react";
 import {
   ExcerciseType,
@@ -121,6 +122,7 @@ const ExcerciseTileFullView = ({
         margin: "10px",
         padding: "10px",
       }}
+      data-testid="exercise-tile"
     >
       <Flex direction="column" gap="3">
         {/* <Button
@@ -159,6 +161,7 @@ const ExcerciseTileFullView = ({
             <img
               src={data.excercise.excercise_image_url}
               alt={data.excercise.excercise_name}
+              role="img"
               style={{
                 width: "100%",
                 height: "100%",
@@ -168,9 +171,7 @@ const ExcerciseTileFullView = ({
               }}
               onLoad={handleImageLoad}
               onError={handleImageError}
-              // onClick={data.onClick}
-              // onMouseEnter={() => setMouseShape("grab")}
-              // onMouseLeave={() => setMouseShape("pointer")}
+              data-testid="exercise-image"
             />
           </div>
         </Skeleton>
@@ -220,6 +221,7 @@ const ExcerciseTileFullView = ({
               boxShadow: "1px 2px 44px 5px rgba(0,0,0, 0.75)",
               color: ThemeColorPallate.cardFontColorBlack,
             }}
+            data-testid="expand-button"
           />
           {/* <ExcerciseDetail></ExcerciseDetail> */}
           {/* <Button
@@ -285,6 +287,7 @@ const ExcerciseTileMobileView = ({
             <img
               src={data.excercise.excercise_image_url}
               alt={data.excercise.excercise_name}
+              role="img"
               style={{
                 width: "100%",
                 height: "100%",

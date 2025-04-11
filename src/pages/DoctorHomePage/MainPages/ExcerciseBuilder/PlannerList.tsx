@@ -66,6 +66,7 @@ export interface PlannerListProps {
   testId: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const PlannerList = (inputs: PlannerListProps) => {
   const {
     breadCrumbItems,
@@ -121,7 +122,7 @@ export const PlannerList = (inputs: PlannerListProps) => {
   };
 
   return (
-    <PlannerContainer data-testid={inputs.testId} ref={plannerListRef}>
+    <PlannerContainer data-testid="planner-list" ref={plannerListRef}>
       <Heading size="6" style={{ color: 'rgb(241, 245, 249)' }}>
         Patient Plan ({excerciseBuilderPlannerList.length})
       </Heading>

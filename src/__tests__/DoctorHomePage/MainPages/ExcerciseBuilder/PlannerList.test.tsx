@@ -108,7 +108,7 @@ const mockContextValue = {
 const defaultProps: PlannerListProps = {
   isPDFPreviewModelRequired: false,
   setIsPDFPreviewModelRequired: jest.fn(),
-  testId: 'planner-list-test',
+  testId: 'planner-list',
 };
 
 const renderPlannerList = (props: Partial<PlannerListProps> = {}, contextValue = mockContextValue) => {
@@ -130,7 +130,7 @@ describe('PlannerList', () => {
   test('renders correctly when planner list is empty', () => {
     renderPlannerList();
 
-    expect(screen.getByTestId('planner-list-test')).toBeInTheDocument();
+    expect(screen.getByTestId('planner-list')).toBeInTheDocument();
     expect(screen.getByText('Patient Plan (0)')).toBeInTheDocument();
     expect(screen.getByTestId('empty-state')).toBeInTheDocument();
     expect(screen.getByTestId('create-plan-button')).toBeInTheDocument();
