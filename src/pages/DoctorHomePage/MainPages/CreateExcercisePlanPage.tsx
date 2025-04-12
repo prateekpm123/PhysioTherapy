@@ -331,13 +331,13 @@ const CreateExcercisePlanPage = () => {
           <Text size="4" weight="bold" style={{ marginBottom: '8px', marginRight: '10px', color: 'white' }}>
             Start Date
           </Text>
-          <DateInput ref={startRef} type="date" />
+          <DateInput data-testid="start-date-input" ref={startRef} type="date" />
         </div>
         <div>
           <Text size="4" weight="bold" style={{ marginBottom: '8px', marginRight: '10px', color: 'white' }}>
             End Date
           </Text>
-          <DateInput ref={endRef} type="date" />
+          <DateInput data-testid="end-date-input" ref={endRef} type="date" />
         </div>
         <div style={{ flex: 1 }}>
           <Text size="4" weight="bold" style={{ marginBottom: '8px', color: 'white' }}>
