@@ -180,7 +180,7 @@ const PatientDetails = () => {
             p_id: pid,
           },
           afterAPISuccess: (res) => {
-            const temp = res.excercisePlans as iExcercisePlanDto[];
+            const temp = res.data as iExcercisePlanDto[];
             const temp2 = currentPatientDetails;
             if (temp2 && setCurrentPatientDetails) {
               temp2.excercisePlans = temp;

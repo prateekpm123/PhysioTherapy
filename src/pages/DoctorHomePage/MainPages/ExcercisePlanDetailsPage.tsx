@@ -140,10 +140,10 @@ const ExcercisePlanDetailsPage = () => {
       },
       afterAPISuccess: (res) => {
         setIsExcercisePlanTrackingLoading(false);
-        setExcercisePlan(res.excercisePlans);
-        setExcerciseCompletionData(res.excercisePlans.excercise_completion);
-        setStartDate(new Date(res.excercisePlans.startDate));
-        setEndDate(new Date(res.excercisePlans.endDate));
+        setExcercisePlan(res.data);
+        setExcerciseCompletionData(res.data.excercise_completion);
+        setStartDate(new Date(res.data.startDate));
+        setEndDate(new Date(res.data.endDate));
         console.log(res);
 
         // Set breadcrumbs for Exercise Plan page

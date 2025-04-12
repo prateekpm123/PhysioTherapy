@@ -207,11 +207,11 @@ const ExcercisePlanTrackSession: React.FC = () => {
           afterAPISuccess: (res) => {
             setIsLoading(false);
             // Ensure data structure is as expected before setting state
-            const completions = res.excercisePlans?.excercisePlanCompleted || [];
-            const notesData = res.excercisePlans?.excercisePlanNotes?.[0];
+            const completions = res.data?.completionStatus || [];
+            const notesData = res.data?.notes;
             setExerciseCompletions(completions);
             setNote(notesData);
-            setNoteText(notesData?.notes || "");
+            setNoteText(notesData || "");
           },
           afterAPIFail: (res) => {
             setIsLoading(false);
