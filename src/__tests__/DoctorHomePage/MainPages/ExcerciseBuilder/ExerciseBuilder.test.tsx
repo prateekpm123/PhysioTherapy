@@ -2,17 +2,17 @@ import * as React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route, useNavigate } from 'react-router-dom';
-import { ExerciseBuilder } from '../../ExcerciseBuilder';
+import { ExerciseBuilder } from '../../../../pages/DoctorHomePage/MainPages/ExcerciseBuilder';
 // import { useToast } from '../../../../stores/ToastContext';
-import { useCurrentMainScreenContext } from '../../../DoctorHomePage';
+import { useCurrentMainScreenContext } from '../../../../pages/DoctorHomePage/DoctorHomePage';
 // import { getAllExcercises } from '../../../../controllers/ExcerciseController';
-import { useToast } from '../../../../../stores/ToastContext';
-import { getAllExcercises } from '../../../../../controllers/ExcerciseController';
+import { useToast } from '../../../../stores/ToastContext';
+import { getAllExcercises } from '../../../../controllers/ExcerciseController';
 
 // Mock the required hooks and controllers
-jest.mock('../../../../../stores/ToastContext');
-jest.mock('../../../DoctorHomePage');
-jest.mock('../../../../../controllers/ExcerciseController');
+jest.mock('../../../../stores/ToastContext');
+jest.mock('../../../../pages/DoctorHomePage/DoctorHomePage');
+jest.mock('../../../../controllers/ExcerciseController');
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: jest.fn(),

@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { PlannerList, PlannerListProps } from '../../../../pages/DoctorHomePage/MainPages/ExcerciseBuilder/PlannerList';
-import { useCurrentMainScreenContext } from '../../../../pages/DoctorHomePage/DoctorHomePage';
-import { iExcerciseDataDto } from '../../../../models/ExcerciseInterface';
+import { PlannerList, PlannerListProps } from '@/pages/DoctorHomePage/MainPages/ExcerciseBuilder/PlannerList';
+import { useCurrentMainScreenContext } from '@/pages/DoctorHomePage/DoctorHomePage';
+import { iExcerciseDataDto } from '@/models/ExcerciseInterface';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 
 // Mock dependencies
@@ -11,13 +11,13 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: jest.fn(),
 }));
-jest.mock('../../../../pages/DoctorHomePage/DoctorHomePage', () => ({
-  ...jest.requireActual('../../../../pages/DoctorHomePage/DoctorHomePage'),
+jest.mock('@/pages/DoctorHomePage/DoctorHomePage', () => ({
+  ...jest.requireActual('@/pages/DoctorHomePage/DoctorHomePage'),
   useCurrentMainScreenContext: jest.fn(),
 }));
 
 // Mock PlannerItem to simplify PlannerList tests
-jest.mock('../../../../pages/DoctorHomePage/MainPages/ExcerciseBuilder/PlannerItem', () => ({
+jest.mock('@/pages/DoctorHomePage/MainPages/ExcerciseBuilder/PlannerItem', () => ({
   PlannerItem: ({ excercise, onDelete }: { excercise: iExcerciseDataDto, onDelete: (ex: iExcerciseDataDto) => void }) => (
     <div data-testid={`planner-item-${excercise.e_id}`}>
       <span>{excercise.excercise_name}</span>

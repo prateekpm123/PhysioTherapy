@@ -316,7 +316,8 @@ describe('CreateExcercisePlanPage', () => {
     const expectedExerciseList = JSON.parse(JSON.stringify(mockPlannerList)); // Deep copy
     expectedExerciseList[0].excercise_reps = 15;
     // Adjust date format expectation in the list - use expect.any(Date)
-     const expectedExerciseListForAssertion = expectedExerciseList.map(ex => ({
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     const expectedExerciseListForAssertion = expectedExerciseList.map((ex: any) => ({
          ...ex,
          excercise_created_on: expect.any(Date),
          modified_created_on: expect.any(Date),

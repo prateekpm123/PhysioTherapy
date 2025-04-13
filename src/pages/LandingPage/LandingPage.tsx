@@ -12,6 +12,7 @@ import {
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import { useNavigate } from "react-router-dom"; // Add this import
+import React from "react";
 
 // The styled function allows you to define reusable, scoped styles for components.
 const Main = styled("main", {
