@@ -81,7 +81,6 @@ describe('ExerciseBuilder Component', () => {
             element={
               <ExerciseBuilder
                 isExcerciseBuilderRefresh={false}
-                debouncedValue=""
               />
             }
           />
