@@ -150,6 +150,27 @@ const SubmitButton = styled("button", {
   },
 });
 
+// Add new styled component for error messages
+const ErrorMessage = styled("span", {
+  color: themeColors.error,
+  fontSize: "0.8rem",
+  marginTop: "4px",
+  display: "block",
+});
+
+// Add validation interface
+interface ValidationErrors {
+  patientName?: string;
+  patientAge?: string;
+  chiefComplaint?: string;
+  phoneNumber?: string;
+  email?: string;
+  address?: string;
+}
+
+// Add type for form fields that need validation
+type ValidatableFields = 'patientName' | 'patientAge' | 'chiefComplaint' | 'phoneNumber' | 'email' | 'address';
+
 // --- Component Logic --- //
 
 const NewPatientEntry = () => {
@@ -182,6 +203,40 @@ const NewPatientEntry = () => {
   const navigate = useNavigate();
   const [countryCode, setCountryCode] = useState("+91"); // State for country code
   const [isSubmitting, setIsSubmitting] = useState(false); // Submission state
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+
+  const validateField = (name: ValidatableFields, value: string | number) => {
+    let error = "";
+    
+    switch (name) {
+      case "patientName":
+        if (!value) error = "Patient name is required";
+        else if (typeof value === "string" && value.length < 2) error = "Name must be at least 2 characters";
+        break;
+      case "patientAge":
+        if (!value) error = "Age is required";
+        else if (Number(value) < 0 || Number(value) > 150) error = "Age must be between 0 and 150";
+        break;
+      case "chiefComplaint":
+        if (!value) error = "Chief complaint is required";
+        else if (typeof value === "string" && value.length < 10) error = "Please provide more details";
+        break;
+      case "phoneNumber":
+        if (!value) error = "Phone number is required";
+        else if (!/^\d{10}$/.test(value as string)) error = "Please enter a valid 10-digit phone number";
+        break;
+      case "email":
+        if (!value) error = "Email is required";
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value as string)) error = "Please enter a valid email address";
+        break;
+      case "address":
+        if (!value) error = "Address is required";
+        else if (typeof value === "string" && value.length < 10) error = "Please provide a complete address";
+        break;
+    }
+    
+    return error;
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -190,6 +245,13 @@ const NewPatientEntry = () => {
   ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
+    // Validate the field and update validation errors
+    const error = validateField(name as ValidatableFields, value);
+    setValidationErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,7 +263,22 @@ const NewPatientEntry = () => {
   const handleSubmit = (event: React.FormEvent) => {
     try {
       event.preventDefault();
-      if (isSubmitting) return; // Prevent multiple submissions
+      if (isSubmitting) return;
+
+      // Validate all fields before submission
+      const errors: ValidationErrors = {};
+      const validatableFields: ValidatableFields[] = ['patientName', 'patientAge', 'chiefComplaint', 'phoneNumber', 'email', 'address'];
+      
+      validatableFields.forEach(field => {
+        const error = validateField(field, formData[field]);
+        if (error) errors[field] = error;
+      });
+
+      if (Object.keys(errors).length > 0) {
+        setValidationErrors(errors);
+        showToast("Please correct the errors in the form", DefaultToastTiming, ToastColors.RED);
+        return;
+      }
 
       setIsSubmitting(true);
       // Combine country code and phone number
@@ -262,6 +339,9 @@ const NewPatientEntry = () => {
                 required
               />
             </Form.Control>
+            {validationErrors.patientName && (
+              <ErrorMessage>{validationErrors.patientName}</ErrorMessage>
+            )}
           </StyledFormField>
 
           {/* Patient Age */}
@@ -277,6 +357,9 @@ const NewPatientEntry = () => {
                 required
               />
             </Form.Control>
+            {validationErrors.patientAge && (
+              <ErrorMessage>{validationErrors.patientAge}</ErrorMessage>
+            )}
           </StyledFormField>
 
           {/* Chief Complaint */}
@@ -292,6 +375,9 @@ const NewPatientEntry = () => {
                 required
               />
             </Form.Control>
+            {validationErrors.chiefComplaint && (
+              <ErrorMessage>{validationErrors.chiefComplaint}</ErrorMessage>
+            )}
           </StyledFormField>
 
           {/* Additional Description */}
@@ -335,6 +421,9 @@ const NewPatientEntry = () => {
                 />
               </Form.Control>
             </PhoneInputContainer>
+            {validationErrors.phoneNumber && (
+              <ErrorMessage>{validationErrors.phoneNumber}</ErrorMessage>
+            )}
           </StyledFormField>
 
           {/* Email */}
@@ -350,6 +439,9 @@ const NewPatientEntry = () => {
                 required
               />
             </Form.Control>
+            {validationErrors.email && (
+              <ErrorMessage>{validationErrors.email}</ErrorMessage>
+            )}
           </StyledFormField>
 
           {/* Address */}
@@ -365,6 +457,9 @@ const NewPatientEntry = () => {
                 required
               />
             </Form.Control>
+            {validationErrors.address && (
+              <ErrorMessage>{validationErrors.address}</ErrorMessage>
+            )}
           </StyledFormField>
 
           {/* Upload PDF/Images */}
