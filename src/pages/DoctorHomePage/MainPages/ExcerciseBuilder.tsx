@@ -19,6 +19,7 @@ import { IoMdAdd } from "react-icons/io";
 import { styled } from "@stitches/react";
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import * as React from 'react';
+import debounce from 'lodash.debounce';
 
 const BuilderContainer = styled('div', {
   display: 'flex',
@@ -147,10 +148,9 @@ const LIMIT = 20;
 
 interface ExerciseBuilderProps {
     isExcerciseBuilderRefresh: boolean;
-    debouncedValue: string;
 }
 
-export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBuilderRefresh, debouncedValue }) => {
+export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBuilderRefresh }) => {
     const [displayedExercises, setDisplayedExercises] = useState<iExcerciseDataDto[]>([]);
     const {
         isExcerciseBuilderLoading,
@@ -173,9 +173,20 @@ export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBui
     const [initialLoadComplete, setInitialLoadComplete] = useState<boolean>(false);
     const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
     
-    const [searchTerm, setSearchTerm] = useState('');
-
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedValue, setDebouncedValue] = useState('');
+
+    // Debounce search term
+    const debouncedSearch = useRef(
+        debounce((value: string) => {
+            setDebouncedValue(value);
+        }, 400)
+    ).current;
+
+    useEffect(() => {
+        debouncedSearch(searchTerm);
+    }, [searchTerm, debouncedSearch]);
 
     useEffect(() => {
         offsetRef.current = offset;
@@ -184,6 +195,8 @@ export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBui
     const fetchExerciseData = useCallback(async (currentOffset: number, limit: number, term: string, isInitialLoad = false) => {
         if (isInitialLoad) {
             setIsExcerciseBuilderLoading(true);
+        } else {
+            setIsLoadingMore(true); // Set loading more when fetching subsequent pages
         }
         console.log(`FETCHING EXERCISES: currentOffset=${currentOffset}, limit=${limit}, term='${term}', isInitialLoad=${isInitialLoad}`);
 
@@ -218,8 +231,9 @@ export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBui
                 if (isInitialLoad) {
                     setInitialLoadComplete(true);
                     setIsExcerciseBuilderLoading(false);
+                } else {
+                    setIsLoadingMore(false); // Unset loading more on success
                 }
-                setIsLoadingMore(false);
             },
             afterAPIFail: (response) => {
                 console.error("API Failure Response:", response);
@@ -228,8 +242,9 @@ export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBui
                 if (isInitialLoad) {
                     setInitialLoadComplete(true);
                     setIsExcerciseBuilderLoading(false);
+                } else {
+                    setIsLoadingMore(false); // Unset loading more on failure
                 }
-                setIsLoadingMore(false);
             },
         });
     }, [setIsExcerciseBuilderLoading, showToast]);
@@ -270,41 +285,28 @@ export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBui
         offsetRef.current = offset;
     }, [offset]);
 
-    // Reset and initial load effect
+    // Effect for initial load, search term changes, and manual refresh
     useEffect(() => {
-        console.log('Resetting and performing initial load');
+        // Determine if it's a manual refresh or a search term change
+        if (isExcerciseBuilderRefresh) {
+            console.log('Manual refresh triggered. Resetting and fetching...');
+        } else {
+            console.log(`Search term changed to: '${debouncedValue}'. Resetting and fetching...`);
+        }
+
         setDisplayedExercises([]);
         setOffset(0);
         setHasMore(true);
         setInitialLoadComplete(false);
         setIsLoadingMore(false);
         
-        const initialOffset = 0;
-        fetchExerciseData(initialOffset, LIMIT, debouncedValue, true);
-        
+        const initialOffset = 0; 
+        fetchExerciseData(initialOffset, LIMIT, debouncedValue, true); 
+
         if (scrollContainerRef.current) {
             scrollContainerRef.current.scrollTop = 0;
         }
-    }, [debouncedValue, fetchExerciseData, setDisplayedExercises, setOffset, setHasMore, setInitialLoadComplete, setIsLoadingMore]);
-
-    // Manual refresh effect
-    useEffect(() => {
-        if (isExcerciseBuilderRefresh) {
-            console.log('Manual refresh triggered');
-            setDisplayedExercises([]);
-            setOffset(0);
-            setHasMore(true);
-            setInitialLoadComplete(false);
-            setIsLoadingMore(false);
-            
-            const initialOffset = 0;
-            fetchExerciseData(initialOffset, LIMIT, debouncedValue, true);
-            
-            if (scrollContainerRef.current) {
-                scrollContainerRef.current.scrollTop = 0;
-            }
-        }
-    }, [isExcerciseBuilderRefresh, debouncedValue, fetchExerciseData, setDisplayedExercises, setOffset, setHasMore, setInitialLoadComplete, setIsLoadingMore]);
+    }, [debouncedValue, isExcerciseBuilderRefresh, fetchExerciseData]);
 
     const onAdd = (clickedExcercise: iExcerciseDataDto) => {
         if (excerciseBuilderPlannerList.find((item) => item.e_id === clickedExcercise.e_id)) {
@@ -322,10 +324,6 @@ export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBui
         navigate(`excerciseDetail`, { state: { excercise } }); 
     };
     
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
-    };
-
     const manualRefresh = () => {
         console.log("Manual refresh button clicked");
         setDisplayedExercises([]);
@@ -338,25 +336,6 @@ export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBui
             scrollContainerRef.current.scrollTop = 0;
         }
     }
-
-    // --- Initial Load & Search Term Change --- //
-    useEffect(() => {
-        console.log(`Search Term Changed / Initial Load: '${debouncedValue}'`);
-        // Reset and fetch when search term changes (debounced)
-        setDisplayedExercises([]);
-        setOffset(0);
-        setHasMore(true); // *** Reset hasMore to true for the new search ***
-        setInitialLoadComplete(false); 
-        setIsLoadingMore(false); // Ensure loadingMore is false initially
-        // Use a temporary variable for offset to avoid race condition with state update
-        const initialOffset = 0; 
-        fetchExerciseData(initialOffset, LIMIT, debouncedValue, true);
-        // Reset scroll position
-        if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollTop = 0;
-        }
-        // **Important:** The dependency array was updated in the previous step, keep it as [debouncedValue, fetchExerciseData]
-    }, [debouncedValue, fetchExerciseData]); 
 
     return (
         <>
@@ -446,7 +425,7 @@ export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBui
                                 color: 'white',
                             }}
                             value={searchTerm}
-                            onChange={handleSearchChange}
+                            onChange={e => setSearchTerm(e.target.value)}
                             data-testid="search-input"
                         >
                             <TextField.Slot>
