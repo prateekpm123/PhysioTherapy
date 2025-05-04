@@ -189,6 +189,29 @@ const SaveButton = styled(Button, {
   }
 });
 
+// Add styled component for error messages
+const ErrorMessage = styled("span", {
+  color: "red",
+  fontSize: "0.8rem",
+  marginTop: "4px",
+  display: "block",
+});
+
+// Add validation interface
+interface ValidationErrors {
+  startDate?: string;
+  endDate?: string;
+  selectedDays?: string;
+  exercises: {
+    [key: number]: {
+      excercise_name?: string;
+      excercise_description?: string;
+      excercise_reps?: string;
+      excercise_sets?: string;
+    }
+  }
+}
+
 const CreateExcercisePlanPage = () => {
   const {
     currentPatientDetails,
@@ -221,6 +244,58 @@ const CreateExcercisePlanPage = () => {
   // const selectedDays = new Set();
   // const weekSelect
   // const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({
+    exercises: {}
+  });
+
+  const validateField = (
+    name: string,
+    value: string | number | boolean,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    index?: number
+  ) => {
+    let error = "";
+    
+    switch (name) {
+      case "startDate":
+        if (!value) error = "Start date is required";
+        else if (new Date(value as string) < new Date()) {
+          error = "Start date cannot be in the past";
+        }
+        break;
+      case "endDate":
+        if (!value) error = "End date is required";
+        else if (startRef.current?.value && new Date(value as string) < new Date(startRef.current.value)) {
+          error = "End date must be after start date";
+        }
+        break;
+      case "selectedDays":
+        if (!value) error = "At least one day must be selected";
+        break;
+      case "excercise_name":
+        if (!value) error = "Exercise name is required";
+        else if (typeof value === "string" && value.length < 2) error = "Name must be at least 2 characters";
+        else if (typeof value === "string" && value.length > 200) error = "Name must be at most 200 characters";
+        break;
+      case "excercise_description":
+        if (!value) error = "Description is required";
+        else if (typeof value === "string" && value.length < 30) error = "Description must be at least 30 characters";
+        else if (typeof value === "string" && value.length > 1000) error = "Description must be at most 1000 characters";
+        break;
+      case "excercise_reps":
+        if (!value) error = "Number of repetitions is required";
+        else if (Number(value) <= 0) error = "Repetitions must be greater than 0";
+        else if (Number(value) > 1000) error = "Repetitions must be less than 1000";
+        break;
+      case "excercise_sets":
+        if (!value) error = "Number of sets is required";
+        else if (Number(value) <= 0) error = "Sets must be greater than 0";
+        else if (Number(value) > 100) error = "Sets must be less than 100";
+        break;
+    }
+    
+    return error;
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -235,6 +310,78 @@ const CreateExcercisePlanPage = () => {
       updatedExercises[index][field] = e.target.value as any;
     }
     setExcerciseBuilderPlannerList(updatedExercises);
+
+    // Validate the field
+    const error = validateField(field, e.target.value, index);
+    setValidationErrors(prev => ({
+      ...prev,
+      exercises: {
+        ...prev.exercises,
+        [index]: {
+          ...prev.exercises?.[index],
+          [field]: error
+        }
+      }
+    }));
+  };
+
+  const handleDateChange = (field: 'startDate' | 'endDate') => {
+    const value = field === 'startDate' ? startRef.current?.value : endRef.current?.value;
+    const error = validateField(field, value || '');
+    setValidationErrors(prev => ({
+      ...prev,
+      [field]: error
+    }));
+  };
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const checked = event.target.checked;
+
+    switch (value) {
+      case "1": setMonday(checked); break;
+      case "2": setTuesday(checked); break;
+      case "3": setWednesday(checked); break;
+      case "4": setThursday(checked); break;
+      case "5": setFriday(checked); break;
+      case "6": setSaturday(checked); break;
+      case "7": setSunday(checked); break;
+    }
+
+    // Validate selected days
+    const hasSelectedDay = [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday].some(day => day);
+    const error = validateField('selectedDays', hasSelectedDay);
+    setValidationErrors(prev => ({
+      ...prev,
+      selectedDays: error
+    }));
+  };
+
+  const validateAllFields = () => {
+    const errors: ValidationErrors = {
+      exercises: {}
+    };
+
+    // Validate dates
+    errors.startDate = validateField('startDate', startRef.current?.value || '');
+    errors.endDate = validateField('endDate', endRef.current?.value || '');
+
+    // Validate selected days
+    const hasSelectedDay = [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday].some(day => day);
+    errors.selectedDays = validateField('selectedDays', hasSelectedDay);
+
+    // Validate each exercise
+    excerciseBuilderPlannerList.forEach((exercise, index) => {
+      errors.exercises[index] = {
+        excercise_name: validateField('excercise_name', exercise.excercise_name, index),
+        excercise_description: validateField('excercise_description', exercise.excercise_description, index),
+        excercise_reps: validateField('excercise_reps', exercise.excercise_reps, index),
+        excercise_sets: validateField('excercise_sets', exercise.excercise_sets, index)
+      };
+    });
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length > 0 || Object.keys(errors.exercises || {}).length > 0;
   };
 
   const getAllData = () => {
@@ -264,6 +411,11 @@ const CreateExcercisePlanPage = () => {
   };
 
   const onExcercisePlanSave = () => {
+    if (validateAllFields()) {
+      showToast("Please correct the errors in the form", DefaultToastTiming, ToastColors.RED);
+      return;
+    }
+
     const data = getAllData();
     setIsLoading(true);
     saveExcercisePlan({
@@ -294,36 +446,6 @@ const CreateExcercisePlanPage = () => {
     });
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleCheckboxChange = (event: any) => {
-    if (event.target.value == "1") {
-      setMonday(event.target.checked);
-    } else if (event.target.value == "2") {
-      setTuesday(event.target.checked);
-    } else if (event.target.value == "3") {
-      setWednesday(event.target.checked);
-    } else if (event.target.value == "4") {
-      setThursday(event.target.checked);
-    } else if (event.target.value == "5") {
-      setFriday(event.target.checked);
-    } else if (event.target.value == "6") {
-      setSaturday(event.target.checked);
-    } else if (event.target.value == "7") {
-      setSunday(event.target.checked);
-    }
-    // if(event.target.checked) {
-    //   selectedDays.add(event.target.value);
-    // } else {
-    //   if(selectedDays.has(event.target.value)) {
-    //     selectedDays.delete(event.target.value);
-    //   }
-    // }
-    // setWeekSelection(values);
-    // selectedDays.current = values;
-    // console.log("Selected Values:", selectedDays.current);
-    // You can use selectedValuesRef.current here or in other parts of your component
-  };
-
   return (
     <PageContainer direction="column">
       <DatePickerContainer>
@@ -331,13 +453,29 @@ const CreateExcercisePlanPage = () => {
           <Text size="4" weight="bold" style={{ marginBottom: '8px', marginRight: '10px', color: 'white' }}>
             Start Date
           </Text>
-          <DateInput data-testid="start-date-input" ref={startRef} type="date" />
+          <DateInput 
+            data-testid="start-date-input" 
+            ref={startRef} 
+            type="date" 
+            onChange={() => handleDateChange('startDate')}
+          />
+          {validationErrors.startDate && (
+            <ErrorMessage>{validationErrors.startDate}</ErrorMessage>
+          )}
         </div>
         <div>
           <Text size="4" weight="bold" style={{ marginBottom: '8px', marginRight: '10px', color: 'white' }}>
             End Date
           </Text>
-          <DateInput data-testid="end-date-input" ref={endRef} type="date" />
+          <DateInput 
+            data-testid="end-date-input" 
+            ref={endRef} 
+            type="date"
+            onChange={() => handleDateChange('endDate')}
+          />
+          {validationErrors.endDate && (
+            <ErrorMessage>{validationErrors.endDate}</ErrorMessage>
+          )}
         </div>
         <div style={{ flex: 1 }}>
           <Text size="4" weight="bold" style={{ marginBottom: '8px', color: 'white' }}>
@@ -367,6 +505,9 @@ const CreateExcercisePlanPage = () => {
               </div>
             ))}
           </WeekdaySelector>
+          {validationErrors.selectedDays && (
+            <ErrorMessage>{validationErrors.selectedDays}</ErrorMessage>
+          )}
         </div>
       </DatePickerContainer>
 
@@ -391,6 +532,9 @@ const CreateExcercisePlanPage = () => {
                     index={index}
                     property_name="excercise_sets"
                   />
+                  {validationErrors.exercises[index]?.excercise_sets && (
+                    <ErrorMessage>{validationErrors.exercises[index].excercise_sets}</ErrorMessage>
+                  )}
                   
                   <Text size="3" style={{ color: 'white' }}>Sets Description</Text>
                   <TextField.Root
@@ -406,6 +550,9 @@ const CreateExcercisePlanPage = () => {
                     index={index}
                     property_name="excercise_reps"
                   />
+                  {validationErrors.exercises[index]?.excercise_reps && (
+                    <ErrorMessage>{validationErrors.exercises[index].excercise_reps}</ErrorMessage>
+                  )}
                   
                   <Text size="3" style={{ color: 'white' }}>Reps Description</Text>
                   <TextField.Root
@@ -422,6 +569,9 @@ const CreateExcercisePlanPage = () => {
                     onChange={(e) => handleInputChange(e, index, "excercise_name")}
                     placeholder="Exercise Name"
                   />
+                  {validationErrors.exercises[index]?.excercise_name && (
+                    <ErrorMessage>{validationErrors.exercises[index].excercise_name}</ErrorMessage>
+                  )}
                   
                   <Text size="3" style={{ color: 'white' }}>Description</Text>
                   <TextArea
@@ -430,20 +580,9 @@ const CreateExcercisePlanPage = () => {
                     onChange={(e) => handleInputChange(e, index, "excercise_description")}
                     placeholder="Description"
                   />
-                  {/* <TextField.Root
-                  value={exercise.excercise_video_url || ""}
-                  onChange={(e) =>
-                    handleInputChange(e, index, "excercise_video_url")
-                  }
-                  placeholder="Video URL"
-                /> */}
-                  {/* <TextField.Root
-                  value={exercise.excercise_duration || ""}
-                  onChange={(e) =>
-                    handleInputChange(e, index, "excercise_duration")
-                  }
-                  placeholder="Duration"
-                ></TextField.Root> */}
+                  {validationErrors.exercises[index]?.excercise_description && (
+                    <ErrorMessage>{validationErrors.exercises[index].excercise_description}</ErrorMessage>
+                  )}
                 </InputGroup>
               </FormSection>
             </FormSection>
