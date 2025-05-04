@@ -16,10 +16,36 @@ import { UserSessionStateType } from "../stores/userSessionStore";
 import { useDispatch, useSelector } from "react-redux";
 import { setDoctorDetails } from "../stores/userSessionSlice";
 import { DoctorDetails as iDoctorDetails } from "../models/iDoctorDetails";
+import { styled } from "@stitches/react";
+
+// Add styled component for error messages
+const ErrorMessage = styled("span", {
+  color: "red",
+  fontSize: "0.8rem",
+  marginTop: "4px",
+  display: "block",
+});
 
 interface DoctorDetailsProps {
   onSave?: () => void;
 }
+
+// Add validation interface
+interface ValidationErrors {
+  name?: string;
+  age?: string;
+  phone_number?: string;
+  email?: string;
+  country?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  doctor_specialization?: string;
+  doctor_qualification?: string;
+}
+
+// Add type for form fields that need validation
+type ValidatableFields = 'name' | 'age' | 'phone_number' | 'email' | 'country' | 'city' | 'state' | 'pincode' | 'doctor_specialization' | 'doctor_qualification';
 
 const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
   const navigate = useNavigate();
@@ -49,6 +75,57 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
   const dispatch = useDispatch();
   const { showToast } = useToast();
   
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+
+  const validateField = (name: ValidatableFields, value: string | number) => {
+    let error = "";
+    
+    switch (name) {
+      case "name":
+        if (!value) error = "Name is required";
+        else if (typeof value === "string" && value.length < 2) error = "Name must be at least 2 characters";
+        else if (typeof value === "string" && value.length > 200) error = "Name must be at max 200 characters";
+        break;
+      case "age":
+        if (!value) error = "Age is required";
+        else if (Number(value) < 0 || Number(value) > 150) error = "Age must be between 0 and 150";
+        break;
+      case "phone_number":
+        if (!value) error = "Phone number is required";
+        else if (!/^\d{10}$/.test(value as string)) error = "Please enter a valid 10-digit phone number";
+        break;
+      case "email":
+        if (!value) error = "Email is required";
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value as string)) error = "Please enter a valid email address";
+        break;
+      case "country":
+        if (!value) error = "Country is required";
+        else if (typeof value === "string" && value.length < 2) error = "Please enter a valid country name";
+        break;
+      case "city":
+        if (!value) error = "City is required";
+        else if (typeof value === "string" && value.length < 2) error = "Please enter a valid city name";
+        break;
+      case "state":
+        if (!value) error = "State is required";
+        else if (typeof value === "string" && value.length < 2) error = "Please enter a valid state name";
+        break;
+      case "pincode":
+        if (!value) error = "Pincode is required";
+        else if (!/^\d{6}$/.test(value as string)) error = "Please enter a valid 6-digit pincode";
+        break;
+      case "doctor_specialization":
+        if (!value) error = "Specialization is required";
+        else if (typeof value === "string" && value.length < 3) error = "Please enter a valid specialization";
+        break;
+      case "doctor_qualification":
+        if (!value) error = "Qualification is required";
+        else if (typeof value === "string" && value.length < 3) error = "Please enter a valid qualification";
+        break;
+    }
+    
+    return error;
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -57,10 +134,39 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
   ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
+    // Validate the field and update validation errors
+    if (name in validationErrors) {
+      const error = validateField(name as ValidatableFields, value);
+      setValidationErrors(prev => ({
+        ...prev,
+        [name]: error
+      }));
+    }
   };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    
+    // Validate all fields before submission
+    const errors: ValidationErrors = {};
+    const validatableFields: ValidatableFields[] = [
+      'name', 'age', 'phone_number', 'email', 'country', 
+      'city', 'state', 'pincode', 'doctor_specialization', 
+      'doctor_qualification'
+    ];
+    
+    validatableFields.forEach(field => {
+      const error = validateField(field, formData[field]);
+      if (error) errors[field] = error;
+    });
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      showToast("Please correct the errors in the form", DefaultToastTiming, ToastColors.RED);
+      return;
+    }
+
     setFormData({ ...formData, user_id: doctorData.uid });
     createDoctor({
       data: formData,
@@ -126,6 +232,9 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
                 required
               />
             </Form.Control>
+            {validationErrors.name && (
+              <ErrorMessage>{validationErrors.name}</ErrorMessage>
+            )}
           </div>
         </Form.Field>
 
@@ -144,6 +253,9 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
                 required
               />
             </Form.Control>
+            {validationErrors.age && (
+              <ErrorMessage>{validationErrors.age}</ErrorMessage>
+            )}
           </div>
         </Form.Field>
 
@@ -176,6 +288,9 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
                 />
               </Form.Control>
             </div>
+            {validationErrors.phone_number && (
+              <ErrorMessage>{validationErrors.phone_number}</ErrorMessage>
+            )}
           </div>
         </Form.Field>
 
@@ -194,6 +309,9 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
                 required
               />
             </Form.Control>
+            {validationErrors.email && (
+              <ErrorMessage>{validationErrors.email}</ErrorMessage>
+            )}
           </div>
         </Form.Field>
 
@@ -207,13 +325,16 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
                   <input
                     type="text"
                     name="country"
-                    // value={addressData.country}
+                    value={formData.country}
                     onChange={handleChange}
                     className="border rounded px-3 py-2 w-full"
                     placeholder="Enter country"
                     required
                   />
                 </Form.Control>
+                {validationErrors.country && (
+                  <ErrorMessage>{validationErrors.country}</ErrorMessage>
+                )}
               </div>
             </Form.Field>
 
@@ -225,13 +346,16 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
                   <input
                     type="text"
                     name="pincode"
-                    // value={addressData.pincode}
+                    value={formData.pincode}
                     onChange={handleChange}
                     className="border rounded px-3 py-2 w-full"
                     placeholder="Enter pincode"
                     required
                   />
                 </Form.Control>
+                {validationErrors.pincode && (
+                  <ErrorMessage>{validationErrors.pincode}</ErrorMessage>
+                )}
               </div>
             </Form.Field>
           </Flex>
@@ -244,13 +368,16 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
                   <input
                     type="text"
                     name="city"
-                    // value={addressData.city}
+                    value={formData.city}
                     onChange={handleChange}
                     className="border rounded px-3 py-2 w-full"
                     placeholder="Enter city"
                     required
                   />
                 </Form.Control>
+                {validationErrors.city && (
+                  <ErrorMessage>{validationErrors.city}</ErrorMessage>
+                )}
               </div>
             </Form.Field>
 
@@ -262,13 +389,16 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
                   <input
                     type="text"
                     name="state"
-                    // value={addressData.state}
+                    value={formData.state}
                     onChange={handleChange}
                     className="border rounded px-3 py-2 w-full"
                     placeholder="Enter state"
                     required
                   />
                 </Form.Control>
+                {validationErrors.state && (
+                  <ErrorMessage>{validationErrors.state}</ErrorMessage>
+                )}
               </div>
             </Form.Field>
           </Flex>
@@ -281,7 +411,6 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
             <Form.Control asChild>
               <textarea
                 name="address"
-                // value={addressData.address}
                 onChange={handleChange}
                 className="border rounded px-3 py-2 w-full"
                 placeholder="Enter address"
@@ -325,6 +454,9 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
                 required
               />
             </Form.Control>
+            {validationErrors.doctor_specialization && (
+              <ErrorMessage>{validationErrors.doctor_specialization}</ErrorMessage>
+            )}
           </div>
         </Form.Field>
 
@@ -345,10 +477,12 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
                 required
               />
             </Form.Control>
+            {validationErrors.doctor_qualification && (
+              <ErrorMessage>{validationErrors.doctor_qualification}</ErrorMessage>
+            )}
           </div>
         </Form.Field>
 
-        {/* Doctor Experience */}
         {/* Doctor Experience */}
         <Form.Field name="doctor_experience">
           <div className="flex flex-col">
@@ -358,7 +492,6 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
             <Form.Control asChild>
               <textarea
                 name="doctor_experience"
-                // value={data.doctor_experience}
                 onChange={handleChange}
                 className="border rounded px-3 py-2 w-full"
                 placeholder="Enter doctor experience"
@@ -375,7 +508,6 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
             <Form.Control asChild>
               <textarea
                 name="doctor_awards"
-                // value={data.doctor_awards}
                 onChange={handleChange}
                 className="border rounded px-3 py-2 w-full"
                 placeholder="Enter doctor awards"
@@ -394,7 +526,6 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
             <Form.Control asChild>
               <textarea
                 name="doctor_certification"
-                // value={data.doctor_certification}
                 onChange={handleChange}
                 className="border rounded px-3 py-2 w-full"
                 placeholder="Enter doctor certification"
