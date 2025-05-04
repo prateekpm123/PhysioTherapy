@@ -136,6 +136,27 @@ const FormGrid = styled("div", {
   }
 });
 
+// Add styled component for error messages
+const ErrorMessage = styled("span", {
+  color: "red",
+  fontSize: "0.8rem",
+  marginTop: "4px",
+  display: "block",
+});
+
+// Add validation interface
+interface ValidationErrors {
+  excercise_name?: string;
+  excercise_description?: string;
+  excercise_reps?: string;
+  excercise_sets?: string;
+  excercise_muscles_involved?: string;
+  excercise_related_conditions?: string;
+}
+
+// Add type for form fields that need validation
+type ValidatableFields = 'excercise_name' | 'excercise_description' | 'excercise_reps' | 'excercise_sets' | 'excercise_muscles_involved' | 'excercise_related_conditions';
+
 // --- Component Logic --- //
 export const EditExcercise = () => {
   const location = useLocation();
@@ -155,6 +176,8 @@ export const EditExcercise = () => {
 
   type UploadState = 'idle' | 'uploading' | 'success' | 'failed';
   const [uploadState, setUploadState] = useState<UploadState>('idle');
+  
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   
   // Redirect or show error if initial data is missing
   useEffect(() => {
@@ -177,29 +200,98 @@ export const EditExcercise = () => {
     }
   };
 
+  const validateField = (name: ValidatableFields, value: string | number | string[]) => {
+    let error = "";
+    
+    switch (name) {
+      case "excercise_name":
+        if (!value) error = "Exercise name is required";
+        else if (typeof value === "string" && value.length < 2) error = "Name must be at least 2 characters";
+        else if (typeof value === "string" && value.length > 200) error = "Name must be at most 200 characters";
+        break;
+      case "excercise_description":
+        if (!value) error = "Description is required";
+        else if (typeof value === "string" && value.length < 30) error = "Description must be at least 30 characters";
+        else if (typeof value === "string" && value.length > 1000) error = "Description must be at most 1000 characters";
+        break;
+      case "excercise_reps":
+        if (!value) error = "Number of repetitions is required";
+        else if (Number(value) <= 0) error = "Repetitions must be greater than 0";
+        else if (Number(value) > 1000) error = "Repetitions must be less than 1000";
+        break;
+      case "excercise_sets":
+        if (!value) error = "Number of sets is required";
+        else if (Number(value) <= 0) error = "Sets must be greater than 0";
+        else if (Number(value) > 100) error = "Sets must be less than 100";
+        break;
+      case "excercise_muscles_involved":
+        if (!value || (Array.isArray(value) && value.length === 0)) error = "At least one muscle must be specified";
+        break;
+      case "excercise_related_conditions":
+        if (!value || (Array.isArray(value) && value.length === 0)) error = "At least one condition must be specified";
+        break;
+    }
+    
+    return error;
+  };
+
   const handleOnChange = useCallback(
     (
       value: string | number | string[],
-      field: keyof iExcerciseDataDto // Use DTO type here
+      field: keyof iExcerciseDataDto
     ) => {
-        if (!excercise) return; // Should not happen due to useEffect check
+      if (!excercise) return;
 
-        let processedValue: any = value;
-        if (field === "excercise_muscles_involved" || field === "excercise_related_conditions" || field === "excercise_tags") {
-            processedValue = Array.isArray(value) ? value.join(',') : '';
-        } else if (typeof value === 'string' && (field === "excercise_reps" || field === "excercise_sets")) {
-             processedValue = parseInt(value, 10) || 0;
+      let processedValue: any = value;
+      if (field === "excercise_muscles_involved" || field === "excercise_related_conditions" || field === "excercise_tags") {
+        processedValue = Array.isArray(value) ? value.join(',') : '';
+        // Validate tag fields
+        if (field === "excercise_muscles_involved" || field === "excercise_related_conditions") {
+          const error = validateField(field as ValidatableFields, value);
+          setValidationErrors(prev => ({
+            ...prev,
+            [field]: error
+          }));
         }
-        
-        setExcercise(prev => prev ? { ...prev, [field]: processedValue } : null);
+      } else if (typeof value === 'string' && (field === "excercise_reps" || field === "excercise_sets")) {
+        processedValue = parseInt(value, 10) || 0;
+        // Validate number fields
+        if (field === "excercise_reps" || field === "excercise_sets") {
+          const error = validateField(field as ValidatableFields, processedValue);
+          setValidationErrors(prev => ({
+            ...prev,
+            [field]: error
+          }));
+        }
+      } else {
+        // Validate other fields
+        if (field === "excercise_name" || field === "excercise_description") {
+          const error = validateField(field as ValidatableFields, value);
+          setValidationErrors(prev => ({
+            ...prev,
+            [field]: error
+          }));
+        }
+      }
+      
+      setExcercise(prev => prev ? { ...prev, [field]: processedValue } : null);
     },
-    [excercise] // Depend on excercise state
+    [excercise]
   );
 
   const handleNumberChange = useCallback(
     (e: { target: { value: number } }, index: number | undefined, property_name: keyof iExcerciseDataDto | undefined) => {
         if (property_name) {
-            handleOnChange(e.target.value, property_name);
+          const value = e.target.value;
+          // Validate number fields immediately
+          if (property_name === "excercise_reps" || property_name === "excercise_sets") {
+            const error = validateField(property_name as ValidatableFields, value);
+            setValidationErrors(prev => ({
+              ...prev,
+              [property_name]: error
+            }));
+          }
+          handleOnChange(value, property_name);
         }
     },
     [handleOnChange]
@@ -243,34 +335,53 @@ export const EditExcercise = () => {
   };
 
   const onEditExcerciseBtnClick = () => {
-      if (!excercise) {
-          showToast("Cannot save, exercise data is missing.", 4000, ToastColors.RED);
-          return;
-      }
-       // Check if a new image was selected but not uploaded successfully
-      if (selectedImage && uploadState !== 'success' && !initialExcercise?.excercise_image_url) {
-           showToast("Please upload the selected image or remove it.", 4000, ToastColors.YELLOW);
-           return;
-       }
+    if (!excercise) {
+      showToast("Cannot save, exercise data is missing.", 4000, ToastColors.RED);
+      return;
+    }
 
-      // Basic Validation
-      if (!excercise.excercise_name.trim()) {
-          showToast("Exercise Name is required.", 4000, ToastColors.YELLOW);
-          return;
-      }
-      if (excercise.excercise_sets <= 0 || excercise.excercise_reps <= 0) {
-          showToast("Sets and Reps must be greater than zero.", 4000, ToastColors.YELLOW);
-          return;
-      }
+    // Check if a new image was selected but not uploaded successfully
+    if (selectedImage && uploadState !== 'success' && !initialExcercise?.excercise_image_url) {
+      showToast("Please upload the selected image or remove it.", 4000, ToastColors.YELLOW);
+      return;
+    }
 
-      // Ensure the image URL is the latest uploaded one if applicable
-      const finalExcerciseData = {
-          ...excercise,
-          excercise_image_url: imageUrl || excercise.excercise_image_url, // Prioritize newly uploaded URL
-          modified_created_on: new Date(), // Update modified date
-      };
+    // Validate all fields before submission
+    const errors: ValidationErrors = {};
+    const validatableFields: ValidatableFields[] = [
+      'excercise_name',
+      'excercise_description',
+      'excercise_reps',
+      'excercise_sets',
+      'excercise_muscles_involved',
+      'excercise_related_conditions'
+    ];
+    
+    validatableFields.forEach(field => {
+      let value: string | number | string[] = excercise[field];
+      if (field === 'excercise_muscles_involved' || field === 'excercise_related_conditions') {
+        value = typeof excercise[field] === 'string' 
+          ? excercise[field].split(',').filter(Boolean)
+          : [];
+      }
+      const error = validateField(field, value);
+      if (error) errors[field] = error;
+    });
 
-      handleEditExercise(finalExcerciseData);
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      showToast("Please correct the errors in the form", 5000, ToastColors.RED);
+      return;
+    }
+
+    // Ensure the image URL is the latest uploaded one if applicable
+    const finalExcerciseData = {
+      ...excercise,
+      excercise_image_url: imageUrl || excercise.excercise_image_url,
+      modified_created_on: new Date(),
+    };
+
+    handleEditExercise(finalExcerciseData);
   };
 
   const handleEditExercise = async (exerciseToUpdate: iExcerciseDataDto) => {
@@ -374,6 +485,9 @@ export const EditExcercise = () => {
               onChange={(e) => handleOnChange(e.target.value, "excercise_name")}
               required
             />
+            {validationErrors.excercise_name && (
+              <ErrorMessage>{validationErrors.excercise_name}</ErrorMessage>
+            )}
           </StyledFormField>
           <StyledFormField>
             <FieldLabel htmlFor="excercise_description">Description / Instructions</FieldLabel>
@@ -383,6 +497,9 @@ export const EditExcercise = () => {
               onChange={(e) => handleOnChange(e.target.value, "excercise_description")}
               rows={6}
             />
+            {validationErrors.excercise_description && (
+              <ErrorMessage>{validationErrors.excercise_description}</ErrorMessage>
+            )}
           </StyledFormField>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: spacing.md }}>
             <Flex direction="column" gap="2">
@@ -393,6 +510,9 @@ export const EditExcercise = () => {
                   handleInputChange={handleNumberChange}
                   property_name="excercise_sets"
                 />
+                {validationErrors.excercise_sets && (
+                  <ErrorMessage>{validationErrors.excercise_sets}</ErrorMessage>
+                )}
               </StyledFormField>
               <StyledFormField>
                 <FieldLabel htmlFor="excercise_sets_description">Set Description (Optional)</FieldLabel>
@@ -411,6 +531,9 @@ export const EditExcercise = () => {
                   handleInputChange={handleNumberChange}
                   property_name="excercise_reps"
                 />
+                {validationErrors.excercise_reps && (
+                  <ErrorMessage>{validationErrors.excercise_reps}</ErrorMessage>
+                )}
               </StyledFormField>
               <StyledFormField>
                 <FieldLabel htmlFor="excercise_reps_description">Repetition Description (Optional)</FieldLabel>
@@ -429,6 +552,9 @@ export const EditExcercise = () => {
               initialTags={excercise.excercise_muscles_involved ? excercise.excercise_muscles_involved.split(',').map(t => t.trim()).filter(Boolean) : []}
               onChange={(tags) => handleTagChange(tags, "excercise_muscles_involved")}
             />
+            {validationErrors.excercise_muscles_involved && (
+              <ErrorMessage>{validationErrors.excercise_muscles_involved}</ErrorMessage>
+            )}
           </StyledFormField>
           <StyledFormField>
             <FieldLabel htmlFor="related_conditions">Related Conditions</FieldLabel>
@@ -437,6 +563,9 @@ export const EditExcercise = () => {
               initialTags={excercise.excercise_related_conditions ? excercise.excercise_related_conditions.split(',').map(t => t.trim()).filter(Boolean) : []}
               onChange={(tags) => handleTagChange(tags, "excercise_related_conditions")}
             />
+            {validationErrors.excercise_related_conditions && (
+              <ErrorMessage>{validationErrors.excercise_related_conditions}</ErrorMessage>
+            )}
           </StyledFormField>
           {/* Add inputs for other iExcerciseDataDto fields if needed */}
         </Flex>
