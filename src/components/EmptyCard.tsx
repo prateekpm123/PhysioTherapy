@@ -1,3 +1,4 @@
+import React from 'react';
 // import { Card } from "@/components/ui/card";
 import { ReactNode } from "react";
 
@@ -8,7 +9,10 @@ interface MyComponentProps {
 
 const P_EmptyCard: React.FC<MyComponentProps> = ({ children, className }) => {
   return (
-    <div className={"m-10 border-x-gray-300 bg-gray-600 h-3/4 p-8 " + className}>
+    <div 
+      data-testid="p-empty-card"
+      className={`m-10 border-x-gray-300 bg-gray-600 h-3/4 p-8 ${className || ''}`}
+    >
       <>{children}</>
     </div>
   );

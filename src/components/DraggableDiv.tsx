@@ -9,15 +9,11 @@ interface DraggableDivProps {
 }
 
 const DraggableContainer = styled('div', {
-  cursor: 'grab',
   userSelect: 'none',
   backgroundColor: themeColors.background.elevation1,
   borderRadius: '8px',
   transition: 'transform 0.2s ease',
-  
-  '&:active': {
-    cursor: 'grabbing',
-  },
+  position: 'absolute',
 });
 
 const DraggableDiv: React.FC<DraggableDivProps> = ({ children, parentRef, onDragEnd }) => {
@@ -28,6 +24,7 @@ const DraggableDiv: React.FC<DraggableDivProps> = ({ children, parentRef, onDrag
 
   const handleMouseDown = (e: MouseEvent) => {
     if (elementRef.current) {
+      e.preventDefault();
       setIsDragging(true);
       const rect = elementRef.current.getBoundingClientRect();
       setDragOffset({
@@ -42,12 +39,17 @@ const DraggableDiv: React.FC<DraggableDivProps> = ({ children, parentRef, onDrag
       const parentRect = parentRef.current.getBoundingClientRect();
       const elementRect = elementRef.current.getBoundingClientRect();
 
-      let newX = e.clientX - parentRect.left - dragOffset.x;
-      let newY = e.clientY - parentRect.top - dragOffset.y;
+      // Calculate new position relative to parent
+      let newX = e.clientX - dragOffset.x - parentRect.left;
+      let newY = e.clientY - dragOffset.y - parentRect.top;
 
-      // Boundary checks
-      newX = Math.max(0, Math.min(newX, parentRect.width - elementRect.width));
-      newY = Math.max(0, Math.min(newY, parentRect.height - elementRect.height));
+      // Calculate maximum allowed positions
+      const maxX = parentRect.width - elementRect.width;
+      const maxY = parentRect.height - elementRect.height;
+
+      // Apply boundary constraints
+      newX = Math.max(0, Math.min(newX, maxX));
+      newY = Math.max(0, Math.min(newY, maxY));
 
       setPosition({ x: newX, y: newY });
     }
@@ -72,7 +74,7 @@ const DraggableDiv: React.FC<DraggableDivProps> = ({ children, parentRef, onDrag
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging]);
+  }, [isDragging, dragOffset, onDragEnd]);
 
   return (
     <DraggableContainer
@@ -83,6 +85,7 @@ const DraggableDiv: React.FC<DraggableDivProps> = ({ children, parentRef, onDrag
         left: `${position.x}px`,
         top: `${position.y}px`,
         transform: isDragging ? 'scale(1.02)' : 'scale(1)',
+        cursor: isDragging ? 'grabbing' : 'grab',
       }}
     >
       {children}
