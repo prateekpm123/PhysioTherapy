@@ -147,16 +147,18 @@ const PlannerSidebar = styled(Box, {
 const LIMIT = 20;
 
 interface ExerciseBuilderProps {
-    isExcerciseBuilderRefresh: boolean;
+    isExcerciseBuilderRefreshInValid: boolean;
 }
 
-export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBuilderRefresh }) => {
+export const ExerciseBuilder: React.FC<ExerciseBuilderProps> = ({ isExcerciseBuilderRefreshInValid }) => {
     const [displayedExercises, setDisplayedExercises] = useState<iExcerciseDataDto[]>([]);
+    console.log("isExcerciseBuilderRefreshInValid", isExcerciseBuilderRefreshInValid);
     const {
         isExcerciseBuilderLoading,
         setIsExcerciseBuilderLoading,
         excerciseBuilderPlannerList,
         setExcerciseBuilderPlannerList,
+        isExcerciseBuilderRefresh,
     } = useCurrentMainScreenContext();
     const { showToast } = useToast();
     const [isPlannerListModalOpen, setIsPlannerListModalOpen] =
