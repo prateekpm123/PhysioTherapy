@@ -4,8 +4,8 @@ import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
-import DoctorDetails from '@/pages/DoctorDetails'; // Use alias import path
-import { DoctorDetails as iDoctorDetails } from '@/models/iDoctorDetails'; // Assuming model path is correct with alias
+import DoctorDetailsComponent from '@/pages/DoctorDetails'; // Alias the component import
+import { DoctorDetails as DoctorDetailsType } from '@/models/iDoctorDetails'; // Import and alias the type
 import { FailedResponseDto } from '@/dtos/FailedResponseDto'; // Assuming DTO path is correct with alias
 import { StatusAndErrorType } from '@/models/StatusAndErrorType.enum'; // Assuming enum path is correct with alias
 import { ToastColors } from '@/components/Toast'; // Use alias import path
@@ -57,9 +57,17 @@ const mockUser = {
   googleSignInProvider: '',
 };
 
-const mockDoctorDetailsInitial: iDoctorDetails = {
+const mockDoctorDetailsInitial: DoctorDetailsType = {
   name: '', age: 0, country_code: '', phone_number: 0n, email: '',
-  address: '', pincode: 0, country: '', city: '', state: '', role: '',
+  address: {
+    address_line1: '',
+    address_line2: '',
+    pincode: 0,
+    district: '',
+    state: '',
+    country: '',
+  },
+  pincode: 0, country: '', district: '', state: '', role: '',
   user_id: '', doctor_history: '', doctor_specialization: '',
   doctor_qualification: '', doctor_experience: '', doctor_awards: '',
   doctor_certification: '', d_id: '',
@@ -102,18 +110,25 @@ const createMockStore = (preloadedState = {}) => {
 };
 
 // --- Mock Data ---
-const mockSuccessDoctorData: iDoctorDetails = {
+const mockSuccessDoctorData: DoctorDetailsType = {
   d_id: 'doc-456',
   name: 'Dr. Test User',
   age: 35,
   country_code: '+91',
   phone_number: 9876543210n, // Use BigInt literal
   email: 'test.user@example.com',
-  address: '123 Test St',
-  city: 'Testville',
+  address: {
+    address_line1: '123 Test St',
+    address_line2: '',
+    pincode: 123456,
+    district: 'Testville',
+    state: 'Test State',
+    country: 'Testland',
+  },
   pincode: 123456,
-  state: 'Test State',
   country: 'Testland',
+  district: 'Testville',
+  state: 'Test State',
   doctor_history: 'Started practice in 2010.',
   doctor_specialization: 'Orthopedics',
   doctor_qualification: 'MBBS, MS Ortho',
@@ -153,7 +168,7 @@ describe('DoctorDetails Component', () => {
           <Provider store={store}>
               <MemoryRouter initialEntries={['/doctor-details']}>
                  <Routes>
-                    <Route path="/doctor-details" element={<DoctorDetails {...props} />} />
+                    <Route path="/doctor-details" element={<DoctorDetailsComponent {...props} />} />
                  </Routes>
               </MemoryRouter>
           </Provider>
@@ -247,7 +262,7 @@ describe('DoctorDetails Component', () => {
       fireEvent.change(screen.getByLabelText(/Doctor Qualification/i), { target: { value: mockSuccessDoctorData.doctor_qualification } });
       fireEvent.change(screen.getByLabelText(/Country/i), { target: { value: mockSuccessDoctorData.country } });
       fireEvent.change(screen.getByLabelText(/Pincode/i), { target: { value: mockSuccessDoctorData.pincode.toString() } });
-      fireEvent.change(screen.getByLabelText(/City/i), { target: { value: mockSuccessDoctorData.city } });
+      fireEvent.change(screen.getByLabelText(/City/i), { target: { value: mockSuccessDoctorData.district } });
       fireEvent.change(screen.getByLabelText(/State/i), { target: { value: mockSuccessDoctorData.state } }); // Corrected label
       // Fill optional fields just in case they become required later or for robustness
       fireEvent.change(screen.getByLabelText(/Address/i), { target: { value: mockSuccessDoctorData.address }});
@@ -284,7 +299,7 @@ describe('DoctorDetails Component', () => {
         address: mockSuccessDoctorData.address,
         pincode: mockSuccessDoctorData.pincode.toString(), // Convert to string
         country: mockSuccessDoctorData.country,
-        city: mockSuccessDoctorData.city,
+        district: mockSuccessDoctorData.district,
         state: mockSuccessDoctorData.state,
         // role: is excluded
         user_id: mockSuccessDoctorData.user_id,

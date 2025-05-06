@@ -80,7 +80,7 @@ describe('ExerciseBuilder Component', () => {
             path="/doctorhome/main/patientDetails/:pid/buildPlan"
             element={
               <ExerciseBuilder
-                isExcerciseBuilderRefresh={false}
+                isExcerciseBuilderRefreshInValid={false}
               />
             }
           />

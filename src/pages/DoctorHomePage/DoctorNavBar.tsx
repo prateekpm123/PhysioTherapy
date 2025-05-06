@@ -33,7 +33,7 @@ const DoctorNavBar = () => {
 
   const onSettingsClick = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    navigate("/doctorhome/settings");
+    navigate("/doctorhome/main/settings/profile");
   };
 
   return (

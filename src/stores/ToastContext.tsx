@@ -42,3 +42,5 @@ export const useToast = () => {
   }
   return context;
 };
+
+export { ToastColors };

@@ -1,6 +1,6 @@
 export interface iAddress {
     address: string;
-    city: string;
+    district: string;
     state: string;
     country: string;
     pincode: string;

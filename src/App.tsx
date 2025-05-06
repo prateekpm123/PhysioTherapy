@@ -16,7 +16,7 @@ import PatientList from "./pages/DoctorHomePage/MainPages/PatientLIst";
 import NewPatientEntry from "./pages/DoctorHomePage/MainPages/NewPatientEntry";
 import DoctorHomeLandingPage from "./pages/DoctorHomePage/MainPages/DoctorHomeLandingPage";
 import ExcerciseBuilder from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder";
-import DoctorSettings from "./pages/DoctorHomePage/DoctorSettings";
+import DoctorSettings from "./pages/DoctorHomePage/DoctorSettings/DoctorSettings";
 import NotFound from "./pages/NotFound";
 // import Modal from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder/TestModal";
 import { EditExcercise } from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder/EditExcercise";
@@ -25,6 +25,11 @@ import { AddExcercise } from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder/
 import DeleteExcercise from "./pages/DoctorHomePage/MainPages/ExcerciseBuilder/DeleteExcercise";
 import ExcercisePlanDetailsPage from "./pages/DoctorHomePage/MainPages/ExcercisePlanDetailsPage";
 import ExcercisePlanTrackSession from "./pages/DoctorHomePage/MainPages/ExcercisePlanTrackSession";
+import DoctorProfileSettings from "./pages/DoctorHomePage/DoctorSettings/DoctorProfileSettings";
+import DoctorAccountSettings from "./pages/DoctorHomePage/DoctorSettings/DoctorAccountSettings";
+import DoctorPasswordSettings from "./pages/DoctorHomePage/DoctorSettings/DoctorPasswordSettings";
+import DoctorNotificationSettings from "./pages/DoctorHomePage/DoctorSettings/DoctorNotificationSettings";
+import DoctorBillingSettings from "./pages/DoctorHomePage/DoctorSettings/DoctorBillingSettings";
 
 const App: React.FC = () => {
   // const {oeid} = useParams();
@@ -45,15 +50,22 @@ const App: React.FC = () => {
             <Route path="patientDetails/:pid" element={<PatientDetails />}/>
             <Route path="patientDetails/:pid/excercisePlans/:epid" element={<ExcercisePlanDetailsPage  />} />
             <Route path="patientDetails/:pid/excercisePlans/:epid/trackSession" element={<ExcercisePlanTrackSession />} />
-            <Route path="patientDetails/:pid/buildPlan" element={<ExcerciseBuilder isExcerciseBuilderRefresh={false} debouncedValue="" />} >
+            <Route path="patientDetails/:pid/buildPlan" element={<ExcerciseBuilder isExcerciseBuilderRefreshInValid={false} />} >
               <Route path="editExcercise/:oeid" element={<EditExcercise />}/>
               <Route path="excerciseDetails/:oeid" element={<ExcerciseDetail />}/>
               <Route path="addExcercise" element={<AddExcercise />}/>
               <Route path="deleteExcercise" element={<DeleteExcercise />}/>
             </Route>
             <Route path="patientDetails/:pid/buildPlan/createPlan" element={<CreateExcercisePlanPage />} />
+            <Route path="settings" element={<DoctorSettings />} >
+              <Route index element={<DoctorProfileSettings />} />
+              <Route path="profile" element={<DoctorProfileSettings />} />
+              <Route path="account" element={<DoctorAccountSettings />} />
+              <Route path="password" element={<DoctorPasswordSettings />} />
+              <Route path="notifications" element={<DoctorNotificationSettings />} />
+              <Route path="billing" element={<DoctorBillingSettings />} />
+            </Route>
           </Route>
-          <Route path="settings" element={<DoctorSettings />} />
           <Route path="patientList" element={<PatientList />} />
           <Route
             path="patientTreatmentHistory"

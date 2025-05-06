@@ -37,7 +37,7 @@ interface ValidationErrors {
   phone_number?: string;
   email?: string;
   country?: string;
-  city?: string;
+  district?: string;
   state?: string;
   pincode?: string;
   doctor_specialization?: string;
@@ -45,7 +45,7 @@ interface ValidationErrors {
 }
 
 // Add type for form fields that need validation
-type ValidatableFields = 'name' | 'age' | 'phone_number' | 'email' | 'country' | 'city' | 'state' | 'pincode' | 'doctor_specialization' | 'doctor_qualification';
+type ValidatableFields = 'name' | 'age' | 'phone_number' | 'email' | 'country' | 'district' | 'state' | 'pincode' | 'doctor_specialization' | 'doctor_qualification';
 
 const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
   const navigate = useNavigate();
@@ -59,7 +59,7 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
     phone_number: "",
     email: doctorData.email,
     address: "",
-    city: "",
+    district: "",
     pincode: "",
     state:"",
     country: "",
@@ -102,9 +102,9 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
         if (!value) error = "Country is required";
         else if (typeof value === "string" && value.length < 2) error = "Please enter a valid country name";
         break;
-      case "city":
+      case "district":
         if (!value) error = "City is required";
-        else if (typeof value === "string" && value.length < 2) error = "Please enter a valid city name";
+        else if (typeof value === "string" && value.length < 2) error = "Please enter a valid district name";
         break;
       case "state":
         if (!value) error = "State is required";
@@ -152,7 +152,7 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
     const errors: ValidationErrors = {};
     const validatableFields: ValidatableFields[] = [
       'name', 'age', 'phone_number', 'email', 'country', 
-      'city', 'state', 'pincode', 'doctor_specialization', 
+      'district', 'state', 'pincode', 'doctor_specialization', 
       'doctor_qualification'
     ];
     
@@ -361,22 +361,22 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ onSave }) => {
           </Flex>
           <Flex direction="column" gap="2" style={{ width: "100%" }}>
             {/* City */}
-            <Form.Field name="city">
+            <Form.Field name="district">
               <div className="flex flex-col">
                 <Form.Label className="mb-1 font-medium">City</Form.Label>
                 <Form.Control asChild>
                   <input
                     type="text"
-                    name="city"
-                    value={formData.city}
+                    name="district"
+                    value={formData.district}
                     onChange={handleChange}
                     className="border rounded px-3 py-2 w-full"
-                    placeholder="Enter city"
+                    placeholder="Enter district"
                     required
                   />
                 </Form.Control>
-                {validationErrors.city && (
-                  <ErrorMessage>{validationErrors.city}</ErrorMessage>
+                {validationErrors.district && (
+                  <ErrorMessage>{validationErrors.district}</ErrorMessage>
                 )}
               </div>
             </Form.Field>

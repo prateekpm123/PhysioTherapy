@@ -5,10 +5,10 @@ export interface DoctorDetails {
   phone_number: bigint;
   email: string;
 
-  address: string;
+  address: Address;
   pincode: number;
   country: string;
-  city: string;
+  district: string;
   state: string;
 
   role: string;
@@ -20,4 +20,14 @@ export interface DoctorDetails {
   doctor_awards: string;
   doctor_certification: string;
   d_id?: string;
+}
+
+export interface Address {
+  address_line1: string;
+  address_line2?: string;
+  pincode: number;
+  flat_no?: number;
+  district: string;
+  state: string;
+  country: string;
 }
