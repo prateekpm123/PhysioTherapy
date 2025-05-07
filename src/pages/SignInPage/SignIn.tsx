@@ -12,7 +12,6 @@ import {
   Flex,
   Text,
   Button,
-  Skeleton,
   TextField,
   Link,
 } from "@radix-ui/themes";
@@ -150,20 +149,15 @@ export const SignIn = () => {
         <Box width="500px">
           <Card size="5">
             <Flex gap="4" align="start" direction={"column"}>
-              <Skeleton loading={loading}>
                 <Text size="8" weight="bold" data-testid="signinText">
                   Sign In
                 </Text>
-              </Skeleton>
 
               <form onSubmit={handleEmailSignIn} style={{ width: '100%' }}>
                 <Flex gap="4" direction="column" style={{ width: "100%" }}>
-                  <Skeleton loading={loading}>
                     <Text as="div" size="4" weight="bold" data-testid="emailLabel">
                       Email
                     </Text>
-                  </Skeleton>
-                  <Skeleton loading={loading}>
                     <TextField.Root
                       placeholder="Email..."
                       size="3"
@@ -178,13 +172,9 @@ export const SignIn = () => {
                         <MagnifyingGlassIcon height="16" width="16" />
                       </TextField.Slot>
                     </TextField.Root>
-                  </Skeleton>
-                  <Skeleton loading={loading}>
                     <Text as="div" size="4" weight="bold" data-testid="passwordLabel">
                       Password
                     </Text>
-                  </Skeleton>
-                  <Skeleton loading={loading}>
                     <TextField.Root
                       placeholder="Password..."
                       size="3"
@@ -200,7 +190,6 @@ export const SignIn = () => {
                         <MagnifyingGlassIcon height="16" width="16" />
                       </TextField.Slot>
                     </TextField.Root>
-                  </Skeleton>
                   {/* <Skeleton loading={loading}> */}
                     <Button
                       variant="solid"
