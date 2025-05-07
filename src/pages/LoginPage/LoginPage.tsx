@@ -5,7 +5,6 @@ import {
   Text,
   TextField,
   Button,
-  Skeleton,
   Link,
 } from "@radix-ui/themes";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
@@ -153,6 +152,7 @@ export const LoginPage = () => {
   };
 
   const afterLoginFail = (response: FailedResponseDto) => {
+    setLoading(false);
     // @todo if user tries to directly login without signing up then show : Please sign up first
     if (response.errorCode === StatusAndErrorType.UserNotCreated) {
       showToast(
@@ -178,20 +178,15 @@ export const LoginPage = () => {
         <Box width="500px">
           <Card size="5">
             <Flex gap="4" align="start" direction={"column"}>
-              <Skeleton loading={loading}>
                 <Text size="8" weight="bold" data-testid="loginText">
                   Login
                 </Text>
-              </Skeleton>
 
               <form onSubmit={handleEmailLogin} style={{ width: '100%' }}>
                 <Flex gap="4" direction="column" style={{ width: "100%" }}>
-                  <Skeleton loading={loading}>
                     <Text as="div" size="4" weight="bold" data-testid="emailLabel">
                       Email
                     </Text>
-                  </Skeleton>
-                  <Skeleton loading={loading}>
                     <TextField.Root
                       placeholder="Email..."
                       size="3"
@@ -206,18 +201,14 @@ export const LoginPage = () => {
                         <MagnifyingGlassIcon height="16" width="16" />
                       </TextField.Slot>
                     </TextField.Root>
-                  </Skeleton>
-                  <Skeleton loading={loading}>
-                    <Text as="div" size="4" weight="bold" data-testid="passwordLabel">
-                      Password
+                  <Text as="div" size="4" weight="bold" data-testid="passwordLabel">
+                    Password
                     </Text>
-                  </Skeleton>
-                  <Skeleton loading={loading}>
-                    <TextField.Root
-                      placeholder="Password..."
-                      size="3"
-                      style={{ width: "100%" }}
-                      data-testid="passwordInput"
+                  <TextField.Root
+                    placeholder="Password..."
+                    size="3"
+                    style={{ width: "100%" }}
+                    data-testid="passwordInput"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
@@ -227,19 +218,16 @@ export const LoginPage = () => {
                         <MagnifyingGlassIcon height="16" width="16" />
                       </TextField.Slot>
                     </TextField.Root>
-                  </Skeleton>
-                  <Skeleton loading={loading}>
-                    <Button
-                      variant="solid"
-                      size="3"
-                      style={{ marginTop: "10px" }}
-                      type="submit"
-                      data-testid="loginButton"
+                  <Button
+                    variant="solid"
+                    size="3"
+                    style={{ marginTop: "10px" }}
+                    type="submit"
+                    data-testid="loginButton"
                       disabled={loading}
                     >
                       {loading ? 'Logging in...' : 'Login'}
                     </Button>
-                  </Skeleton>
                 </Flex>
               </form>
 
@@ -284,19 +272,17 @@ export const LoginPage = () => {
                 />
               </Flex>
 
-              <Skeleton loading={loading}>
                 <Button
                   variant="solid"
                   size="3"
                   style={{ marginTop: "10px", width: "100%" }}
                   onClick={handleGoogleLogin}
                   data-testid="googleLoginButton"
+                  disabled={loading}
                 >
                   <FcGoogle size="30" style={{ marginRight: "0px" }} />
                   Sign in with Google
                 </Button>
-              </Skeleton>
-              <Skeleton loading={loading}>
                 <Button
                   variant="solid"
                   size="3"
@@ -308,7 +294,6 @@ export const LoginPage = () => {
                   <FaFacebook size="30" style={{ marginRight: "0px" }} />
                   Sign in with Facebook
                 </Button>
-              </Skeleton>
             </Flex>
           </Card>
         </Box>
