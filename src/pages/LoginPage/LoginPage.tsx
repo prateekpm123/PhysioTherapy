@@ -12,6 +12,7 @@ import React, { useState } from 'react';
 import {
   FacebookAuthProvider,
   GoogleAuthProvider,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
@@ -167,6 +168,31 @@ export const LoginPage = () => {
     }
     dispatch(setIsSignedIn(false));
   };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      showToast('Please enter your email address first.', undefined, ToastColors.BLUE);
+      return;
+    }
+    setLoading(true);
+    try {
+      await sendPasswordResetEmail(firebaseAuth, email);
+      showToast('Password reset email sent. Check your inbox.', undefined, ToastColors.GREEN);
+    } catch (error) {
+      const firebaseError = error as { code?: string; message?: string };
+      if (firebaseError.code === 'auth/invalid-email') {
+        showToast('Invalid email address.', undefined, ToastColors.RED);
+      } else if (firebaseError.code === 'auth/user-not-found') {
+        showToast('No account found with this email.', undefined, ToastColors.RED);
+      } else {
+        console.error('Forgot password error:', error);
+        showToast('Failed to send password reset email. Please try again.', undefined, ToastColors.RED);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <Flex
@@ -218,6 +244,17 @@ export const LoginPage = () => {
                         <MagnifyingGlassIcon height="16" width="16" />
                       </TextField.Slot>
                     </TextField.Root>
+                  <Flex justify="end" style={{ width: "100%", marginTop: "5px" }}>
+                    <Link
+                      href="#"
+                      size="2"
+                      onClick={handleForgotPassword}
+                      style={{ color: "#5392cd" }}
+                      data-testid="forgotPasswordLink"
+                    >
+                      Forgot Password?
+                    </Link>
+                  </Flex>
                   <Button
                     variant="solid"
                     size="3"
